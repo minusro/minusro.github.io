@@ -1,0 +1,215 @@
+:root {
+  --bg: #f4f1ea;
+  --fg: #151414;
+  --muted: #6f6b64;
+  --line: rgba(21, 20, 20, 0.12);
+  --accent: #e2552b;
+  --glow-a: rgba(226, 85, 43, 0.22);
+  --glow-b: rgba(93, 120, 255, 0.16);
+  --grain-opacity: 0.07;
+
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: clamp(16px, 4vw, 48px);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0f10;
+    --fg: #f1eee7;
+    --muted: #8d8a84;
+    --line: rgba(241, 238, 231, 0.12);
+    --accent: #ff7a4d;
+    --glow-a: rgba(255, 122, 77, 0.18);
+    --glow-b: rgba(110, 135, 255, 0.14);
+    --grain-opacity: 0.05;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: var(--gutter);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Film grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Soft drifting color behind the name */
+.glow {
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 35% at 30% 55%, var(--glow-a), transparent 70%),
+    radial-gradient(35% 30% at 72% 40%, var(--glow-b), transparent 70%);
+  filter: blur(40px);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translate3d(-3%, 2%, 0) scale(1); }
+  to   { transform: translate3d(3%, -2%, 0) scale(1.08); }
+}
+
+/* Header / footer */
+.top,
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.top {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.bottom {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.mark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Hero */
+.hero {
+  align-self: center;
+  padding-block: clamp(48px, 10vh, 120px);
+}
+
+.eyebrow {
+  margin: 0 0 clamp(12px, 2vw, 24px);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(4rem, 15vw, 13rem);
+  line-height: 0.88;
+  letter-spacing: -0.025em;
+}
+
+h1 span {
+  display: inline-block;
+}
+
+.tagline {
+  margin: clamp(20px, 3vw, 36px) 0 0;
+  max-width: 32ch;
+  font-size: clamp(17px, 1.6vw, 22px);
+  color: var(--muted);
+}
+
+.tagline em {
+  font-family: var(--font-display);
+  font-size: 1.3em;
+  font-style: italic;
+  color: var(--fg);
+}
+
+/* Entrance */
+.eyebrow,
+h1 span,
+.tagline {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.eyebrow        { animation-delay: 0.05s; }
+h1 span:first-child { animation-delay: 0.15s; }
+h1 span:last-child  { animation-delay: 0.27s; }
+.tagline        { animation-delay: 0.45s; }
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 480px) {
+  .hide-sm {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+
+  .eyebrow,
+  h1 span,
+  .tagline {
+    opacity: 1;
+    transform: none;
+  }
+}
