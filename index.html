@@ -3,43 +3,113 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daniel Stanciu — Coming soon</title>
-  <meta name="description" content="The portfolio of Daniel Stanciu. Coming soon.">
-  <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0f0f10" media="(prefers-color-scheme: dark)">
+  <title>Daniel Stanciu — Portfolio</title>
+  <meta name="description" content="Games, AR, music and educational software by Daniel Stanciu.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f4f4f1" media="(prefers-color-scheme: light)">
 
-  <meta property="og:title" content="Daniel Stanciu">
-  <meta property="og:description" content="Portfolio coming soon.">
+  <meta property="og:title" content="Daniel Stanciu — Portfolio">
+  <meta property="og:description" content="Games, AR, music and educational software.">
   <meta property="og:type" content="website">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <script src="fx.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <div class="glow" aria-hidden="true"></div>
+  <a class="skip" href="#work">Skip to work</a>
 
-  <header class="top">
-    <span class="mark" aria-label="Daniel Stanciu">DS</span>
-    <span class="status"><span class="dot" aria-hidden="true"></span>In progress</span>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">DS</span>
+        <span class="brand-name">Daniel Stanciu</span>
+      </a>
+      <nav class="site-nav mono" aria-label="Main">
+        <a class="scramble-hover" href="#work"><span class="sr-only">Work</span><span aria-hidden="true" data-scramble>Work</span></a>
+        <a class="scramble-hover" href="#about"><span class="sr-only">About</span><span aria-hidden="true" data-scramble>About</span></a>
+        <a class="scramble-hover" href="#contact"><span class="sr-only">Contact</span><span aria-hidden="true" data-scramble>Contact</span></a>
+      </nav>
+    </div>
   </header>
 
-  <main class="hero">
-    <p class="eyebrow">Portfolio</p>
-    <h1><span>Daniel</span> <span>Stanciu</span></h1>
-    <p class="tagline">Something new is <em>coming soon</em>.</p>
+  <main id="top">
+    <section class="hero">
+      <canvas class="field" id="field" aria-hidden="true"></canvas>
+      <div class="wrap hero-inner">
+        <p class="kicker mono"><span class="cursor" aria-hidden="true"></span>Portfolio / index of work</p>
+        <h1><span class="sr-only">Daniel Stanciu</span><span aria-hidden="true" data-scramble>Daniel Stanciu</span></h1>
+        <p class="lede" id="tagline">Games, AR, music and educational software.</p>
+        <dl class="stats mono">
+          <div><dt>Projects</dt><dd id="stat-projects">—</dd></div>
+          <div><dt>Categories</dt><dd id="stat-categories">—</dd></div>
+          <div><dt>Span</dt><dd id="stat-span">—</dd></div>
+        </dl>
+      </div>
+      <p class="field-hint mono" aria-hidden="true">Click the field to send a pulse</p>
+    </section>
+
+    <section id="work" class="section wrap" aria-labelledby="work-title">
+      <header class="section-head">
+        <span class="section-num mono">01</span>
+        <h2 id="work-title"><span class="sr-only">Work</span><span aria-hidden="true" data-scramble>Work</span></h2>
+        <span class="section-count mono" id="result-count" aria-live="polite"></span>
+      </header>
+
+      <div class="toolbar mono" id="toolbar">
+        <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+        <div class="toolbar-right">
+          <div class="seg" role="group" aria-label="Sort">
+            <button type="button" data-sort="newest">Newest</button>
+            <button type="button" data-sort="oldest">Oldest</button>
+          </div>
+          <div class="seg" role="group" aria-label="Layout">
+            <button type="button" data-view="grid">Grid</button>
+            <button type="button" data-view="list">List</button>
+          </div>
+        </div>
+      </div>
+
+      <ol class="projects" id="projects" data-view="grid"></ol>
+      <noscript><p class="placeholder">The project index needs JavaScript.</p></noscript>
+    </section>
+
+    <section id="about" class="section wrap" aria-labelledby="about-title">
+      <header class="section-head">
+        <span class="section-num mono">02</span>
+        <h2 id="about-title"><span class="sr-only">About</span><span aria-hidden="true" data-scramble>About</span></h2>
+      </header>
+      <div class="about-body" id="about-body">
+        <p class="placeholder">TODO: short bio — what you do, where you've worked, what you're into. Add it in the editor (npm run edit).</p>
+      </div>
+    </section>
+
+    <section id="contact" class="section wrap" aria-labelledby="contact-title">
+      <header class="section-head">
+        <span class="section-num mono">03</span>
+        <h2 id="contact-title"><span class="sr-only">Contact</span><span aria-hidden="true" data-scramble>Contact</span></h2>
+      </header>
+      <div id="contact-body">
+        <p class="placeholder">TODO: email, LinkedIn, GitHub. Add them in the editor (npm run edit).</p>
+      </div>
+    </section>
   </main>
 
-  <footer class="bottom">
-    <span>&copy; <span id="year">2026</span> Daniel Stanciu</span>
-    <span class="hide-sm">Check back shortly</span>
+  <footer class="site-footer">
+    <div class="wrap footer-inner mono">
+      <span>&copy; <span id="year">2026</span> Daniel Stanciu</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <div class="preview" id="preview" aria-hidden="true"><div class="preview-inner"></div></div>
+  <dialog id="project" class="sheet" aria-labelledby="sheet-title"></dialog>
 </body>
 </html>

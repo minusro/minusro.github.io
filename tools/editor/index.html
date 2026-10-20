@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Portfolio editor</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="editor.css">
+  <script src="editor.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">DS</span><span>Portfolio editor</span></div>
+    <span class="status" id="status" role="status" data-state="loading">Loading…</span>
+    <div class="actions">
+      <label class="toggle"><input type="checkbox" id="preview-toggle"> Preview</label>
+      <a class="btn" href="/" target="_blank" rel="noopener">Open site ↗</a>
+      <button type="button" class="btn btn-primary" id="publish-open">Publish…</button>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <aside class="sidebar">
+      <div class="tabs">
+        <button type="button" data-tab="projects" aria-pressed="true">Projects <span id="project-count" class="count"></span></button>
+        <button type="button" data-tab="site" aria-pressed="false">Site</button>
+      </div>
+      <div class="sidebar-body" id="sidebar"></div>
+    </aside>
+
+    <main class="form-pane" id="form"></main>
+
+    <section class="preview-pane" id="preview-pane" hidden>
+      <iframe id="preview" title="Site preview"></iframe>
+    </section>
+  </div>
+
+  <dialog class="modal" id="publish-dialog" aria-labelledby="publish-title">
+    <div class="modal-inner">
+      <h2 id="publish-title">Publish to GitHub</h2>
+      <div id="publish-info" class="publish-info">Checking for changes…</div>
+      <label class="field">
+        <span class="label">What changed?</span>
+        <input type="text" id="publish-message" value="Update portfolio content">
+      </label>
+      <pre class="log" id="publish-log" hidden></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close-modal>Close</button>
+        <button type="button" class="btn btn-primary" id="publish-go">Publish</button>
+      </div>
+    </div>
+  </dialog>
+
+  <input type="file" id="file-cover" accept="image/*" hidden>
+  <input type="file" id="file-video" accept="video/mp4,video/webm" hidden>
+</body>
+</html>

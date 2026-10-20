@@ -1,0 +1,338 @@
+{
+  "site": {
+    "tagline": "Games, AR and music software.",
+    "about": "Senior Software Engineer with 14 years of experience in Gaming, AR and Audio Software.",
+    "email": "minusro@gmail.com",
+    "links": [
+      {
+        "label": "Linkedin",
+        "url": "https://www.linkedin.com/in/daniel-stanciu"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "games",
+      "label": "Games",
+      "short": "Game",
+      "color": "#ff7a45"
+    },
+    {
+      "id": "ar",
+      "label": "AR",
+      "short": "AR",
+      "color": "#3fd5ff"
+    },
+    {
+      "id": "music",
+      "label": "Music",
+      "short": "Music",
+      "color": "#c18bff"
+    },
+    {
+      "id": "education",
+      "label": "Educational",
+      "short": "Edu",
+      "color": "#ffd04a"
+    }
+  ],
+  "projects": [
+    {
+      "id": "fifa-14",
+      "title": "FIFA 14",
+      "year": 2013,
+      "tags": [
+        "games"
+      ],
+      "role": "Software engineer",
+      "studio": "Electronic Arts",
+      "platforms": [
+        "Playstation",
+        "Xbox",
+        "Windows"
+      ],
+      "tech": [
+        "C++"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "nifty-drifty",
+      "title": "Nifty Drifty",
+      "year": 2015,
+      "tags": [
+        "games"
+      ],
+      "role": "Game developer",
+      "studio": "Pronetis Games",
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "zombie-intern",
+      "title": "Zombie INTERN",
+      "year": 2016,
+      "tags": [
+        "games"
+      ],
+      "role": "Game designer and developer",
+      "studio": "Pronetis Games",
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "race-yourself",
+      "title": "RACE Yourself",
+      "year": 2017,
+      "tags": [
+        "games"
+      ],
+      "role": "Game designer and developer",
+      "studio": "Pronetis Games",
+      "platforms": [
+        "iOS",
+        "Android",
+        "AppleTV"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "sector-escape",
+      "title": "Sector ESCAPE",
+      "year": 2017,
+      "tags": [
+        "games"
+      ],
+      "role": "Game designer and developer",
+      "studio": "Pronetis Games",
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "springboard",
+      "title": "Springboard",
+      "year": 2022,
+      "tags": [
+        "games"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "superluminal",
+      "title": "Superluminal",
+      "year": 2023,
+      "tags": [
+        "games"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "squish-hour",
+      "title": "Squish Hour",
+      "year": 2026,
+      "tags": [
+        "games"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "holo-one-sphere",
+      "title": "Sphere",
+      "year": 2018,
+      "tags": [
+        "ar"
+      ],
+      "role": "Augmented Reality software engineer",
+      "studio": "Holo-One",
+      "platforms": [
+        "HoloLens",
+        "Magic Leap"
+      ],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "beatspiral",
+      "title": "BeatSpiral",
+      "year": 2012,
+      "tags": [
+        "music"
+      ],
+      "role": "App designer and Audio / UI programmer",
+      "studio": "Xylio",
+      "platforms": [
+        "iOS"
+      ],
+      "tech": [
+        "Objective-C",
+        "C++"
+      ],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "roli-airwave-player",
+      "title": "ROLI Airwave Player",
+      "year": 2024,
+      "tags": [
+        "music"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "l7",
+      "title": "L7",
+      "year": 2026,
+      "tags": [
+        "music"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "k6",
+      "title": "K6",
+      "year": 2026,
+      "tags": [
+        "music"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "gk-rowing",
+      "title": "GK Rowing",
+      "year": 2014,
+      "tags": [
+        "education"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "gk-guitar",
+      "title": "GK Guitar",
+      "year": 2014,
+      "tags": [
+        "education",
+        "music"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    },
+    {
+      "id": "roli-learn",
+      "title": "ROLI Learn",
+      "year": 2020,
+      "tags": [
+        "education",
+        "music"
+      ],
+      "role": "",
+      "studio": "",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "",
+      "video": ""
+    }
+  ]
+}

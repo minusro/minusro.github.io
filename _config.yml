@@ -1,0 +1,6 @@
+# GitHub Pages builds this repo with Jekyll. Keep the local editor and
+# project files off the live site.
+exclude:
+  - tools
+  - package.json
+  - README.md
