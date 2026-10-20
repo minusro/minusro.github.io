@@ -150,6 +150,11 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-close]')) {
+        e.preventDefault();
+        closeAll();
+        return;
+      }
       const a = e.target.closest('a[href^="#/"]');
       // Re-clicking the current hash doesn't fire hashchange: clicking an open
       // card again folds it back up.
@@ -418,6 +423,9 @@
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
     return `
+      <button type="button" class="detail-close" data-close aria-label="Close project">
+        <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8"/></svg>
+      </button>
       <dl class="detail-meta">
         ${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
       </dl>

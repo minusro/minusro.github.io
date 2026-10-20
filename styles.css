@@ -148,6 +148,7 @@ code {
 .tag,
 .card-link,
 .card-media,
+.detail-close,
 .palette {
   box-shadow:
     inset 1px 1px 0 var(--fc),
@@ -621,6 +622,38 @@ h1 {
 .card.is-expanded > .card-link {
   --fc: var(--c);
   height: auto;
+}
+
+/* A one-square close button in the top-right square of the details */
+.card-detail {
+  position: relative;
+}
+
+.detail-close {
+  --fc: var(--line-strong);
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--g);
+  height: var(--g);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.detail-close svg {
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+
+.detail-close:hover {
+  --fc: var(--fg);
+  color: var(--fg);
 }
 
 /* The title, tags and picture are on the card beside these details, which
