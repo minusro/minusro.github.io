@@ -150,11 +150,6 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
-      if (e.target.closest('[data-close]')) {
-        e.preventDefault();
-        closeAll();
-        return;
-      }
       const a = e.target.closest('a[href^="#/"]');
       // Re-clicking the current hash doesn't fire hashchange: clicking an open
       // card again folds it back up.
@@ -233,7 +228,7 @@
   // Round the width of buttons, tags and links up to whole squares, so the
   // next thing along starts on a gridline too.
   function snapWidths(root = document) {
-    const items = root.querySelectorAll('.chip, .tag, .detail-close, .detail-links a');
+    const items = root.querySelectorAll('.chip, .tag, .detail-links a');
     for (const el of items) el.style.width = '';
     const widths = [...items].map((el) => el.getBoundingClientRect().width);
     items.forEach((el, i) => {
@@ -408,8 +403,10 @@
   function detailHTML(p) {
     const nav = visible();
     const i = nav.indexOf(p);
-    const prev = nav[i - 1];
-    const next = nav[i + 1];
+    // The list runs newest first: < goes back to the older project (the
+    // lower number), > on to the newer one
+    const prev = nav[i + 1];
+    const next = nav[i - 1];
 
     const meta = [
       ['Year', p.year],
@@ -421,9 +418,6 @@
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
     return `
-      <button type="button" class="detail-close" data-close>Close</button>
-      <ul class="tags">${tagsHTML(p)}</ul>
-      <h2 class="detail-title">${esc(p.title)}</h2>
       <dl class="detail-meta">
         ${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
       </dl>

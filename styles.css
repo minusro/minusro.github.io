@@ -148,7 +148,6 @@ code {
 .tag,
 .card-link,
 .card-media,
-.detail-close,
 .palette {
   box-shadow:
     inset 1px 1px 0 var(--fc),
@@ -160,8 +159,7 @@ code {
 /* Headings: capitals trimmed to exactly fill whole squares */
 @supports (text-box: trim-both cap alphabetic) {
   h1,
-  .section-head h2,
-  .detail-title {
+  .section-head h2 {
     text-box: trim-both cap alphabetic;
   }
 }
@@ -615,51 +613,15 @@ h1 {
   height: auto;
 }
 
-.card-detail {
-  position: relative;
-}
-
-.detail-close {
-  --fc: var(--line-strong);
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: var(--g);
-  padding: 0 12px;
-  border: 0;
-  background: none;
-  color: var(--fg);
-  font: 12px/1 var(--font-mono);
-  cursor: pointer;
-}
-
-.detail-close:hover {
-  --fc: var(--fg);
-}
-
-.detail-title {
-  margin: var(--g) 0 0;
-  font-size: calc(var(--g) / var(--cap));
-  font-weight: 600;
-  line-height: calc(var(--g) * 2);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-/* Facts in columns five squares wide, ruled above and below */
-/* Year and studio take five squares; role and platforms run on to the
-   card's right edge, and tech has a full row of its own */
+/* The title, tags and picture are on the card beside these details, which
+   start level with the card's top edge. Year and studio take five squares;
+   role and platforms run on to the card's right edge, and tech has a full
+   row of its own. */
 .detail-meta {
   display: grid;
   grid-template-columns: calc(var(--g) * 5) minmax(0, 1fr);
   row-gap: var(--g);
-  margin: var(--g) 0 0;
-  padding-top: var(--g);
-  box-shadow: inset 0 1px 0 var(--line);
+  margin: 0;
   font-family: var(--font-mono);
 }
 
@@ -742,9 +704,11 @@ h1 {
   font: 13px/var(--g) var(--font-mono);
 }
 
+/* Project names in capitals, as on the cards */
 .detail-nav a {
   color: var(--muted);
   text-decoration: none;
+  text-transform: uppercase;
 }
 
 .detail-nav a:hover {
@@ -1186,11 +1150,11 @@ h1 {
   color: var(--fg);
 }
 
-/* The current year's line is a square and a half long, ending where the
-   short dashes end */
+/* The current year's line is a square longer than the other years' dashes,
+   ending where they end */
 .scrubber button[aria-current]::before {
-  left: calc(16px - var(--g) * 1.5);
-  width: calc(var(--g) * 1.5);
+  left: calc(8px - var(--g));
+  width: calc(8px + var(--g));
   background: var(--accent);
 }
 
