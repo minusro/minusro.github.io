@@ -32,12 +32,6 @@
       "label": "Music",
       "short": "Music",
       "color": "#c18bff"
-    },
-    {
-      "id": "education",
-      "label": "Educational",
-      "short": "Edu",
-      "color": "#ffd04a"
     }
   ],
   "projects": [
@@ -308,10 +302,8 @@
       "id": "gk-rowing",
       "title": "GK Rowing",
       "year": 2014,
-      "tags": [
-        "education"
-      ],
-      "hidden": false,
+      "tags": [],
+      "hidden": true,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -326,10 +318,9 @@
       "title": "GK Guitar",
       "year": 2014,
       "tags": [
-        "education",
         "music"
       ],
-      "hidden": false,
+      "hidden": true,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -344,7 +335,6 @@
       "title": "ROLI Learn",
       "year": 2020,
       "tags": [
-        "education",
         "music"
       ],
       "hidden": false,
