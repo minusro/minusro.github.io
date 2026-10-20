@@ -1,7 +1,7 @@
 {
   "site": {
     "tagline": "Games, AR and music software.",
-    "about": "Senior Software Engineer with 14 years of experience in Gaming, AR and Audio Software.",
+    "about": "Senior Software Engineer with 14 years of experience in Gaming, AR and Audio Software.\n",
     "email": "minusro@gmail.com",
     "links": [
       {
@@ -150,7 +150,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "\"A Minimalist Space Odyssey\"",
+      "summary": "A minimalist space odyssey.",
       "links": [],
       "cover": "media/sector-escape-cover-2.webp",
       "video": "media/sector-escape-video.mp4",
