@@ -225,20 +225,23 @@ code {
   mask-image: radial-gradient(ellipse 80% 90% at 65% 40%, #000 25%, transparent 80%);
 }
 
-/* "Portfolio", centred on a gridline, with the target mark on the crossing
-   where that line meets the left edge */
+/* "Portfolio", with the target mark on the left edge line. It's drawn half
+   a square lower than its slot (centred in a row of squares, not on a
+   gridline) without moving anything after it. */
 .kicker {
   position: relative;
+  top: calc(var(--g) / 2);
   height: var(--g);
   margin: calc(var(--g) * (var(--kicker-row) - 0.5)) 0 0;
-  padding-left: var(--g);
+  /* Pulled in from a square so the last letter ends on a gridline */
+  padding-left: calc(var(--g) - 0.605em);
   font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Odd size, so the mark has a centre pixel to put on the crossing */
+/* Odd size, so the mark has a centre pixel to put on the gridline */
 .cursor {
   position: absolute;
   left: -7px;
@@ -849,7 +852,7 @@ h1 {
 
   .side-nav {
     position: absolute;
-    top: calc(var(--g) * (var(--kicker-row) - 0.5));
+    top: calc(var(--g) * var(--kicker-row));
     right: calc(100% - var(--rail, 100%));
     flex-direction: row;
     gap: var(--g);
