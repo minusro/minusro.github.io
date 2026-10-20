@@ -6,110 +6,75 @@
   <title>Daniel Stanciu — Portfolio</title>
   <meta name="description" content="Games, AR, music and educational software by Daniel Stanciu.">
   <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f4f4f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f3471" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f2f0e6" media="(prefers-color-scheme: light)">
 
   <meta property="og:title" content="Daniel Stanciu — Portfolio">
-  <meta property="og:description" content="Games, AR, music and educational software.">
+  <meta property="og:description" content="Games, AR, music and educational software">
   <meta property="og:type" content="website">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
   <script src="fx.js" defer></script>
+  <script src="nav.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#work">Skip to work</a>
 
-  <header class="site-header">
-    <div class="wrap header-inner">
-      <a class="brand" href="#top">
-        <span class="brand-mark">DS</span>
-        <span class="brand-name">Daniel Stanciu</span>
-      </a>
-      <nav class="site-nav mono" aria-label="Main">
-        <a class="scramble-hover" href="#work"><span class="sr-only">Work</span><span aria-hidden="true" data-scramble>Work</span></a>
-        <a class="scramble-hover" href="#about"><span class="sr-only">About</span><span aria-hidden="true" data-scramble>About</span></a>
-        <a class="scramble-hover" href="#contact"><span class="sr-only">Contact</span><span aria-hidden="true" data-scramble>Contact</span></a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="top">
-    <section class="hero">
-      <canvas class="field" id="field" aria-hidden="true"></canvas>
-      <div class="wrap hero-inner">
-        <p class="kicker mono"><span class="cursor" aria-hidden="true"></span>Portfolio / index of work</p>
-        <h1><span class="sr-only">Daniel Stanciu</span><span aria-hidden="true" data-scramble>Daniel Stanciu</span></h1>
-        <p class="lede" id="tagline">Games, AR, music and educational software.</p>
-        <dl class="stats mono">
-          <div><dt>Projects</dt><dd id="stat-projects">—</dd></div>
-          <div><dt>Categories</dt><dd id="stat-categories">—</dd></div>
-          <div><dt>Span</dt><dd id="stat-span">—</dd></div>
-        </dl>
-      </div>
-      <p class="field-hint mono" aria-hidden="true">Click the field to send a pulse</p>
-    </section>
-
-    <section id="work" class="section wrap" aria-labelledby="work-title">
-      <header class="section-head">
-        <span class="section-num mono">01</span>
-        <h2 id="work-title"><span class="sr-only">Work</span><span aria-hidden="true" data-scramble>Work</span></h2>
-        <span class="section-count mono" id="result-count" aria-live="polite"></span>
-      </header>
-
-      <div class="toolbar mono" id="toolbar">
-        <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
-        <div class="toolbar-right">
-          <div class="seg" role="group" aria-label="Sort">
-            <button type="button" data-sort="newest">Newest</button>
-            <button type="button" data-sort="oldest">Oldest</button>
-          </div>
-          <div class="seg" role="group" aria-label="Layout">
-            <button type="button" data-view="grid">Grid</button>
-            <button type="button" data-view="list">List</button>
-          </div>
+  <main id="top" class="page">
+    <!-- Stays put on desktop while the projects scroll beside it -->
+    <aside class="page-side" aria-label="Introduction">
+      <section class="hero">
+        <canvas class="field" id="field" aria-hidden="true"></canvas>
+        <div class="hero-inner">
+          <p class="kicker mono"><span class="cursor" aria-hidden="true"></span>Portfolio</p>
+          <h1>Daniel Stanciu</h1>
+          <span class="dim" aria-hidden="true"></span>
+          <p class="lede" id="tagline">Games, AR, music and educational software</p>
         </div>
-      </div>
+      </section>
 
-      <ol class="projects" id="projects" data-view="grid"></ol>
-      <noscript><p class="placeholder">The project index needs JavaScript.</p></noscript>
-    </section>
+      <nav class="side-nav mono" aria-label="Sections">
+        <a href="#work" data-section="work"><span class="side-nav-line" aria-hidden="true"></span>Work</a>
+        <a href="#about" data-section="about"><span class="side-nav-line" aria-hidden="true"></span>About</a>
+      </nav>
 
-    <section id="about" class="section wrap" aria-labelledby="about-title">
-      <header class="section-head">
-        <span class="section-num mono">02</span>
-        <h2 id="about-title"><span class="sr-only">About</span><span aria-hidden="true" data-scramble>About</span></h2>
-      </header>
-      <div class="about-body" id="about-body">
-        <p class="placeholder">TODO: short bio — what you do, where you've worked, what you're into. Add it in the editor (npm run edit).</p>
-      </div>
-    </section>
+      <!-- Email and links, from the editor's Site tab -->
+      <div class="side-contact mono" id="side-contact"></div>
+    </aside>
 
-    <section id="contact" class="section wrap" aria-labelledby="contact-title">
-      <header class="section-head">
-        <span class="section-num mono">03</span>
-        <h2 id="contact-title"><span class="sr-only">Contact</span><span aria-hidden="true" data-scramble>Contact</span></h2>
-      </header>
-      <div id="contact-body">
-        <p class="placeholder">TODO: email, LinkedIn, GitHub. Add them in the editor (npm run edit).</p>
-      </div>
-    </section>
-  </main>
+    <div class="page-main">
+      <section id="work" class="section" aria-labelledby="work-title">
+        <header class="section-head">
+          <span class="section-num mono">01</span>
+          <h2 id="work-title">Work</h2>
+          <span class="section-count mono" id="result-count" aria-live="polite"></span>
+        </header>
 
-  <footer class="site-footer">
-    <div class="wrap footer-inner mono">
-      <span>&copy; <span id="year">2026</span> Daniel Stanciu</span>
-      <a href="#top">Back to top ↑</a>
+        <div class="toolbar mono" id="toolbar">
+          <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+        </div>
+
+        <ol class="projects" id="projects"></ol>
+        <noscript><p class="placeholder">The project index needs JavaScript.</p></noscript>
+      </section>
+
+      <section id="about" class="section" aria-labelledby="about-title">
+        <header class="section-head">
+          <span class="section-num mono">02</span>
+          <h2 id="about-title">About</h2>
+        </header>
+        <div class="about-body" id="about-body">
+          <p class="placeholder">TODO: short bio — what you do, where you've worked, what you're into. Add it in the editor (npm run edit).</p>
+        </div>
+      </section>
     </div>
-  </footer>
-
-  <div class="preview" id="preview" aria-hidden="true"><div class="preview-inner"></div></div>
-  <dialog id="project" class="sheet" aria-labelledby="sheet-title"></dialog>
+  </main>
 </body>
 </html>

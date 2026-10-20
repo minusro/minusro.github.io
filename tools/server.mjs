@@ -268,6 +268,14 @@ async function serveFile(req, res, base, rel) {
     'Accept-Ranges': 'bytes',
   };
 
+  // Local previews of the site get a light/dark/auto switch. It's added here,
+  // not in index.html, so it never reaches the live site.
+  if (file === path.join(ROOT, 'index.html')) {
+    const html = (await readFile(file, 'utf8')).replace('</head>', '  <script src="/editor/dev-scheme.js"></script>\n</head>');
+    res.writeHead(200, { ...headers, 'Content-Length': Buffer.byteLength(html) });
+    return res.end(req.method === 'HEAD' ? undefined : html);
+  }
+
   // Range requests, so videos can stream and seek (Safari insists on this).
   const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
   if (range && (range[1] || range[2])) {

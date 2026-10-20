@@ -458,6 +458,40 @@ input[type="color"] {
   background: color-mix(in srgb, var(--c) 12%, transparent);
 }
 
+.check-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  cursor: pointer;
+}
+
+.check-row input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.check-row .hint {
+  flex-basis: 100%;
+  padding-left: 23px;
+}
+
+.pitem.is-hidden .pitem-year,
+.pitem.is-hidden .pitem-title,
+.pitem.is-hidden .pitem-dots {
+  opacity: 0.45;
+}
+
+.pitem-hidden {
+  margin-left: 4px;
+  padding: 1px 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  font: 10px var(--font-mono);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
 .check-order {
   font-size: 10px;
   color: var(--faint);

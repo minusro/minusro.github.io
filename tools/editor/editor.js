@@ -157,7 +157,11 @@
 
   function onChange(e) {
     const t = e.target;
-    if (t.dataset.tag) {
+    if (t.dataset.flag) {
+      selected[t.dataset.flag] = t.checked;
+      renderSidebar();
+      changed();
+    } else if (t.dataset.tag) {
       const id = t.dataset.tag;
       const rest = selected.tags.filter((x) => x !== id);
       selected.tags = t.checked ? [...rest, id] : rest;
@@ -426,9 +430,9 @@
       <ul class="plist">
         ${sortedProjects().map((p) => `
           <li>
-            <button type="button" class="pitem" data-index="${content.projects.indexOf(p)}"${p === selected ? ' aria-current="true"' : ''}>
+            <button type="button" class="pitem${p.hidden ? ' is-hidden' : ''}" data-index="${content.projects.indexOf(p)}"${p === selected ? ' aria-current="true"' : ''}>
               <span class="pitem-year">${p.year ?? '—'}</span>
-              <span class="pitem-title">${esc(p.title || 'Untitled')}</span>
+              <span class="pitem-title">${esc(p.title || 'Untitled')}${p.hidden ? ' <span class="pitem-hidden">hidden</span>' : ''}</span>
               <span class="pitem-dots">${p.tags.map((t) => `<span class="dot" data-cat="${esc(t)}"></span>`).join('')}</span>
             </button>
           </li>`).join('')}
@@ -474,6 +478,12 @@
           <div class="checks">${checksHTML(p)}</div>
           <span class="hint">The first one ticked sets the project’s colour.</span>
         </div>
+
+        <label class="check-row">
+          <input type="checkbox" data-flag="hidden"${p.hidden ? ' checked' : ''}>
+          Hide this project
+          <span class="hint">It stays here in the editor but doesn’t appear anywhere on the site, and the project numbers skip it.</span>
+        </label>
 
         <div class="row">
           <label class="field">
@@ -748,7 +758,7 @@
   }
 
   function blankProject() {
-    return { id: '', title: '', year: null, tags: [], role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '' };
+    return { id: '', title: '', year: null, tags: [], hidden: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '' };
   }
 
   // Same order as the site: newest first, undated last, ties keep file order.

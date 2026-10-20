@@ -5,7 +5,11 @@
     "email": "minusro@gmail.com",
     "links": [
       {
-        "label": "Linkedin",
+        "label": "GitHub",
+        "url": "https://github.com/minusro"
+      },
+      {
+        "label": "LinkedIn",
         "url": "https://www.linkedin.com/in/daniel-stanciu"
       }
     ]
@@ -44,6 +48,7 @@
       "tags": [
         "games"
       ],
+      "hidden": false,
       "role": "Software engineer",
       "studio": "Electronic Arts",
       "platforms": [
@@ -66,6 +71,7 @@
       "tags": [
         "games"
       ],
+      "hidden": false,
       "role": "Game developer",
       "studio": "Pronetis Games",
       "platforms": [
@@ -88,6 +94,7 @@
       "tags": [
         "games"
       ],
+      "hidden": false,
       "role": "Game designer and developer",
       "studio": "Pronetis Games",
       "platforms": [
@@ -106,10 +113,11 @@
     {
       "id": "race-yourself",
       "title": "RACE Yourself",
-      "year": 2017,
+      "year": 2016,
       "tags": [
         "games"
       ],
+      "hidden": false,
       "role": "Game designer and developer",
       "studio": "Pronetis Games",
       "platforms": [
@@ -133,6 +141,7 @@
       "tags": [
         "games"
       ],
+      "hidden": false,
       "role": "Game designer and developer",
       "studio": "Pronetis Games",
       "platforms": [
@@ -153,10 +162,12 @@
       "title": "Springboard",
       "year": 2022,
       "tags": [
+        "music",
         "games"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",
@@ -169,10 +180,12 @@
       "title": "Superluminal",
       "year": 2023,
       "tags": [
+        "music",
         "games"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",
@@ -187,6 +200,7 @@
       "tags": [
         "games"
       ],
+      "hidden": true,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -198,13 +212,14 @@
     },
     {
       "id": "holo-one-sphere",
-      "title": "Sphere",
+      "title": "holo|one Sphere",
       "year": 2018,
       "tags": [
         "ar"
       ],
+      "hidden": false,
       "role": "Augmented Reality software engineer",
-      "studio": "Holo-One",
+      "studio": "holo|one",
       "platforms": [
         "HoloLens",
         "Magic Leap"
@@ -222,6 +237,7 @@
       "tags": [
         "music"
       ],
+      "hidden": false,
       "role": "App designer and Audio / UI programmer",
       "studio": "Xylio",
       "platforms": [
@@ -237,14 +253,16 @@
       "video": ""
     },
     {
-      "id": "roli-airwave-player",
-      "title": "ROLI Airwave Player",
+      "id": "airwave-player",
+      "title": "Airwave Player",
       "year": 2024,
       "tags": [
+        "ar",
         "music"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",
@@ -259,30 +277,32 @@
       "tags": [
         "music"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "side project",
       "platforms": [],
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": ""
+      "cover": "media/l7-cover.webp",
+      "video": "media/l7-video-2.mp4"
     },
     {
-      "id": "k6",
-      "title": "K6",
+      "id": "loop-brother",
+      "title": "LÖÖP BRÖTHER",
       "year": 2026,
       "tags": [
         "music"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "side project",
       "platforms": [],
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": ""
+      "cover": "media/loop-brother-cover-2.webp",
+      "video": "media/loop-brother-video.mp4"
     },
     {
       "id": "gk-rowing",
@@ -291,6 +311,7 @@
       "tags": [
         "education"
       ],
+      "hidden": false,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -308,6 +329,7 @@
         "education",
         "music"
       ],
+      "hidden": false,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -325,8 +347,9 @@
         "education",
         "music"
       ],
+      "hidden": false,
       "role": "",
-      "studio": "",
+      "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",

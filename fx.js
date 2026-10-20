@@ -1,6 +1,5 @@
-// Visual effects: text scramble, the interactive dot field behind the hero,
-// and the floating preview that follows the cursor in list view.
-// All of them stand down when the visitor prefers reduced motion.
+// Visual effects: the interactive dot field behind the intro. It stands down
+// when the visitor prefers reduced motion.
 
 const FX = (() => {
   'use strict';
@@ -8,57 +7,19 @@ const FX = (() => {
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const darkMode = matchMedia('(prefers-color-scheme: dark)');
 
-  // ---- Text scramble --------------------------------------------------------
-  // Characters resolve left to right through random glyphs of the same kind
-  // (upper/lower/digit), which keeps the text width roughly stable.
-
-  const GLYPHS = [
-    [/[A-Z]/, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'],
-    [/[a-z]/, 'abcdefghijklmnopqrstuvwxyz'],
-    [/[0-9]/, '0123456789'],
-  ];
-  const SYMBOLS = '#%&*+=/<>_';
-  const scrambling = new WeakMap();
-
-  function randomLike(ch) {
-    if (/\s/.test(ch)) return ch;
-    for (const [re, set] of GLYPHS) if (re.test(ch)) return set[(Math.random() * set.length) | 0];
-    return SYMBOLS[(Math.random() * SYMBOLS.length) | 0];
-  }
-
-  function scramble(el, duration = 450) {
-    if (!el || reduceMotion.matches) return;
-    const chars = Array.from(el.dataset.text ?? (el.dataset.text = el.textContent));
-    cancelAnimationFrame(scrambling.get(el));
-    const start = performance.now();
-    let noise = [];
-    let lastSwap = -Infinity;
-
-    const frame = () => {
-      const now = performance.now();
-      const p = Math.min(1, (now - start) / duration);
-      const revealed = Math.floor(p * chars.length);
-      if (now - lastSwap > 45) {
-        noise = chars.map(randomLike);
-        lastSwap = now;
-      }
-      el.textContent = chars.slice(0, revealed).join('') + noise.slice(revealed).join('');
-      if (p < 1) scrambling.set(el, requestAnimationFrame(frame));
-    };
-    scrambling.set(el, requestAnimationFrame(frame));
-  }
-
   // ---- Hero dot field -------------------------------------------------------
   // A grid of points on springs. The cursor pushes them away, clicks send out a
   // ripple in one of the category colours, and a slow wave keeps it breathing.
 
   function field(canvas) {
-    const noop = { setPalette() {} };
+    const noop = { setCategories() {} };
     if (!canvas?.getContext) return noop;
 
     const ctx = canvas.getContext('2d');
     const host = canvas.parentElement;
-    const SPACING = 26;
+    // Dots sit on the background grid's crossings: same spacing, and the
+    // canvas starts on a gridline (the page keeps it there).
+    const SPACING = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
     const RADIUS = 140;
     const SPRING = 0.06;
     const DAMPING = 0.82;
@@ -69,7 +30,9 @@ const FX = (() => {
     let w = 0;
     let h = 0;
     let hx, hy, ox, oy, vx, vy, bucket;
-    let rawPalette = ['#ff7a45', '#3fd5ff', '#c18bff', '#ffd04a'];
+    let categoryIds = [];
+    const probe = document.body.appendChild(document.createElement('span'));
+    probe.hidden = true;
     let colors = readColors();
     let pointer = { x: -1e4, y: -1e4 };
     let ripples = [];
@@ -78,13 +41,22 @@ const FX = (() => {
     let onScreen = true;
     let raf = 0;
 
+    // Colours come from the active style's CSS variables. They're resolved
+    // through a hidden element because tokens like light-dark() only become
+    // real colours once applied to something.
+    function resolve(value, cat) {
+      if (cat) probe.dataset.cat = cat;
+      else delete probe.dataset.cat;
+      probe.style.color = value;
+      return getComputedStyle(probe).color;
+    }
+
     function readColors() {
-      const cs = getComputedStyle(document.documentElement);
-      const shade = darkMode.matches ? 1 : 0.78;
+      const palette = categoryIds.map((id) => resolve('var(--c)', id));
       return {
-        dot: cs.getPropertyValue('--field-dot').trim(),
-        hot: cs.getPropertyValue('--accent').trim(),
-        palette: rawPalette.map((hex) => scaleHex(hex, shade)),
+        dot: resolve('var(--field-dot)'),
+        hot: resolve('var(--accent)'),
+        palette: palette.length ? palette : [resolve('var(--accent)')],
       };
     }
 
@@ -106,8 +78,9 @@ const FX = (() => {
       vx = new Float32Array(n);
       vy = new Float32Array(n);
       bucket = new Uint8Array(n);
-      const x0 = (w - (cols - 1) * SPACING) / 2;
-      const y0 = (h - (rows - 1) * SPACING) / 2;
+      // +0.5: the centre of the 1px gridline
+      const x0 = 0.5;
+      const y0 = 0.5;
       for (let r = 0, i = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++, i++) {
           hx[i] = x0 + c * SPACING;
@@ -220,88 +193,25 @@ const FX = (() => {
       draw();
       schedule();
     });
-    darkMode.addEventListener('change', () => {
+    const refresh = () => {
       colors = readColors();
       draw();
-    });
+    };
+    darkMode.addEventListener('change', refresh);
+    // ...and when the page forces a colour scheme on <html> (the local dev switch does)
+    new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
 
     resize();
     schedule();
 
     return {
-      setPalette(hexes) {
-        if (!hexes.length) return;
-        rawPalette = hexes;
-        colors = readColors();
+      // Ripple colours follow the project categories.
+      setCategories(ids) {
+        categoryIds = ids;
+        refresh();
       },
     };
   }
 
-  function scaleHex(hex, f) {
-    const n = parseInt(hex.slice(1), 16);
-    const c = [n >> 16, (n >> 8) & 255, n & 255].map((v) => Math.round(v * f));
-    return `rgb(${c.join(',')})`;
-  }
-
-  // ---- Cursor preview (list view) -------------------------------------------
-  // A media card that trails the cursor with a little lag and tilts with speed.
-
-  function hoverPreview(el) {
-    const inner = el.firstElementChild;
-    let tx = 0;
-    let ty = 0;
-    let x = 0;
-    let y = 0;
-    let shown = false;
-    let jump = true;
-    let key = null;
-    let raf = 0;
-
-    function loop() {
-      const px = x;
-      x += (tx - x) * 0.18;
-      y += (ty - y) * 0.18;
-      const tilt = Math.max(-8, Math.min(8, (x - px) * 0.5));
-      el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${tilt}deg)`;
-      const moving = Math.abs(tx - x) > 0.3 || Math.abs(ty - y) > 0.3;
-      raf = shown && moving ? requestAnimationFrame(loop) : 0;
-    }
-
-    return {
-      show(id, html) {
-        if (reduceMotion.matches) return;
-        if (id !== key) {
-          inner.innerHTML = html;
-          key = id;
-          inner.querySelector('video')?.play().catch(() => {});
-        }
-        if (!shown) {
-          shown = true;
-          jump = true;
-          el.classList.add('is-visible');
-        }
-      },
-      move(clientX, clientY) {
-        if (!shown) return;
-        const W = el.offsetWidth;
-        const H = el.offsetHeight;
-        tx = clientX + 28 + W > innerWidth - 16 ? clientX - W - 28 : clientX + 28;
-        ty = Math.max(16, Math.min(innerHeight - H - 16, clientY - H / 2));
-        if (jump) {
-          x = tx;
-          y = ty;
-          jump = false;
-        }
-        if (!raf) raf = requestAnimationFrame(loop);
-      },
-      hide() {
-        if (!shown) return;
-        shown = false;
-        el.classList.remove('is-visible');
-        inner.querySelector('video')?.pause();
-      },
-    };
-  }
-
-  return { scramble, field, hoverPreview };
+  return { field };
 })();
