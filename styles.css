@@ -307,6 +307,13 @@ h1 {
   padding-block: calc(var(--g) * 3);
 }
 
+/* Three squares between one section and the next. Jumping to a later
+   section still leaves its heading three squares from the top. */
+.section + .section {
+  padding-top: 0;
+  scroll-margin-top: calc(var(--g) * 3);
+}
+
 /* Title row, then a ruled line on the gridline below it */
 .section-head {
   display: flex;
@@ -793,7 +800,7 @@ h1 {
 
   .page {
     display: grid;
-    grid-template-columns: calc(var(--g) * 16) minmax(0, 1fr);
+    grid-template-columns: calc(var(--g) * 15) minmax(0, 1fr);
     column-gap: calc(var(--g) * 3);
   }
 
@@ -1087,10 +1094,11 @@ h1 {
 
 /* ---- Year scrubber -------------------------------------------------------- */
 
+/* nav.js places it (left) beside the content, or hides it when there's no
+   room */
 .scrubber {
   position: fixed;
   top: 50%;
-  right: 14px;
   z-index: 9;
   width: calc(var(--g) * 3);
   opacity: 0;
@@ -1104,8 +1112,6 @@ h1 {
 @supports (width: round(down, 10px, 3px)) {
   .scrubber {
     top: round(down, 50vh - var(--years, 3) * var(--g) / 2, var(--g));
-    left: round(down, 100vw - var(--g) * 3 - 12px, var(--g));
-    right: auto;
     transform: none;
   }
 }
@@ -1159,12 +1165,6 @@ h1 {
   left: calc(8px - var(--g));
   width: calc(8px + var(--g));
   background: var(--accent);
-}
-
-@media (max-width: 1359px) {
-  .scrubber {
-    display: none;
-  }
 }
 
 /* ---- Reduced motion ------------------------------------------------------- */

@@ -2,7 +2,7 @@
 //   ⌘K / Ctrl+K or /   command palette: jump to a project, a filter or a section
 //   `                  drop-down console with shell-style commands (try `help`)
 //   j / k              move through the projects, Enter opens
-//   year scrubber      a rail of years beside the project index (wide screens)
+//   year scrubber      a rail of years beside the project index (when there's room)
 // app.js calls NAV.init() with an API once the content has loaded.
 
 const NAV = (() => {
@@ -10,6 +10,7 @@ const NAV = (() => {
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const G = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
   const SECTIONS = { top: 'top', work: 'work', about: 'about', '~': 'top' };
 
   let api = null;
@@ -461,7 +462,7 @@ const NAV = (() => {
   // ---- Year scrubber -------------------------------------------------------
 
   let scrubber;
-  let scrubberVisible = false;
+  let scrubberVisible = false; // the project index is on screen
 
   function mountScrubber() {
     scrubber = document.createElement('nav');
@@ -483,9 +484,19 @@ const NAV = (() => {
     // Only show it while the project index is on screen.
     new IntersectionObserver(([entry]) => {
       scrubberVisible = entry.isIntersecting;
-      scrubber.classList.toggle('is-visible', scrubberVisible && scrubber.querySelector('li') !== null);
+      showScrubber();
       markYear();
     }, { rootMargin: '-30% 0px -30% 0px' }).observe($('#work'));
+
+    // Keep it beside the content as the window or the card grid changes.
+    let placing = 0;
+    const replace = () => {
+      cancelAnimationFrame(placing);
+      placing = requestAnimationFrame(placeScrubber);
+    };
+    window.addEventListener('resize', replace);
+    new ResizeObserver(replace).observe($('#work .section-head'));
+    placeScrubber();
 
     let ticking = false;
     window.addEventListener('scroll', () => {
@@ -510,8 +521,22 @@ const NAV = (() => {
     $('ol', scrubber).innerHTML = years.length > 1
       ? years.map((y) => `<li><button type="button" data-year="${y}">${y}</button></li>`).join('')
       : '';
-    scrubber.classList.toggle('is-visible', scrubberVisible && years.length > 1);
+    showScrubber();
     markYear();
+  }
+
+  // It needs five free squares right of the content (the end of the Work
+  // heading's line, which stops at the rightmost card), and sits with its
+  // year labels three squares from the content.
+  function placeScrubber() {
+    const right = $('#work .section-head').getBoundingClientRect().right;
+    const room = document.documentElement.clientWidth - right >= G * 5;
+    scrubber.hidden = !room;
+    if (room) scrubber.style.left = `${right + G * 2}px`;
+  }
+
+  function showScrubber() {
+    scrubber.classList.toggle('is-visible', scrubberVisible && scrubber.querySelector('li') !== null);
   }
 
   // Highlight the year of the first project below the header.
