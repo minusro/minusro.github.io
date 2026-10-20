@@ -658,8 +658,8 @@ h1 {
   grid-template-columns: calc(var(--g) * 5) minmax(0, 1fr);
   row-gap: var(--g);
   margin: var(--g) 0 0;
-  padding-block: var(--g);
-  box-shadow: inset 0 1px 0 var(--line), 0 1px 0 var(--line);
+  padding-top: var(--g);
+  box-shadow: inset 0 1px 0 var(--line);
   font-family: var(--font-mono);
 }
 
@@ -680,16 +680,39 @@ h1 {
   font-size: 13px;
 }
 
-/* At least three squares tall, however short the description */
+/* The description sits in a framed box, a square of padding inside and a
+   square of space outside, so one line makes a box three squares tall. Like
+   the dashed "to do" box, the frame reaches a pixel further right and down
+   so all four sides are on gridlines. Set like the year, role and other
+   values above it. */
 .detail-body {
-  max-width: 60ch;
-  min-height: calc(var(--g) * 3);
+  position: relative;
   margin-top: var(--g);
-  font-size: 17px;
+  padding: var(--g);
+  font-family: var(--font-mono);
+  font-size: 13px;
   color: var(--muted);
 }
 
+.detail-body::before {
+  content: "";
+  position: absolute;
+  inset: 0 -1px -1px 0;
+  border: 1px solid var(--line-strong);
+  pointer-events: none;
+}
+
+/* No description yet */
+.detail-body.is-todo {
+  color: var(--faint);
+}
+
+.detail-body.is-todo::before {
+  border-style: dashed;
+}
+
 .detail-body p {
+  max-width: 60ch;
   margin: 0 0 var(--g);
 }
 
@@ -715,9 +738,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   gap: var(--g);
-  margin-top: calc(var(--g) * 2);
-  padding-top: var(--g);
-  box-shadow: inset 0 1px 0 var(--line);
+  margin-top: var(--g);
   font: 13px/var(--g) var(--font-mono);
 }
 
@@ -1165,11 +1186,11 @@ h1 {
   color: var(--fg);
 }
 
-/* The current year's line is a whole square long, ending where the short
-   dashes end */
+/* The current year's line is a square and a half long, ending where the
+   short dashes end */
 .scrubber button[aria-current]::before {
-  left: calc(16px - var(--g));
-  width: var(--g);
+  left: calc(16px - var(--g) * 1.5);
+  width: calc(var(--g) * 1.5);
   background: var(--accent);
 }
 

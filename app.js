@@ -24,6 +24,7 @@
   let tag = 'all';
   let expandedId = null;
   let hovered = null;
+  let jumpNext = false; // the next project opens without a smooth scroll
   // Card grid, in grid squares (see layoutGrid)
   let grid = { cols: 1, cells: 14, mediaRows: 9 };
 
@@ -140,7 +141,12 @@
       if (!hovered?.classList.contains('is-expanded')) setHovered(null);
     }, { passive: true });
 
-    // Projects open in place via #/<id> links.
+    // Projects open in place via #/<id> links. The previous/next links jump
+    // straight to the project rather than scrolling smoothly.
+    els.list.addEventListener('click', (e) => {
+      const newTab = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
+      if (e.target.closest('.detail-nav a') && !newTab) jumpNext = true;
+    });
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
@@ -376,7 +382,8 @@
     collapse();
     expandedId = p.id;
     const card = attachDetail(p);
-    card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    card?.scrollIntoView({ block: 'start', behavior: jumpNext || reduceMotion.matches ? 'instant' : 'smooth' });
+    jumpNext = false;
     // Its video keeps playing (or starts) while the project is open
     if (card) setHovered(card);
   }
@@ -420,10 +427,10 @@
       <dl class="detail-meta">
         ${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
       </dl>
-      <div class="detail-body">
+      <div class="detail-body${p.summary ? '' : ' is-todo'}">
         ${p.summary
           ? p.summary.split(/\n\s*\n/).map((s) => `<p>${esc(s.trim())}</p>`).join('')
-          : '<p class="placeholder">TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
+          : '<p>TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
       </div>
       ${links.length
         ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
