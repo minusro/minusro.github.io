@@ -24,6 +24,7 @@
   let projects = [];
   let tag = 'all';
   let expandedId = null;
+  let hovered = null;
   // Card grid, in grid squares (see layoutGrid)
   let grid = { cols: 1, cells: 14, mediaRows: 9 };
 
@@ -130,17 +131,13 @@
       update();
     });
 
-    // Hovering a card plays its video, if it has one.
-    let hovered = null;
-    const setHovered = (card) => {
-      if (card === hovered) return;
-      if (hovered) playVideo(hovered, false);
-      hovered = card;
-      if (card) playVideo(card, true);
-    };
-    els.list.addEventListener('pointermove', (e) => setHovered(e.target.closest('.card:not(.is-expanded)')));
+    els.list.addEventListener('pointermove', (e) => setHovered(e.target.closest('.card')));
     els.list.addEventListener('pointerleave', () => setHovered(null));
-    window.addEventListener('scroll', () => setHovered(null), { passive: true });
+    // Scrolling moves cards out from under a still pointer, so their videos
+    // stop; an opened card's carries on until the pointer moves off it.
+    window.addEventListener('scroll', () => {
+      if (!hovered?.classList.contains('is-expanded')) setHovered(null);
+    }, { passive: true });
 
     // Projects open in place via #/<id> links.
     window.addEventListener('hashchange', route);
@@ -165,6 +162,15 @@
       if (e.key !== 'Escape' || e.defaultPrevented || document.querySelector('dialog[open]')) return;
       if (expandedId) closeAll();
     });
+  }
+
+  // The card under the pointer (or the one just opened) plays its video, if
+  // it has one; the others show their still.
+  function setHovered(card) {
+    if (card === hovered) return;
+    if (hovered) playVideo(hovered, false);
+    hovered = card;
+    if (card) playVideo(card, true);
   }
 
   function playVideo(card, on) {
@@ -361,6 +367,8 @@
     expandedId = p.id;
     const card = attachDetail(p);
     card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    // Its video keeps playing (or starts) while the project is open
+    if (card) setHovered(card);
   }
 
   function attachDetail(p) {
@@ -411,8 +419,8 @@
         ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
         : ''}
       <nav class="detail-nav" aria-label="More projects">
-        ${prev ? `<a href="#/${prev.id}">← ${esc(prev.title)}</a>` : '<span></span>'}
-        ${next ? `<a href="#/${next.id}">${esc(next.title)} →</a>` : '<span></span>'}
+        ${prev ? `<a href="#/${prev.id}">&lt; ${esc(prev.title)}</a>` : '<span></span>'}
+        ${next ? `<a href="#/${next.id}">${esc(next.title)} &gt;</a>` : '<span></span>'}
       </nav>`;
   }
 
