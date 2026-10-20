@@ -282,6 +282,11 @@
       case 'tech':
         p[field] = value.split(',').map((s) => s.trim()).filter(Boolean);
         break;
+      case 'mediaAlign':
+        p.mediaAlign = Math.round(Math.max(-1, Math.min(1, Number(value) || 0)) * 100) / 100;
+        $('#align-value', els.form).textContent = formatAlign(p.mediaAlign);
+        $('#media-pickers', els.form).style.setProperty('--media-y', mediaY(p.mediaAlign));
+        break;
       default:
         p[field] = value;
     }
@@ -516,7 +521,14 @@
         </label>
 
         <h2>Media</h2>
-        <div id="media-pickers">${mediaPicker(p, 'cover')}${mediaPicker(p, 'video')}</div>
+        <div id="media-pickers" style="--media-y: ${mediaY(p.mediaAlign)}">${mediaPicker(p, 'cover')}${mediaPicker(p, 'video')}</div>
+
+        <label class="field">
+          <span class="label">Vertical alignment <output class="align-value" id="align-value">${formatAlign(p.mediaAlign)}</output></span>
+          <input type="range" class="align-slider" data-field="mediaAlign" min="-1" max="1" step="0.05" value="${p.mediaAlign}">
+          <span class="align-scale" aria-hidden="true"><span>Bottom</span><span>Centre</span><span>Top</span></span>
+          <span class="hint">Which part of the cover and video stays in view when they’re cropped to fit the card: −1 keeps the bottom, 0 the middle, 1 the top. The previews above follow it.</span>
+        </label>
 
         <h2>Links</h2>
         ${linkRows(p.links, 'links')}
@@ -595,6 +607,16 @@
           </div>
         </div>
       </div>`;
+  }
+
+  // Vertical alignment: 1 shows the top of the media, 0 the middle, -1 the
+  // bottom (the same mapping as the site's object-position)
+  function mediaY(align) {
+    return `${(1 - align) * 50}%`;
+  }
+
+  function formatAlign(align) {
+    return (align > 0 ? '+' : '') + align.toFixed(2);
   }
 
   function linkRows(links, key) {
@@ -758,7 +780,7 @@
   }
 
   function blankProject() {
-    return { id: '', title: '', year: null, tags: [], hidden: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '' };
+    return { id: '', title: '', year: null, tags: [], hidden: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
   }
 
   // Same order as the site: newest first, undated last, ties keep file order.

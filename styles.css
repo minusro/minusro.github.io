@@ -336,12 +336,6 @@ h1 {
   text-transform: uppercase;
 }
 
-.section-count {
-  margin-left: auto;
-  font-size: 12px;
-  color: var(--muted);
-}
-
 .about-body p {
   max-width: 60ch;
   margin: 0 0 var(--g);
@@ -396,15 +390,6 @@ h1 {
 .chip[aria-pressed="true"] {
   --fc: var(--fg);
   background: var(--fg);
-  color: var(--bg);
-}
-
-.chip-count {
-  font-size: 11px;
-  color: var(--faint);
-}
-
-.chip[aria-pressed="true"] .chip-count {
   color: var(--bg);
 }
 

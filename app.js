@@ -12,7 +12,6 @@
     toolbar: $('#toolbar'),
     filters: $('#filters'),
     list: $('#projects'),
-    count: $('#result-count'),
   };
 
   const field = FX.field($('#field'));
@@ -58,6 +57,8 @@
         tags: (p.tags ?? []).filter((t) => catById[t]),
         cover: safeMedia(p.cover),
         video: safeMedia(p.video),
+        // Vertical alignment of the cover and video: 1 top, 0 middle, -1 bottom
+        mediaAlign: Math.max(-1, Math.min(1, Number(p.mediaAlign) || 0)),
         order,
       }))
       .sort((a, b) => compare(a, b, 1))
@@ -241,10 +242,12 @@
     if (pad !== tail) els.main.style.paddingBottom = pad ? `${pad}px` : '';
   }
 
-  // After a scroll stops, glide the last few pixels to the nearest grid
+  // After a scroll stops (with a mouse or trackpad, at any window width; not
+  // on phones and tablets), glide the last few pixels to the nearest grid
   // position: each frame closes a share of the remaining gap. Any new
   // scrolling by the visitor takes over.
   function settleOnGrid() {
+    const mouse = matchMedia('(pointer: fine)');
     const page = document.scrollingElement;
     let glide = 0;
     const stop = () => {
@@ -253,7 +256,7 @@
     };
     const settle = () => {
       // Left alone while pinch-zoomed in
-      if (glide || (window.visualViewport?.scale ?? 1) > 1.01) return;
+      if (glide || !mouse.matches || (window.visualViewport?.scale ?? 1) > 1.01) return;
       const max = page.scrollHeight - window.innerHeight;
       const target = Math.min(Math.round(page.scrollTop / G) * G, max - (max % G));
       let y = page.scrollTop;
@@ -453,15 +456,17 @@
     ].join('');
   }
 
+  // The categories, then "All" last (still the one selected to begin with).
   // Categories with no (visible) projects get no button.
   function renderFilters() {
-    const options = [{ id: 'all', label: 'All', n: projects.length }]
-      .concat(categories.map((c) => ({ ...c, n: projects.filter((p) => p.tags.includes(c.id)).length })))
+    const options = categories
+      .map((c) => ({ ...c, n: projects.filter((p) => p.tags.includes(c.id)).length }))
+      .concat({ id: 'all', label: 'All', n: projects.length })
       .filter((c) => c.n > 0);
     els.filters.innerHTML = options
       .map((c) => `
         <button type="button" class="chip" data-cat="${c.id}">
-          <span class="dot" aria-hidden="true"></span>${esc(c.label)}<span class="chip-count">${c.n}</span>
+          <span class="dot" aria-hidden="true"></span>${esc(c.label)}
         </button>`)
       .join('');
     snapWidths(els.filters);
@@ -470,7 +475,6 @@
   function renderProjects() {
     const list = visible();
     els.list.innerHTML = list.map(cardHTML).join('');
-    els.count.textContent = `${list.length} of ${projects.length}`;
     if (expandedId) {
       const p = projects.find((x) => x.id === expandedId);
       if (!p || !attachDetail(p)) closeAll();
@@ -506,10 +510,11 @@
     const x = G * (1 + (h % Math.max(1, across - 1)));
     const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows - 1)));
     const gap = [6, 8, 12][(h >>> 24) % 3];
+    const fit = `object-position: 50% ${(1 - p.mediaAlign) * 50}%`;
     const still = p.cover
-      ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async">`
+      ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async" style="${fit}">`
       : `<span class="ph" style="--a:${h % 180}deg;--x:${x}px;--y:${y}px;--gap:${gap}px"></span>`;
-    const video = p.video ? `<video src="${esc(p.video)}" muted loop playsinline preload="none"></video>` : '';
+    const video = p.video ? `<video src="${esc(p.video)}" muted loop playsinline preload="none" style="${fit}"></video>` : '';
     return still + video;
   }
 

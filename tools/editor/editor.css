@@ -558,6 +558,32 @@ input[type="color"] {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% var(--media-y, 50%);
+}
+
+/* Same spacing as the rest of the form */
+#media-pickers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.align-value {
+  margin-left: 6px;
+  color: var(--fg);
+}
+
+.align-slider {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.align-scale {
+  display: flex;
+  justify-content: space-between;
+  font: 11px var(--font-mono);
+  color: var(--faint);
 }
 
 .media-actions {
