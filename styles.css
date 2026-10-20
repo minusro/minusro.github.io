@@ -252,9 +252,11 @@ code {
   box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 10px var(--accent);
 }
 
-/* Each line's capitals fill two squares, one square apart */
+/* Each line's capitals fill two squares, one square apart. The indent takes
+   back the D's side bearing, so its stem starts on the gridline. */
 h1 {
   margin: calc(var(--g) * 1.5) 0 0;
+  text-indent: -0.073em;
   font-size: calc(var(--g) * 2 / var(--cap));
   font-weight: 600;
   line-height: calc(var(--g) * 3);
@@ -520,12 +522,15 @@ h1 {
   object-fit: cover;
 }
 
-.card-media video {
+/* The hover video (or animated GIF) fades in over the still */
+.card-media video,
+.card-media .card-anim {
   opacity: 0;
   transition: opacity 0.3s;
 }
 
-.card.is-playing .card-media video {
+.card.is-playing .card-media video,
+.card.is-playing .card-media .card-anim {
   opacity: 1;
 }
 
@@ -675,8 +680,10 @@ h1 {
   font-size: 13px;
 }
 
+/* At least three squares tall, however short the description */
 .detail-body {
   max-width: 60ch;
+  min-height: calc(var(--g) * 3);
   margin-top: var(--g);
   font-size: 17px;
   color: var(--muted);
@@ -1158,9 +1165,11 @@ h1 {
   color: var(--fg);
 }
 
+/* The current year's line is a whole square long, ending where the short
+   dashes end */
 .scrubber button[aria-current]::before {
-  left: 4px;
-  width: 16px;
+  left: calc(16px - var(--g));
+  width: var(--g);
   background: var(--accent);
 }
 

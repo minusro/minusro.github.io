@@ -333,11 +333,11 @@
         if (!file.type.startsWith('image/')) throw new Error('That file isn’t an image.');
         ({ blob, ext } = await prepareImage(file));
       } else {
-        if (!/^video\/(mp4|webm)$/.test(file.type)) throw new Error('Use an MP4 or WebM video.');
+        if (!/^(video\/(mp4|webm)|image\/gif)$/.test(file.type)) throw new Error('Use an MP4 or WebM video, or an animated GIF.');
         const mb = file.size / 1024 / 1024;
         if (mb > 95) throw new Error(`That video is ${mb.toFixed(0)} MB; GitHub only accepts files under 100 MB.`);
         if (mb > 25 && !confirm(`This video is ${mb.toFixed(0)} MB. Big videos make the site slow to load. Use it anyway?`)) return;
-        ext = file.type === 'video/webm' ? 'webm' : 'mp4';
+        ext = { 'video/webm': 'webm', 'image/gif': 'gif' }[file.type] ?? 'mp4';
       }
 
       setStatus('saving', `Uploading ${kind}…`);
@@ -587,11 +587,11 @@
     const value = p[kind];
     const src = /^https?:/.test(value) ? value : `/${value}`;
     const shown = value
-      ? isVideo
+      ? isVideo && !/\.gif$/i.test(value)
         ? `<video src="${esc(src)}" muted loop autoplay playsinline></video>`
         : `<img src="${esc(src)}" alt="">`
       : isVideo
-        ? 'Drop a video here<br>MP4 or WebM'
+        ? 'Drop a video here<br>MP4, WebM or GIF'
         : 'Drop an image here';
     return `
       <div class="field">
@@ -602,7 +602,7 @@
             <button type="button" class="btn btn-small" data-action="choose-${kind}">${value ? 'Replace…' : 'Choose file…'}</button>
             ${value ? `<button type="button" class="btn btn-small btn-danger" data-action="remove-${kind}">Remove</button><span class="media-path">${esc(value)}</span>` : ''}
             <span class="hint">${isVideo
-              ? 'A short, silent loop (5–15 s). It plays when someone hovers the project. Aim for under 10 MB.'
+              ? 'A short, silent loop (5–15 s), or an animated GIF. It plays when someone hovers the project. Aim for under 10 MB.'
               : 'Resized to 1600px wide and saved as WebP. GIFs are kept as they are.'}</span>
           </div>
         </div>

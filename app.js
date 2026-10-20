@@ -175,11 +175,18 @@
   }
 
   function playVideo(card, on) {
-    const v = $('video', card);
+    const v = $('video, .card-anim', card);
     if (!v) return;
-    card.classList.toggle('is-playing', on && !reduceMotion.matches);
-    if (on && !reduceMotion.matches) v.play().catch(() => {});
-    else v.pause();
+    const play = on && !reduceMotion.matches;
+    card.classList.toggle('is-playing', play);
+    if (v.tagName !== 'VIDEO') {
+      // GIFs animate on their own; they're just shown and hidden
+      if (play && !v.src) v.src = v.dataset.src;
+    } else if (play) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
   }
 
   // Highlight a side-nav link. It follows what was clicked, not the scroll
@@ -514,7 +521,12 @@
     const still = p.cover
       ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async" style="${fit}">`
       : `<span class="ph" style="--a:${h % 180}deg;--x:${x}px;--y:${y}px;--gap:${gap}px"></span>`;
-    const video = p.video ? `<video src="${esc(p.video)}" muted loop playsinline preload="none" style="${fit}"></video>` : '';
+    // An animated GIF stands in for a video; it loads the first time it's shown
+    const video = !p.video
+      ? ''
+      : /\.gif$/i.test(p.video)
+        ? `<img class="card-anim" data-src="${esc(p.video)}" alt="" style="${fit}">`
+        : `<video src="${esc(p.video)}" muted loop playsinline preload="none" style="${fit}"></video>`;
     return still + video;
   }
 
