@@ -164,7 +164,7 @@
       ],
       "summary": "A minimal space odyssey.",
       "links": [],
-      "cover": "media/sector-escape-cover-2.webp",
+      "cover": "media/sector-escape-cover.webp",
       "video": "media/sector-escape-video.mp4",
       "mediaAlign": 0
     },
@@ -191,7 +191,7 @@
       ],
       "summary": "Springboard is a rhythm platformer inside ROLI Learn. A seven-piece cartoon band hops across lava and ice, and each jump is a note of a real song  like \"Jump\", \"Eye of the Tiger\" or \"Kids\", played on the light-up LUMI keyboard. Hit the note on time and the critter clears the gap, miss and they fall. It teaches timing and note recognition to people who would never open a lesson.",
       "links": [],
-      "cover": "media/springboard-cover-2.webp",
+      "cover": "media/springboard-cover.webp",
       "video": "media/springboard-video.mp4",
       "mediaAlign": 0
     },
@@ -267,7 +267,7 @@
       "summary": "Sphere is holo|one's off-the-shelf mixed-reality platform for industry: remote expert calls, 3D models pinned in the workspace, and step-by-step task guidance, all synced through one cloud back end. I was an XR software engineer on the headset apps, building for HoloLens and Magic Leap.",
       "links": [],
       "cover": "media/holo-one-sphere-cover.webp",
-      "video": "media/holo-one-sphere-video-2.mp4",
+      "video": "media/holo-one-sphere-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -373,7 +373,7 @@
       "summary": "VST/AU plugin with 97 classic Jungle breaks you can switch and layer intuitively by using a wholesome meme-inspired interface.",
       "links": [],
       "cover": "media/loop-brother-cover.webp",
-      "video": "media/loop-brother-video-2.mp4",
+      "video": "media/loop-brother-video.mp4",
       "mediaAlign": -0.95
     },
     {
