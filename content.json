@@ -44,7 +44,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Software engineer",
+      "role": "Software development",
       "studio": "EA Sports",
       "platforms": [
         "Playstation",
@@ -173,7 +173,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "",
+      "role": "Game design and software development",
       "studio": "ROLI",
       "platforms": [
         "iOS",
@@ -199,7 +199,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "",
+      "role": "Game design and software development",
       "studio": "ROLI",
       "platforms": [
         "iOS",
@@ -243,7 +243,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "XR software engineer",
+      "role": "UX design and software development",
       "studio": "holo|one",
       "platforms": [
         "HoloLens",
@@ -270,7 +270,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "App designer and Audio / UI programmer",
+      "role": "Instrument design and software development",
       "studio": "Xylio",
       "platforms": [
         "iOS"
@@ -295,7 +295,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "",
+      "role": "Software development",
       "studio": "ROLI",
       "platforms": [
         "macOS",
@@ -309,7 +309,7 @@
         "C++",
         "Max MSP"
       ],
-      "summary": "Airwave Player is the instrument that ships with ROLI Airwave, a camera that tracks both hands above a keyboard and turns gestures into expression. It runs as a VST3/AUv2 plug-in in DAWs or standalone, with a preset library and 3D visuals that react to every raise, tilt and glide of your hands.",
+      "summary": "Airwave Player is the instrument that ships with ROLI Airwave, a camera that tracks both hands above a keyboard and turns gestures into expression. It runs as a VST/AU plug-in or standalone, with a preset library and 3D visuals that react to every Raise, Tilt and Glide of your hands.",
       "links": [],
       "cover": "media/airwave-player-cover.webp",
       "video": "media/airwave-player-video.mp4",
@@ -324,10 +324,10 @@
       ],
       "hidden": false,
       "personal": true,
-      "role": "",
+      "role": "App design and firmware development",
       "studio": "",
       "platforms": [
-        "Teensy"
+        "Teensy 4.x"
       ],
       "tech": [
         "C++"
@@ -347,7 +347,7 @@
       ],
       "hidden": false,
       "personal": true,
-      "role": "",
+      "role": "Instrument design, art direction and software development",
       "studio": "",
       "platforms": [
         "macOS",
@@ -357,7 +357,7 @@
         "C++",
         "JUCE"
       ],
-      "summary": "DAW plugin with 97 classic Jungle breaks you can switch and layer intuitively by using a wholesome, meme-inspired interface.",
+      "summary": "VST/AU plugin with 97 classic Jungle breaks you can switch and layer intuitively by using a wholesome, meme-inspired interface.",
       "links": [],
       "cover": "media/loop-brother-cover.webp",
       "video": "media/loop-brother-video-2.mp4",
@@ -408,7 +408,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "",
+      "role": "Software development",
       "studio": "ROLI",
       "platforms": [
         "iOS",
