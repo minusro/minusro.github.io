@@ -1,7 +1,7 @@
 {
   "site": {
     "tagline": "Games + music + XR software",
-    "about": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.",
+    "about": "",
     "email": "minusro@gmail.com",
     "links": [
       {
@@ -307,7 +307,7 @@
       "links": [],
       "cover": "media/l7-cover.webp",
       "video": "media/l7-video.mp4",
-      "mediaAlign": 0
+      "mediaAlign": -1
     },
     {
       "id": "loop-brother",
