@@ -32,7 +32,7 @@
 
   --g: 24px;      /* grid step: the small squares of the background */
   --px: calc(var(--g) / 24);   /* a pixel at full size; type and spacing scale with the grid */
-  --mask: calc(var(--g) / 3);   /* the strip under the pinned filters (whole px where possible) */
+  --mask: calc(var(--g) / 2);   /* the strip under the pinned filters */
   --cap: 0.698;   /* capital height of the IBM Plex fonts, as a share of font size */
 
   /* Content edges: centred like a 1728px column (wide enough for three
@@ -60,7 +60,6 @@
 
 @supports (width: round(nearest, 10px, 3px)) {
   :root {
-    --mask: round(nearest, var(--g) / 3, 1px);
     --edge-left: round(nearest, var(--centred), var(--g));
     --edge-right: calc(100% - var(--edge-left) - round(down, 100% - var(--edge-left) - var(--centred), var(--g)));
   }
@@ -478,7 +477,7 @@ h1 a {
 /* ---- Category filters and tags ------------------------------------------- */
 
 /* Sticks to the top of the window while the projects scroll under it. The
-   third of a square of padding below the buttons hides the cards, so they're
+   half a square of padding below the buttons hides the cards, so they're
    cut off on a clean edge. It reaches a square past the content on each side
    to cover the cards' crop marks, and leaves with the last row (.work-list
    ends there). */
