@@ -475,10 +475,10 @@ h1 {
   opacity: 0;
 }
 
+/* Edge to edge, sharing gridlines, like the tags */
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--g);
 }
 
 /* One square tall; widths snap to whole squares (app.js) */
