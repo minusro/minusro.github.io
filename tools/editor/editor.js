@@ -287,6 +287,9 @@
         $('#align-value', els.form).textContent = formatAlign(p.mediaAlign);
         $('#media-pickers', els.form).style.setProperty('--media-y', mediaY(p.mediaAlign));
         break;
+      case 'url':
+        p.url = value.trim();
+        break;
       default:
         p[field] = value;
     }
@@ -505,6 +508,12 @@
           <input type="checkbox" data-flag="personal"${p.personal ? ' checked' : ''}>
           Personal project
           <span class="hint">The site says “Personal project” where the studio would go (the studio above is ignored).</span>
+        </label>
+
+        <label class="field">
+          <span class="label">Project page</span>
+          <input type="url" data-field="url" value="${esc(p.url)}" placeholder="https://…" spellcheck="false">
+          <span class="hint">For a personal project: “Personal project” on the site links here (opens in a new tab). Leave empty for no link.</span>
         </label>
 
         <div class="row">
@@ -786,7 +795,7 @@
   }
 
   function blankProject() {
-    return { id: '', title: '', year: null, tags: [], hidden: false, personal: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
+    return { id: '', title: '', year: null, tags: [], hidden: false, personal: false, url: '', role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
   }
 
   // Same order as the site: newest first, undated last, ties keep file order.

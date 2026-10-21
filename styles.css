@@ -909,9 +909,51 @@ h1 a {
   color: var(--faint);
 }
 
-/* "Personal project", coloured like a value */
+/* "Personal project", coloured like a value; when it links to the
+   project's own page it's muted, like the side column's links, and lights
+   up on hover */
 .detail-meta .meta-value {
   color: var(--fg);
+}
+
+.detail-meta .meta-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+@media (hover: hover) {
+  .detail-meta .meta-link:hover {
+    color: var(--fg);
+  }
+}
+
+.detail-meta .meta-link:focus-visible {
+  color: var(--fg);
+}
+
+/* The arrow at the side column links' size, without making the row taller.
+   Its tip lines up with the top of the T before it (the arrow's ink reaches
+   0.4224em above the baseline, a capital 0.698em), and it sits half a
+   letter (0.3em of the label) plus a fifth of a square closer to it. The
+   label's second line, "project ", is 8 letters of 0.72em (11px): where
+   the browser can round, the arrow lands on whole pixels. */
+.detail-meta .meta-arrow {
+  --after: calc(8 * 0.72 * 11 * var(--px));
+  --shift-x: calc(-0.3 * 11 * var(--px) - var(--g) / 5);
+  --shift-y: calc(0.4224 * var(--lede-size) - 0.698 * 11 * var(--px));
+  position: relative;
+  top: var(--shift-y);
+  left: var(--shift-x);
+  font-size: var(--lede-size);
+  line-height: 0;
+}
+
+@supports (width: round(nearest, 10px, 3px)) {
+  .detail-meta .meta-arrow {
+    top: round(nearest, var(--shift-y), 1px);
+    left: calc(round(nearest, var(--after) + var(--shift-x), 1px) - var(--after));
+  }
 }
 
 .detail-meta dd {
@@ -931,7 +973,7 @@ h1 a {
   padding: var(--g);
   font-family: var(--font-mono);
   font-size: calc(13 * var(--px));
-  color: var(--muted);
+  color: var(--fg);
 }
 
 .detail-body::before {
@@ -1101,6 +1143,11 @@ h1 a {
   margin-top: var(--g);
   font-size: var(--lede-size);
   letter-spacing: 0.02em;
+}
+
+/* Arrows placed like the opened project's link arrow (app.js) */
+.side-contact .link-arrow {
+  position: relative;
 }
 
 .side-contact a {

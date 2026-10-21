@@ -81,6 +81,8 @@
         // Vertical alignment of the cover and video: 1 top, 0 middle, -1 bottom
         mediaAlign: Math.max(-1, Math.min(1, Number(p.mediaAlign) || 0)),
         personal: p.personal === true,
+        // A personal project's own page (a bare address gets https://)
+        url: webUrl(p.url),
         order,
       }))
       .sort((a, b) => compare(a, b, 1))
@@ -106,6 +108,7 @@
     document.fonts?.ready.then(() => {
       snapWidths();
       alignNavNames();
+      alignLinkArrows();
       placeContact();
       // Headings settle to their exact height with the web fonts too, so a
       // project opened from its link is glided back exactly into place
@@ -167,6 +170,7 @@
     };
     window.addEventListener('scroll', follow, { passive: true });
     window.addEventListener('resize', follow);
+    window.addEventListener('resize', alignLinkArrows);
     window.addEventListener('scrollend', () => {
       heldSection = null;
       followScroll();
@@ -657,8 +661,11 @@
         </div>
         <dl class="detail-meta">
           ${meta.map(([k, v, wide]) => k === 'Studio' && p.personal
-            // Personal projects say so, on two rows, instead of naming a studio
-            ? '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
+            // Personal projects say so, on two rows, instead of naming a studio,
+            // and link to their own page when they have one
+            ? p.url
+              ? `<div><dt class="meta-value"><a class="meta-link" href="${esc(p.url)}" target="_blank" rel="noopener">Personal<br>project <span class="meta-arrow" aria-hidden="true">↗</span></a></dt><dd></dd></div>`
+              : '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
             : `<div${wide ? ' class="meta-wide"' : ''}><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
         </dl>
         ${links.length
@@ -691,9 +698,52 @@
 
     const links = (site.links ?? []).filter((l) => l.label && safeUrl(l.url));
     $('#side-contact').innerHTML = [
-      ...links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`),
+      ...links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} <span class="link-arrow" aria-hidden="true">↗</span></a>`),
       site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '',
     ].join('');
+    alignLinkArrows();
+  }
+
+  // The side column's link arrows sit in their squares exactly where the
+  // arrow after an opened personal project's "Personal project" does (see
+  // .meta-arrow in styles.css): as far short of a gridline, as far down
+  // their row, on whole pixels. Each is nudged to the nearest such spot.
+  function alignLinkArrows() {
+    const arrows = document.querySelectorAll('#side-contact .link-arrow');
+    if (!arrows.length) return;
+    const px = G / 24;
+    const lede = parseFloat(getComputedStyle(arrows[0]).fontSize);
+    const font = (el) => {
+      const cs = getComputedStyle(el);
+      return `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    };
+    // Where the browser puts a line's baseline, below the line's top
+    const baseline = (line) => {
+      const mark = document.createElement('span');
+      mark.style.cssText = 'display:inline-block;width:0;height:0';
+      line.append(mark);
+      const y = mark.getBoundingClientRect().top - line.getBoundingClientRect().top;
+      mark.remove();
+      return y;
+    };
+    measure.font = font(arrows[0]);
+    const ink = measure.measureText('↗');
+    // The project arrow: its start, from the label's gridline, and its tip
+    const start = Math.round(8 * 0.72 * 11 * px - 0.3 * 11 * px - G / 5);
+    const gap = Math.ceil((start + ink.actualBoundingBoxRight) / G) * G - (start + ink.actualBoundingBoxRight);
+    const label = document.createElement('div');
+    label.style.cssText = `position:absolute;visibility:hidden;font:400 ${11 * px}px/${G}px var(--font-mono)`;
+    label.textContent = 'project';
+    document.body.append(label);
+    const tip = baseline(label) + Math.round(0.4224 * lede - 0.698 * 11 * px);
+    label.remove();
+    for (const arrow of arrows) {
+      arrow.style.left = '';
+      arrow.style.top = '';
+      const right = arrow.getBoundingClientRect().left + ink.actualBoundingBoxRight;
+      arrow.style.left = `${Math.round((right + gap) / G) * G - gap - right}px`;
+      arrow.style.top = `${tip - baseline(arrow.parentElement)}px`;
+    }
   }
 
   // The categories, then "All" last (still the one selected to begin with).
@@ -841,6 +891,12 @@
 
   function safeUrl(url) {
     return /^(https?:|mailto:)/i.test(url ?? '') ? url : '';
+  }
+
+  function webUrl(url) {
+    const u = String(url ?? '').trim();
+    if (!u) return '';
+    return /^[a-z][\w+.-]*:/i.test(u) ? (/^https?:/i.test(u) ? u : '') : `https://${u}`;
   }
 
   function safeMedia(path) {
