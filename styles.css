@@ -351,7 +351,8 @@ h1 {
 }
 
 /* Back to the top: a double chevron, no outline, in the last square of a
-   section's title row */
+   section's title row (not the first section's, which starts near the top
+   anyway) */
 .to-top {
   flex: none;
   display: grid;
@@ -377,13 +378,6 @@ h1 {
 @media (hover: hover) {
   .to-top:hover {
     color: var(--fg);
-  }
-}
-
-/* With the side column, Work's title row is already at the top of the page */
-@media (min-width: 1024px) {
-  #work .to-top {
-    display: none;
   }
 }
 
@@ -1053,11 +1047,12 @@ h1 {
 }
 
 /* Narrow windows (phones, tablets): the section links sit side by side at
-   the top right, in the "Portfolio" row a square from the top (where a jump
-   to About puts its heading too). They and the dimension line end where
-   the rightmost card does. Two squares between sections, and an opened
-   project lands where any card does, a square below the filters, with no
-   extra space around it (app.js). */
+   the top right, in the "Portfolio" row a square from the top. They and the
+   dimension line end where the rightmost card does. Two squares between
+   sections; About's heading lands two squares from the top (also as far as
+   the page's end lets it scroll, see app.js). An opened project lands where
+   any card does, a square below the filters, with no extra space around
+   it. */
 @media (max-width: 1023px) {
   :root {
     --kicker-row: 1;
@@ -1068,7 +1063,7 @@ h1 {
   }
 
   .section + .section {
-    scroll-margin-top: var(--g);
+    scroll-margin-top: calc(var(--g) * 2);
   }
 
   .card.is-expanded {
@@ -1102,10 +1097,6 @@ h1 {
     display: none;
   }
 
-  /* No highlight for the current section here: both links look the same */
-  .side-nav a[aria-current] {
-    color: var(--faint);
-  }
 }
 
 /* ---- Command palette (⌘K / Ctrl+K or /) ----------------------------------- */
