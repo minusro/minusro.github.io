@@ -460,13 +460,12 @@ h1 a {
   max-width: var(--rail, none);
 }
 
+/* In the tagline's typeface (not its capitals) */
 .about-body p {
   margin: 0 0 var(--g);
+  font-family: var(--font-mono);
   font-size: calc(18 * var(--px));
-  color: var(--muted);
-}
-
-.about-body p:first-child {
+  letter-spacing: 0.02em;
   color: var(--fg);
 }
 
