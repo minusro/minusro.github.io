@@ -239,7 +239,7 @@
       "summary": "",
       "links": [],
       "cover": "media/holo-one-sphere-cover.webp",
-      "video": "media/holo-one-sphere-video.mp4",
+      "video": "media/holo-one-sphere-video-2.mp4",
       "mediaAlign": 0
     },
     {
@@ -330,8 +330,8 @@
       ],
       "summary": "",
       "links": [],
-      "cover": "media/loop-brother-cover-2.webp",
-      "video": "media/loop-brother-video.mp4",
+      "cover": "",
+      "video": "media/loop-brother-video-2.mp4",
       "mediaAlign": -0.95
     },
     {
@@ -385,8 +385,8 @@
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
+      "cover": "media/roli-learn-cover.webp",
+      "video": "media/roli-learn-video.mp4",
       "mediaAlign": 0
     }
   ]
