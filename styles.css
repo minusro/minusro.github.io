@@ -291,6 +291,11 @@ h1 {
   text-transform: uppercase;
 }
 
+/* The name reloads the page, fresh (app.js) */
+h1 a {
+  text-decoration: none;
+}
+
 /* A dimension line under the name, like a drawing measurement */
 .dim {
   position: relative;

@@ -217,6 +217,14 @@
         closeAll({ scrollBack: true });
         return;
       }
+      // The name loads the page afresh: no filter, no open project, at the
+      // top (scrolling there first, so the reload doesn't put it back)
+      if (e.target.closest('[data-home]') && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) {
+        e.preventDefault();
+        instantly(() => window.scrollTo(0, 0));
+        location.assign(new URL('./', location.href));
+        return;
+      }
       // The ^^ buttons in the section title rows go back to the top
       if (e.target.closest('[data-to-top]')) {
         window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
