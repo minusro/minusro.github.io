@@ -15,7 +15,10 @@
   };
 
   const field = FX.field($('#field'));
-  const G = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
+  // The grid step, in px (smaller in mid-size windows; see styles.css)
+  const readG = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
+  let G = readG();
+  window.addEventListener('resize', () => (G = readG()));
 
   let site = {};
   let categories = [];
@@ -78,11 +81,14 @@
     bindEvents();
     NAV.init(navApi());
     // Text widths change once the web fonts arrive
-    document.fonts?.ready.then(() => snapWidths());
+    document.fonts?.ready.then(() => {
+      snapWidths();
+      alignNavNames();
+    });
 
     // The browser jumped to #about before the projects rendered and
     // pushed those sections down; jump again now that the layout is final.
-    if (/^#[a-z][\w-]*$/.test(location.hash)) $(location.hash)?.scrollIntoView({ behavior: 'instant' });
+    if (/^#[a-z][\w-]*$/.test(location.hash)) instantly(() => $(location.hash)?.scrollIntoView());
   }
 
   // ---- Events --------------------------------------------------------------
@@ -144,7 +150,7 @@
       // With the filters pinned to the top, jump to the first project of the
       // new selection (as the timeline's newest year would); otherwise stay.
       const pinned = els.toolbar.getBoundingClientRect().top <= 0.5;
-      update({ then: pinned ? () => els.list.querySelector('.card')?.scrollIntoView({ block: 'start', behavior: 'instant' }) : null });
+      update({ then: pinned ? () => instantly(() => els.list.querySelector('.card')?.scrollIntoView({ block: 'start' })) : null });
     });
 
     els.list.addEventListener('pointermove', (e) => setHovered(e.target.closest('.card')));
@@ -164,24 +170,19 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
-      if (e.target.closest('[data-close]')) {
-        e.preventDefault();
-        closeAll();
-        return;
-      }
       const a = e.target.closest('a[href^="#/"]');
       // Re-clicking the current hash doesn't fire hashchange: clicking an open
       // card again folds it back up.
       if (a && a.getAttribute('href') === location.hash) {
         e.preventDefault();
-        if (expandedId && a.getAttribute('href') === `#/${expandedId}`) closeAll();
+        if (expandedId && a.getAttribute('href') === `#/${expandedId}`) closeAll({ scrollBack: true });
         else route();
       }
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape' || e.defaultPrevented || document.querySelector('dialog[open]')) return;
-      if (expandedId) closeAll();
+      if (expandedId) closeAll({ scrollBack: true });
     });
   }
 
@@ -254,13 +255,19 @@
 
   // ---- Keeping things on the grid ------------------------------------------
 
-  // Fit as many cards across as will go (at least 12 squares wide, at most
-  // 16), one free square between them; the picture is about 4:3 in whole
-  // squares. Returns true if anything changed.
+  // Fit as many cards across as will go, up to three (at least 12 squares
+  // wide, at most 16), one free square between them; the picture is about
+  // 4:3 in whole squares. With three columns the cards only grow past 12
+  // squares as far as still leaves the year timeline its five free squares
+  // to the right (see nav.js). Returns true if anything changed.
   function layoutGrid() {
     const across = Math.floor(els.list.clientWidth / G + 0.01);
-    const cols = Math.max(1, Math.floor((across + 1) / 13));
-    const cells = Math.max(6, Math.min(16, Math.floor((across + 1) / cols) - 1));
+    const cols = Math.min(3, Math.max(1, Math.floor((across + 1) / 13)));
+    let cells = Math.max(6, Math.min(16, Math.floor((across + 1) / cols) - 1));
+    if (cols === 3) {
+      const room = Math.floor((document.documentElement.clientWidth - els.list.getBoundingClientRect().left) / G + 0.01);
+      cells = Math.max(12, Math.min(cells, Math.floor((room - 5 - 2) / 3)));
+    }
     const mediaRows = Math.round(((cells - 2) * 3) / 4);
     const changed = cols !== grid.cols || cells !== grid.cells || mediaRows !== grid.mediaRows;
     grid = { cols, cells, mediaRows };
@@ -273,6 +280,35 @@
     if (cols > 1) els.page.style.setProperty('--rail', `${(cols * (cells + 1) - 1) * G}px`);
     else els.page.style.removeProperty('--rail');
     return changed;
+  }
+
+  // The previous/next names start and end exactly on gridlines (the arrows
+  // sit outside them): each name is pulled out by its first or last letter's
+  // own side spacing, measured in the font.
+  const measure = document.createElement('canvas').getContext('2d');
+
+  function alignNavNames(root = els.list) {
+    for (const name of root.querySelectorAll('.detail-nav .nav-name')) {
+      const cs = getComputedStyle(name);
+      measure.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const text = name.textContent.trim().toUpperCase();
+      if (name.parentElement.classList.contains('nav-prev')) {
+        name.style.marginLeft = `${measure.measureText(text[0]).actualBoundingBoxLeft}px`;
+      } else {
+        const m = measure.measureText(text.at(-1));
+        name.style.marginRight = `${m.actualBoundingBoxRight - m.width}px`;
+      }
+    }
+  }
+
+  // Scroll without animation. The page asks for smooth scrolling in CSS (for
+  // its # links), and not every browser reliably lets a script opt out per
+  // call with behavior: 'instant', so it's switched off around the scroll
+  // instead.
+  function instantly(scroll) {
+    document.documentElement.classList.add('jump');
+    scroll();
+    document.documentElement.classList.remove('jump');
   }
 
   // Round the width of buttons, tags and links up to whole squares, so the
@@ -290,14 +326,19 @@
   // line up when the scroll position is a whole number of squares. Padding
   // under the content keeps the page a whole number of squares taller than
   // the window, which makes the very bottom one of those positions too.
+  // The page is also long enough for the About heading to scroll up to three
+  // squares from the top, level with where the Work heading starts (and the
+  // Portfolio label), however short About is.
   // (innerHeight rather than clientHeight: on phones it follows the browser
   // bars sliding away, and so does how far the page can scroll.)
   function fitPageLength() {
     const page = document.scrollingElement;
     const tail = parseFloat(els.main.style.paddingBottom) || 0;
     const over = page.scrollHeight - tail - window.innerHeight;
-    const pad = over > 0 ? (G - (over % G)) % G : 0;
-    if (pad !== tail) els.main.style.paddingBottom = pad ? `${pad}px` : '';
+    const about = $('#about .section-head').getBoundingClientRect().top + scrollY;
+    const need = Math.max(over, about - G * 3);
+    const pad = need > 0 ? need - over + ((G - (need % G)) % G) : 0;
+    if (Math.abs(pad - tail) > 0.5) els.main.style.paddingBottom = pad ? `${pad}px` : '';
   }
 
   // After a scroll stops (with a mouse or trackpad, at any window width; not
@@ -319,13 +360,13 @@
       const target = Math.min(Math.round(page.scrollTop / G) * G, max - (max % G));
       let y = page.scrollTop;
       if (Math.abs(target - y) < 0.5) return;
-      if (reduceMotion.matches) return window.scrollTo({ top: target, behavior: 'instant' });
+      if (reduceMotion.matches) return instantly(() => window.scrollTo(0, target));
       let last = 0;
       const step = (now) => {
         y = target + (y - target) * Math.exp(-(last ? now - last : 16) / 40);
         last = now;
         const done = Math.abs(target - y) < 0.5;
-        window.scrollTo({ top: done ? target : y, behavior: 'instant' });
+        instantly(() => window.scrollTo(0, done ? target : y));
         glide = done ? 0 : requestAnimationFrame(step);
       };
       glide = requestAnimationFrame(step);
@@ -396,16 +437,37 @@
     if (!p) {
       // #work / #about (typed, or via Back/Forward) count like a click on that link
       holdSection(location.hash.slice(1));
-      return closeAll();
+      return closeAll({ scrollBack: !location.hash });
     }
     expandCard(p);
     document.title = `${p.title} — Daniel Stanciu`;
   }
 
-  function closeAll() {
+  // Closing a project by hand scrolls back to its card, which lands a square
+  // below the filters like any card scrolled to. The card first keeps its
+  // place on screen while the cards around it rearrange, so the page doesn't
+  // jump; then it glides the rest of the way (usually just that square).
+  function closeAll({ scrollBack = false } = {}) {
+    const card = expandedId && els.list.querySelector(`.card[data-id="${expandedId}"]`);
+    const before = card?.getBoundingClientRect();
     collapse();
     document.title = baseTitle;
     if (location.hash.startsWith('#/')) replaceUrl(location.pathname + location.search);
+    if (!scrollBack || !card) return;
+    const keep = scrollY + card.getBoundingClientRect().top - before.top;
+    // Where the filters start sticking to the top of the window
+    const pinned = els.toolbar.parentElement.getBoundingClientRect().top + scrollY;
+    if (keep >= pinned - 0.5 || reduceMotion.matches) {
+      instantly(() => window.scrollTo(0, keep));
+      card.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    } else {
+      // Near the top of the list, holding the card in place would pull the
+      // filters loose for a moment. Go straight to the end position (the
+      // filters stay put) and let just the card glide up the last stretch.
+      instantly(() => card.scrollIntoView({ block: 'start' }));
+      const dy = before.top - card.getBoundingClientRect().top;
+      if (dy > 0) card.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 250, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
+    }
   }
 
   function expandCard(p) {
@@ -415,10 +477,16 @@
       expandedId = p.id;
       update();
     }
+    // The clicked card keeps its place on screen while the cards around it
+    // rearrange (so nothing jumps under the pointer), then glides into
+    // position. The previous/next links jump straight there instead.
+    const before = els.list.querySelector(`.card[data-id="${p.id}"]`)?.getBoundingClientRect().top;
     collapse();
     expandedId = p.id;
     const card = attachDetail(p);
-    card?.scrollIntoView({ block: 'start', behavior: jumpNext || reduceMotion.matches ? 'instant' : 'smooth' });
+    if (card && before != null && !jumpNext) instantly(() => window.scrollBy(0, card.getBoundingClientRect().top - before));
+    if (card && jumpNext) instantly(() => card.scrollIntoView({ block: 'start' }));
+    else card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     jumpNext = false;
     // Its video keeps playing (or starts) while the project is open
     if (card) setHovered(card);
@@ -431,6 +499,7 @@
     card.insertAdjacentHTML('beforeend', `<div class="card-detail" data-cat="${primary(p)}">${detailHTML(p)}</div>`);
     placeCards();
     snapWidths(card.querySelector('.card-detail'));
+    alignNavNames(card);
     return card;
   }
 
@@ -461,27 +530,26 @@
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
     return `
-      <button type="button" class="detail-close" data-close aria-label="Close project">
-        <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8"/></svg>
-      </button>
-      <dl class="detail-meta">
-        ${meta.map(([k, v]) => k === 'Studio' && p.personal
-          // Personal projects say so, on two rows, instead of naming a studio
-          ? '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
-          : `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
-      </dl>
-      <div class="detail-body${p.summary ? '' : ' is-todo'}">
-        ${p.summary
-          ? p.summary.split(/\n\s*\n/).map((s) => `<p>${esc(s.trim())}</p>`).join('')
-          : '<p>TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
-      </div>
-      ${links.length
-        ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
-        : ''}
       <nav class="detail-nav" aria-label="More projects">
-        ${prev ? `<a href="#/${prev.id}">&lt; ${esc(prev.title)}</a>` : '<span></span>'}
-        ${next ? `<a href="#/${next.id}">${esc(next.title)} &gt;</a>` : '<span></span>'}
-      </nav>`;
+        ${prev ? `<a href="#/${prev.id}" class="nav-prev"><span class="nav-arrow" aria-hidden="true">&lt;</span><span class="nav-name">${esc(prev.title)}</span></a>` : '<span></span>'}
+        ${next ? `<a href="#/${next.id}" class="nav-next"><span class="nav-name">${esc(next.title)}</span><span class="nav-arrow" aria-hidden="true">&gt;</span></a>` : '<span></span>'}
+      </nav>
+      <div class="detail-info">
+        <div class="detail-body${p.summary ? '' : ' is-todo'}">
+          ${p.summary
+            ? p.summary.split(/\n\s*\n/).map((s) => `<p>${esc(s.trim())}</p>`).join('')
+            : '<p>TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
+        </div>
+        <dl class="detail-meta">
+          ${meta.map(([k, v]) => k === 'Studio' && p.personal
+            // Personal projects say so, on two rows, instead of naming a studio
+            ? '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
+            : `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
+        </dl>
+        ${links.length
+          ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
+          : ''}
+      </div>`;
   }
 
   // ---- Rendering -----------------------------------------------------------
@@ -544,13 +612,17 @@
   // Rows fill right to left: the newest project top right. Every card gets
   // its row and column explicitly (rather than an rtl grid, which some
   // browsers let leak into the cards' contents); an opened card takes a
-  // whole row of its own.
+  // whole row of its own, with two squares to the rows above and below it
+  // (and to the filters, when it's first).
   function placeCards() {
     let slot = 0;
-    for (const card of els.list.querySelectorAll('.card')) {
+    const cards = [...els.list.querySelectorAll('.card')];
+    for (const [i, card] of cards.entries()) {
+      card.style.margin = '';
       if (card.classList.contains('is-expanded')) {
         slot = Math.ceil(slot / grid.cols) * grid.cols;
         card.style.gridArea = `${slot / grid.cols + 1} / 1 / auto / -1`;
+        card.style.margin = `${G}px 0 ${i < cards.length - 1 ? G : 0}px`;
         slot += grid.cols;
       } else {
         card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${grid.cols - (slot % grid.cols)}`;
@@ -628,7 +700,7 @@
         if (section === 'top') window.scrollTo({ top: 0, behavior: smooth });
         else document.getElementById(section)?.scrollIntoView({ behavior: smooth });
       },
-      close: closeAll,
+      close: () => closeAll({ scrollBack: true }),
     };
   }
 

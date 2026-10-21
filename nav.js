@@ -10,7 +10,7 @@ const NAV = (() => {
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const G = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
+  const gridStep = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
   const SECTIONS = { top: 'top', work: 'work', about: 'about', '~': 'top' };
 
   let api = null;
@@ -493,7 +493,7 @@ const NAV = (() => {
       clickedYear = year;
       // In case the scroll's end isn't reported
       clickedTimer = setTimeout(() => settleYear(), 2000);
-      target.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'instant' : 'smooth' });
+      target.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     });
     window.addEventListener('scrollend', () => settleYear());
     // Scrolling by hand takes over from a click
@@ -508,7 +508,7 @@ const NAV = (() => {
       scrubberVisible = entry.isIntersecting;
       showScrubber();
       markYear();
-    }, { rootMargin: '-30% 0px -30% 0px' }).observe($('#work'));
+    }, { rootMargin: '0px 0px -30% 0px' }).observe($('#work'));
 
     // Keep it beside the content as the window or the card grid changes.
     let placing = 0;
@@ -552,6 +552,7 @@ const NAV = (() => {
   // year labels three squares from the content.
   function placeScrubber() {
     const right = $('#work .section-head').getBoundingClientRect().right;
+    const G = gridStep();
     const room = document.documentElement.clientWidth - right >= G * 5;
     scrubber.hidden = !room;
     if (room) scrubber.style.left = `${right + G * 2}px`;

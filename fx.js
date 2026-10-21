@@ -19,7 +19,7 @@ const FX = (() => {
     const host = canvas.parentElement;
     // Dots sit on the background grid's crossings: same spacing, and the
     // canvas starts on a gridline (the page keeps it there).
-    const SPACING = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
+    let spacing = 24;
     const RADIUS = 140;
     const SPRING = 0.06;
     const DAMPING = 0.82;
@@ -68,8 +68,9 @@ const FX = (() => {
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const cols = Math.ceil(w / SPACING) + 1;
-      const rows = Math.ceil(h / SPACING) + 1;
+      spacing = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
+      const cols = Math.ceil(w / spacing) + 1;
+      const rows = Math.ceil(h / spacing) + 1;
       const n = cols * rows;
       hx = new Float32Array(n);
       hy = new Float32Array(n);
@@ -83,8 +84,8 @@ const FX = (() => {
       const y0 = 0.5;
       for (let r = 0, i = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++, i++) {
-          hx[i] = x0 + c * SPACING;
-          hy[i] = y0 + r * SPACING;
+          hx[i] = x0 + c * spacing;
+          hy[i] = y0 + r * spacing;
         }
       }
       draw();

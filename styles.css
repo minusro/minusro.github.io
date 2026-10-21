@@ -31,24 +31,36 @@
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
   --g: 24px;      /* grid step: the small squares of the background */
+  --px: calc(var(--g) / 24);   /* a pixel at full size; type and spacing scale with the grid */
+  --mask: calc(var(--g) / 3);   /* the strip under the pinned filters (whole px where possible) */
   --cap: 0.698;   /* capital height of the IBM Plex fonts, as a share of font size */
 
-  /* Content edges: centred like a 1280px column, then snapped onto gridlines
-     where the browser can round (see @supports below). Percentages are of
-     the window width wherever these end up. */
-  --wrap: 1280px;
-  --gutter: clamp(16px, 4vw, 48px);
+  /* Content edges: centred like a 1728px column (wide enough for three
+     columns of projects, which take priority over room for the year
+     timeline), then snapped onto gridlines where the browser can round (see
+     @supports below). Percentages are of the window width wherever these
+     end up. */
+  --wrap: 1728px;
+  --gutter: clamp(calc(16 * var(--px)), 4vw, calc(48 * var(--px)));
   --centred: max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter));
   --edge-left: var(--centred);
   --edge-right: var(--centred);
 
   --kicker-row: 3;                /* gridline the "Portfolio" mark sits on */
-  --lede-size: 16px;              /* the tagline, and the contact links */
+  --lede-size: calc(16 * var(--px));              /* the tagline, and the contact links */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Mid-size desktop windows: everything a little smaller (22px squares) */
+@media (min-width: 1024px) and (max-width: 1759px) {
+  :root {
+    --g: 22px;
+  }
 }
 
 @supports (width: round(nearest, 10px, 3px)) {
   :root {
+    --mask: round(nearest, var(--g) / 3, 1px);
     --edge-left: round(nearest, var(--centred), var(--g));
     --edge-right: calc(100% - var(--edge-left) - round(down, 100% - var(--edge-left) - var(--centred), var(--g)));
   }
@@ -84,12 +96,17 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Set for a moment by app.js to scroll without animation */
+html.jump {
+  scroll-behavior: auto;
+}
+
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: calc(16 * var(--px));
   line-height: var(--g);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -156,7 +173,6 @@ code {
 .tag,
 .card-link,
 .card-media,
-.detail-close,
 .palette {
   box-shadow:
     inset 1px 1px 0 var(--fc),
@@ -183,7 +199,7 @@ code {
   padding: var(--g);
   color: var(--faint);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
 }
 
 .placeholder::before {
@@ -243,7 +259,7 @@ code {
   margin: calc(var(--g) * (var(--kicker-row) - 0.5)) 0 0;
   /* Pulled in from a square so the last letter ends on a gridline */
   padding-left: calc(var(--g) - 0.605em);
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
@@ -342,7 +358,7 @@ h1 {
   margin-right: -1px;
   border-radius: 50%;
   box-shadow: inset 0 0 0 1px var(--fg);
-  font-size: 11px;
+  font-size: calc(11 * var(--px));
 }
 
 .section-head h2 {
@@ -354,10 +370,14 @@ h1 {
   text-transform: uppercase;
 }
 
+/* As wide as the heading line above it */
+.about-body {
+  max-width: var(--rail, none);
+}
+
 .about-body p {
-  max-width: 60ch;
   margin: 0 0 var(--g);
-  font-size: 18px;
+  font-size: calc(18 * var(--px));
   color: var(--muted);
 }
 
@@ -382,8 +402,8 @@ h1 {
   top: 0;
   z-index: 5;
   max-width: calc(var(--rail, 100vw) + var(--g) * 2);
-  margin: 0 calc(var(--g) * -1) calc(var(--g) * 2 / 3);
-  padding: 0 var(--g) calc(var(--g) / 3);
+  margin: 0 calc(var(--g) * -1) calc(var(--g) - var(--mask));
+  padding: 0 var(--g) var(--mask);
   background-color: var(--bg);
   background-image:
     linear-gradient(var(--grid-major) 1px, transparent 1px),
@@ -421,13 +441,13 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: calc(8 * var(--px));
   height: var(--g);
-  padding: 0 12px;
+  padding: 0 calc(12 * var(--px));
   border: 0;
   background: transparent;
   color: var(--muted);
-  font: 500 12px/1 var(--font-mono);
+  font: 500 calc(12 * var(--px))/1 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
@@ -463,10 +483,10 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: calc(6 * var(--px));
   height: var(--g);
-  padding: 0 8px;
-  font: 500 11px/1 var(--font-mono);
+  padding: 0 calc(8 * var(--px));
+  font: 500 calc(11 * var(--px))/1 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
@@ -474,8 +494,8 @@ h1 {
 
 .dot {
   flex: none;
-  width: 6px;
-  height: 6px;
+  width: calc(6 * var(--px));
+  height: calc(6 * var(--px));
   border-radius: 50%;
   background: var(--c);
 }
@@ -506,10 +526,15 @@ h1 {
   height: var(--g);
 }
 
-/* Scrolled to, a card lands just below the filters (app.js measures them) */
+/* Scrolled to, a card lands just below the filters (app.js measures them);
+   an opened one a square lower, matching the two squares around it */
 .card,
 .card-link {
   scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
+}
+
+.card.is-expanded {
+  scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) + var(--g));
 }
 
 /* One square of padding; picture; the title row, centred on the gridline
@@ -606,8 +631,8 @@ h1 {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at var(--x) var(--y), transparent 35px, var(--c) 36px, transparent 37px),
-    radial-gradient(circle at var(--x) var(--y), transparent 59px, color-mix(in srgb, var(--c) 60%, transparent) 60px, transparent 61px),
+    radial-gradient(circle at var(--x) var(--y), transparent calc(36 * var(--px) - 1px), var(--c) calc(36 * var(--px)), transparent calc(36 * var(--px) + 1px)),
+    radial-gradient(circle at var(--x) var(--y), transparent calc(60 * var(--px) - 1px), color-mix(in srgb, var(--c) 60%, transparent) calc(60 * var(--px)), transparent calc(60 * var(--px) + 1px)),
     linear-gradient(color-mix(in srgb, var(--fg) 30%, transparent), color-mix(in srgb, var(--fg) 30%, transparent)) 0 var(--y) / 100% 1px no-repeat,
     linear-gradient(color-mix(in srgb, var(--fg) 30%, transparent), color-mix(in srgb, var(--fg) 30%, transparent)) var(--x) 0 / 1px 100% no-repeat,
     repeating-linear-gradient(var(--a), color-mix(in srgb, var(--c) 30%, transparent) 0 1px, transparent 1px var(--gap));
@@ -630,14 +655,14 @@ h1 {
   margin-bottom: -1px;
   border-radius: 50%;
   box-shadow: inset 0 0 0 1px var(--line-strong);
-  font: 11px/1 var(--font-mono);
+  font: calc(11 * var(--px))/1 var(--font-mono);
   color: var(--muted);
 }
 
 .card-title {
   grid-area: title;
   margin: 0;
-  font-size: 19px;
+  font-size: calc(19 * var(--px));
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -645,8 +670,8 @@ h1 {
 
 .card-year {
   grid-area: year;
-  padding-left: 12px;
-  font: 12px/var(--g) var(--font-mono);
+  padding-left: calc(12 * var(--px));
+  font: calc(12 * var(--px))/var(--g) var(--font-mono);
   color: var(--muted);
 }
 
@@ -656,8 +681,10 @@ h1 {
 
 /* ---- A project opened in place -------------------------------------------- */
 
-/* The card keeps its column; the details take the rest of the row
-   (or go underneath when there's only one column) */
+/* The card keeps its column, with the previous/next row under it; the
+   description and details take the rest of the row. With only one column
+   it all stacks: card, previous/next, description, details. (The detail
+   wrapper steps aside so its parts can be placed in this grid.) */
 .card.is-expanded {
   grid-column: 1 / -1;
   display: grid;
@@ -666,8 +693,27 @@ h1 {
   gap: var(--g);
 }
 
+.card-detail {
+  display: contents;
+}
+
+.card.is-expanded > .card-link,
+.card-detail > .detail-nav {
+  grid-column: 1;
+}
+
+.card-detail > .detail-info {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
 .projects[data-cols="1"] .card.is-expanded {
   grid-template-columns: minmax(0, 1fr);
+}
+
+.projects[data-cols="1"] .card-detail > .detail-info {
+  grid-column: 1;
+  grid-row: auto;
 }
 
 .card.is-expanded > .card-link {
@@ -675,47 +721,14 @@ h1 {
   height: auto;
 }
 
-/* A one-square close button in the top-right square of the details */
-.card-detail {
-  position: relative;
-}
-
-.detail-close {
-  --fc: var(--line-strong);
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: var(--g);
-  height: var(--g);
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.detail-close svg {
-  stroke: currentColor;
-  stroke-width: 1.25;
-}
-
-.detail-close:hover {
-  --fc: var(--fg);
-  color: var(--fg);
-}
-
-/* The title, tags and picture are on the card beside these details, which
-   start level with the card's top edge. Year and studio take five squares;
-   role and platforms run on to the card's right edge, and tech has a full
-   row of its own. */
+/* A square below the description. Year and studio take five squares; role
+   and platforms run on to the card's right edge, and tech has a full row of
+   its own. */
 .detail-meta {
   display: grid;
   grid-template-columns: calc(var(--g) * 5) minmax(0, 1fr);
   row-gap: var(--g);
-  margin: 0;
+  margin: var(--g) 0 0;
   font-family: var(--font-mono);
 }
 
@@ -724,7 +737,7 @@ h1 {
 }
 
 .detail-meta dt {
-  font-size: 11px;
+  font-size: calc(11 * var(--px));
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
@@ -737,21 +750,21 @@ h1 {
 
 .detail-meta dd {
   margin: 0;
-  padding-right: 12px;
-  font-size: 13px;
+  padding-right: calc(12 * var(--px));
+  font-size: calc(13 * var(--px));
 }
 
-/* The description sits in a framed box, a square of padding inside and a
-   square of space outside, so one line makes a box three squares tall. Like
-   the dashed "to do" box, the frame reaches a pixel further right and down
-   so all four sides are on gridlines. Set like the year, role and other
-   values above it. */
+/* The description, level with the card's top edge (or a square below the
+   previous/next row when stacked): a framed box with a square of padding
+   inside, so one line makes a box three squares tall.
+   Like the dashed "to do" box, the frame reaches a pixel further right and
+   down so all four sides are on gridlines. Set like the year, role and
+   other values. */
 .detail-body {
   position: relative;
-  margin-top: var(--g);
   padding: var(--g);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
   color: var(--muted);
 }
 
@@ -787,7 +800,7 @@ h1 {
   margin: var(--g) 0 0;
   padding: 0;
   list-style: none;
-  font: 13px/var(--g) var(--font-mono);
+  font: calc(13 * var(--px))/var(--g) var(--font-mono);
 }
 
 /* Widths snap to whole squares (app.js) */
@@ -795,12 +808,35 @@ h1 {
   display: inline-block;
 }
 
+/* Under the card: previous project on the left, next on the right, inset a
+   square so the names line up with the card's picture (app.js trims them
+   onto the gridlines exactly); the < and > hang outside the names. */
 .detail-nav {
   display: flex;
   justify-content: space-between;
   gap: var(--g);
-  margin-top: var(--g);
-  font: 13px/var(--g) var(--font-mono);
+  padding-inline: var(--g);
+  font: calc(13 * var(--px))/var(--g) var(--font-mono);
+}
+
+.detail-nav a {
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 0;
+}
+
+.nav-prev .nav-arrow {
+  right: 100%;
+  margin-right: 1ch;
+}
+
+.nav-next .nav-arrow {
+  left: 100%;
+  margin-left: 1ch;
 }
 
 /* Project names in capitals, as on the cards */
@@ -820,7 +856,7 @@ h1 {
   display: flex;
   flex-direction: column;
   margin-top: calc(var(--g) * 2);
-  font-size: 12px;
+  font-size: calc(12 * var(--px));
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -877,7 +913,7 @@ h1 {
 
 @media (min-width: 1024px) {
   :root {
-    --lede-size: 20px;
+    --lede-size: calc(20 * var(--px));
   }
 
   /* No elastic bounce at the top or bottom of the page, so the side column
@@ -1023,7 +1059,7 @@ h1 {
   background: none;
   box-shadow: 0 1px 0 var(--line);
   color: var(--fg);
-  font: 17px var(--font-sans);
+  font: calc(17 * var(--px)) var(--font-sans);
   outline: none;
 }
 
@@ -1042,7 +1078,7 @@ h1 {
 .palette-group {
   height: var(--g);
   padding: 0 var(--g);
-  font: 10px/var(--g) var(--font-mono);
+  font: calc(10 * var(--px))/var(--g) var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
@@ -1051,7 +1087,7 @@ h1 {
 .palette-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: calc(12 * var(--px));
   height: calc(var(--g) * 2);
   padding: 0 var(--g);
   cursor: pointer;
@@ -1063,7 +1099,7 @@ h1 {
 }
 
 .palette-icon {
-  width: 6px;
+  width: calc(6 * var(--px));
   color: var(--faint);
 }
 
@@ -1077,7 +1113,7 @@ h1 {
 
 .palette-hint,
 .palette-current {
-  font-size: 11px;
+  font-size: calc(11 * var(--px));
   color: var(--faint);
   white-space: nowrap;
 }
@@ -1105,7 +1141,7 @@ h1 {
   backdrop-filter: blur(8px);
   box-shadow: 0 1px 0 var(--line-strong), var(--shadow);
   color: var(--fg);
-  font: 14px/var(--g) var(--font-mono);
+  font: calc(14 * var(--px))/var(--g) var(--font-mono);
   animation: console-in 0.22s var(--ease);
 }
 
@@ -1148,7 +1184,7 @@ h1 {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: calc(12 * var(--px));
   height: calc(var(--g) * 2);
   padding: 0 var(--edge-right) 0 var(--edge-left);
   box-shadow: inset 0 1px 0 var(--line);
@@ -1177,7 +1213,7 @@ h1 {
 
   .console-prompt::after {
     content: "$";
-    font-size: 14px;
+    font-size: calc(14 * var(--px));
   }
 }
 
@@ -1227,7 +1263,7 @@ h1 {
   border: 0;
   background: none;
   color: var(--faint);
-  font: 11px/var(--g) var(--font-mono);
+  font: calc(11 * var(--px))/var(--g) var(--font-mono);
   text-align: left;
   cursor: pointer;
 }
@@ -1236,8 +1272,8 @@ h1 {
   content: "";
   position: absolute;
   top: calc(var(--g) / 2);
-  left: 8px;
-  width: 8px;
+  left: calc(8 * var(--px));
+  width: calc(8 * var(--px));
   height: 1px;
   background: currentColor;
   transition: left 0.2s var(--ease), width 0.2s var(--ease);
@@ -1249,11 +1285,10 @@ h1 {
 }
 
 /* The current year's line is a square longer than the other years' dashes,
-   ending where they end */
+   ending where they end, in the text colour like the current section's */
 .scrubber button[aria-current]::before {
-  left: calc(8px - var(--g));
-  width: calc(8px + var(--g));
-  background: var(--accent);
+  left: calc(8 * var(--px) - var(--g));
+  width: calc(8 * var(--px) + var(--g));
 }
 
 /* ---- Reduced motion ------------------------------------------------------- */
