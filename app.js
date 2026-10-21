@@ -207,7 +207,7 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
-      // The ✕ on an opened card closes it
+      // The dash in an opened card's corner closes it
       if (e.target.closest('[data-close]')) {
         closeAll({ scrollBack: true });
         return;
@@ -593,9 +593,7 @@
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
     return `
-      <button type="button" class="detail-close" data-close aria-label="Close project">
-        <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg>
-      </button>
+      <button type="button" class="detail-close" data-close aria-label="Close project"></button>
       <nav class="detail-nav" aria-label="More projects">
         ${prev ? `<a href="#/${prev.id}" class="nav-prev"><span class="nav-arrow" aria-hidden="true">&lt;</span><span class="nav-name">${esc(prev.title)}</span></a>` : '<span></span>'}
         ${next ? `<a href="#/${next.id}" class="nav-next"><span class="nav-name">${esc(next.title)}</span><span class="nav-arrow" aria-hidden="true">&gt;</span></a>` : '<span></span>'}
