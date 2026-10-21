@@ -4,7 +4,6 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const SLUG = /^[a-z0-9][a-z0-9-]*$/;
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const baseTitle = document.title;
 
   const els = {
     page: $('.page'),
@@ -549,7 +548,6 @@
       return closeAll({ scrollBack: !location.hash });
     }
     expandCard(p);
-    document.title = `${p.title} — Daniel Stanciu`;
   }
 
   // Closing a project by hand scrolls back to its card, which lands a square
@@ -561,7 +559,6 @@
     const before = card?.getBoundingClientRect();
     collapse();
     NAV.markYear();
-    document.title = baseTitle;
     if (location.hash.startsWith('#/')) replaceUrl(location.pathname + location.search);
     if (!scrollBack || !card) return;
     const keep = scrollY + card.getBoundingClientRect().top - before.top;
