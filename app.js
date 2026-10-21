@@ -106,6 +106,7 @@
     document.fonts?.ready.then(() => {
       snapWidths();
       alignNavNames();
+      placeContact();
       // Headings settle to their exact height with the web fonts too, so a
       // project opened from its link is glided back exactly into place
       // (touch screens don't snap to the grid afterwards)
@@ -302,6 +303,27 @@
     let lit = !aboutInPlace && t.bottom > 0 ? 'work' : 'about';
     if (lit === 'work' && !wide.matches && $('#work .section-head').getBoundingClientRect().top >= innerHeight) lit = null;
     if (!heldSection) markSection(lit);
+    placeContact();
+  }
+
+  // Beside the projects, the email and links sit at the bottom of the side
+  // column, but never lower than the last line of the About text: as that
+  // scrolls up into view they rise with it, at most to a square below the
+  // About link (or below the tagline, when short windows hide the links).
+  function placeContact() {
+    const box = $('#side-contact');
+    const last = $('#about-body').lastElementChild;
+    if (!wide.matches || !last) {
+      box.style.removeProperty('--lift');
+      return;
+    }
+    const lift = parseFloat(box.style.getPropertyValue('--lift')) || 0;
+    const r = box.getBoundingClientRect();
+    const aboutLink = $('.side-nav a[data-section="about"]');
+    const above = aboutLink.getClientRects().length ? aboutLink : $('#tagline');
+    const highest = above.getBoundingClientRect().bottom + G - (r.top - lift);
+    const level = last.getBoundingClientRect().bottom - (r.bottom - lift);
+    box.style.setProperty('--lift', `${Math.min(0, Math.max(level, highest))}px`);
   }
 
   function holdSection(id) {

@@ -1158,8 +1158,10 @@ h1 a {
     }
   }
 
+  /* Raised to the About text's last line when that's higher (app.js) */
   .side-contact {
     margin-top: auto;
+    transform: translateY(var(--lift, 0px));
   }
 }
 
