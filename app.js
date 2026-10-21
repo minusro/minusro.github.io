@@ -174,13 +174,18 @@
 
     els.toolbar.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-cat]');
-      if (!b) return;
-      tag = b.dataset.cat;
-      // With the filters pinned to the top, jump to the first project of the
-      // new selection (as the timeline's newest year would); otherwise stay.
-      const pinned = els.toolbar.getBoundingClientRect().top <= 0.5;
-      update({ then: pinned ? () => instantly(() => els.list.querySelector('.card')?.scrollIntoView({ block: 'start' })) : null });
+      if (b) selectTag(b.dataset.cat);
     });
+
+    // A card's tags pick that filter too, instead of opening the card (caught
+    // on the way down, before the card's link or the page's handlers see it)
+    els.list.addEventListener('click', (e) => {
+      const t = e.target.closest('.card-link .tag');
+      if (!t) return;
+      e.preventDefault();
+      e.stopPropagation();
+      selectTag(t.dataset.cat);
+    }, { capture: true });
 
     // Hovering means a mouse (or pen). A finger on the screen is a scroll or
     // a tap, which would otherwise start and stop videos as it goes; on
@@ -207,7 +212,7 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
-      // The dash in an opened card's corner closes it
+      // The x on an opened card closes it (as does clicking the card itself, below)
       if (e.target.closest('[data-close]')) {
         closeAll({ scrollBack: true });
         return;
@@ -315,9 +320,9 @@
   // ---- Keeping things on the grid ------------------------------------------
 
   // Fit as many cards across as will go, up to three (at least 12 squares
-  // wide, at most 16), one free square between them; the picture, which runs
-  // to the card's top and sides, is about 4:3 in whole squares (mediaRows is
-  // its height below the top padding). With three columns the cards only grow
+  // wide, at most 16), one free square between them; the picture, half a
+  // square in from the card's top and sides, is roughly 4:3 (mediaRows + 1
+  // squares tall). With three columns the cards only grow
   // past 12 squares as far as still leaves the year timeline its five free
   // squares to the right (see nav.js). Returns true if anything changed.
   function layoutGrid() {
@@ -455,6 +460,16 @@
   }
 
   // ---- State ---------------------------------------------------------------
+
+  // A new filter closes any opened project. With the filters pinned to the
+  // top, jump to the first project of the new selection (as the timeline's
+  // newest year would); otherwise stay.
+  function selectTag(cat) {
+    if (cat !== tag) closeAll();
+    tag = cat;
+    const pinned = els.toolbar.getBoundingClientRect().top <= 0.5;
+    update({ then: pinned ? () => instantly(() => els.list.querySelector('.card')?.scrollIntoView({ block: 'start' })) : null });
+  }
 
   function update({ syncUrl = true, then = null } = {}) {
     for (const b of els.filters.querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.cat === tag);
@@ -719,11 +734,11 @@
 
   // Cover image (or a pattern seeded from the project id) plus an optional video loop.
   // The placeholder's circle is centred on a grid crossing inside the picture
-  // (which runs to the card's top and sides, starting a pixel in from its corner).
+  // (which starts half a square in from the card's corner).
   function mediaHTML(p) {
     const h = hash(p.id);
-    const x = G * (1 + (h % Math.max(1, grid.cells - 1))) - 1;
-    const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows))) - 1;
+    const x = G * (1 + (h % Math.max(1, grid.cells - 1))) - G / 2;
+    const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows))) - G / 2;
     const gap = [6, 8, 12][(h >>> 24) % 3];
     const fit = `object-position: 50% ${(1 - p.mediaAlign) * 50}%`;
     const gif = /\.gif$/i.test(p.video);
@@ -757,6 +772,7 @@
         else location.hash = `#/${id}`;
       },
       filter(next) {
+        if (next !== tag) closeAll();
         tag = next;
         update();
       },

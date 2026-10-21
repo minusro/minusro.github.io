@@ -381,10 +381,12 @@ h1 {
   }
 }
 
-/* Close: a short dash on an opened card, like a year's dash in the year
-   list, in the card's bottom-right corner square. It sits over the card
-   in the card's own grid cell. It's part of the details, so a closed card
-   has none. */
+/* Close: a small x on an opened card, on the grid crossing a square up and
+   left from its bottom-right corner. The whole card answers to it: clicks
+   pass through the x to the card, which closes an opened card (app.js), and
+   hovering the card lights the x. The button stays for the keyboard. It sits
+   over the card in the card's own grid cell, and it's part of the details,
+   so a closed card has none. */
 .detail-close {
   position: relative;
   z-index: 1;
@@ -392,29 +394,39 @@ h1 {
   grid-row: 1;
   align-self: end;
   justify-self: end;
-  width: var(--g);
-  height: var(--g);
+  width: calc(var(--g) * 2);
+  height: calc(var(--g) * 2);
   padding: 0;
   border: 0;
   background: none;
   color: var(--faint);
-  cursor: pointer;
+  pointer-events: none;
 }
 
-.detail-close::before {
+.detail-close::before,
+.detail-close::after {
   content: "";
   position: absolute;
-  top: calc(var(--g) / 2);
-  left: calc(50% - 4 * var(--px));
-  width: calc(8 * var(--px));
+  top: 50%;
+  left: calc(50% - 5 * var(--px));
+  width: calc(10 * var(--px));
   height: 1px;
   background: currentColor;
+  transform: rotate(45deg);
+}
+
+.detail-close::after {
+  transform: rotate(-45deg);
 }
 
 @media (hover: hover) {
-  .detail-close:hover {
+  .card.is-expanded:has(.card-link:hover):not(:has(.tag:hover)) .detail-close {
     color: var(--fg);
   }
+}
+
+.detail-close:focus-visible {
+  color: var(--fg);
 }
 
 /* Section numbers are circled detail callouts, one square across */
@@ -547,7 +559,8 @@ h1 {
 /* Hover styles only where there's a pointer that hovers: on touch screens
    they would stick to whatever was last tapped */
 @media (hover: hover) {
-  .chip:hover {
+  .chip:hover,
+  .card-link .tag:hover {
     --fc: color-mix(in srgb, var(--c) 50%, var(--line-strong));
     color: var(--fg);
   }
@@ -631,15 +644,17 @@ h1 {
   scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) + var(--g));
 }
 
-/* One square of padding; picture; the title row, centred on the gridline
-   a square below the picture, with the title half a square after the
-   number; tags row */
+/* The picture (half a square in from the card's top) runs on half a square
+   past a gridline; half a square; the title row, with the title half a
+   square after the number; half a square; tags row. Everything sits half a
+   square in from the card's sides, and the tags half a square above its
+   bottom. */
 .card-link {
   --fc: var(--line-strong);
   position: relative;
   display: grid;
   grid-template-columns: var(--g) calc(var(--g) / 2) minmax(0, 1fr) auto;
-  grid-template-rows: calc(var(--media-rows, 9) * var(--g)) calc(var(--g) / 2) minmax(var(--g), auto) calc(var(--g) / 2) var(--g);
+  grid-template-rows: calc((var(--media-rows, 9) + 0.5) * var(--g)) calc(var(--g) / 2) minmax(var(--g), auto) calc(var(--g) / 2) var(--g);
   grid-template-areas:
     "media media media media"
     ".     .     .     .   "
@@ -647,7 +662,7 @@ h1 {
     ".     .     .     .   "
     "tags  tags  tags  tags";
   height: 100%;
-  padding: var(--g);
+  padding: var(--g) calc(var(--g) / 2) calc(var(--g) / 2);
   background: color-mix(in srgb, var(--bg-raise) 70%, transparent);
   text-decoration: none;
 }
@@ -680,22 +695,48 @@ h1 {
     linear-gradient(var(--m), var(--m)) calc(100% - 6px) 100% / 1px 13px no-repeat;
 }
 
+/* Open: a + on a closed card where an opened card has its x (on the grid
+   crossing a square up and left from the bottom-right corner), in the x's
+   faint colour, lit while the card is hovered or focused. Whole pixels,
+   three either side of the crossing's pixel, so it stays symmetrical at
+   every grid size. */
+.card:not(.is-expanded) .card-link::after {
+  content: "";
+  --plus: var(--faint);
+  position: absolute;
+  right: calc(var(--g) - 4px);
+  bottom: calc(var(--g) - 4px);
+  width: 7px;
+  height: 7px;
+  background:
+    linear-gradient(var(--plus), var(--plus)) 0 3px / 100% 1px no-repeat,
+    linear-gradient(var(--plus), var(--plus)) 3px 0 / 1px 100% no-repeat;
+  pointer-events: none;
+}
+
+.card:not(.is-expanded) .card-link:focus-visible::after {
+  --plus: var(--fg);
+}
+
 @media (hover: hover) {
+  .card:not(.is-expanded) .card-link:hover:not(:has(.tag:hover))::after {
+    --plus: var(--fg);
+  }
+
   .card-link:hover::before {
     --m: var(--accent);
   }
 }
 
-/* The picture spreads over the card's top and side padding, up to its
-   outline: a pixel in at the top and left (where the outline is drawn just
-   inside the card), right to the edge on the right (where it's drawn just
-   outside). Its bottom stays on the gridline above the title. */
+/* The picture takes the lower half of the card's top square of padding, so
+   it sits half a square in from the top as it does from the sides (lined up
+   with the number and tags on the left and the year on the right) */
 .card-media {
   --fc: var(--line);
   grid-area: media;
   position: relative;
   overflow: hidden;
-  margin: calc(1px - var(--g)) calc(var(--g) * -1) 0 calc(1px - var(--g));
+  margin-top: calc(var(--g) / -2);
   background: var(--bg);
 }
 
@@ -704,11 +745,6 @@ h1 {
 .card-media:has(img, video) {
   background: none;
   box-shadow: none;
-}
-
-/* A placeholder keeps only its bottom line: its other sides are the card's */
-.card-media:not(:has(img, video)) {
-  box-shadow: 0 1px 0 var(--fc);
 }
 
 .card-media img,
@@ -753,8 +789,9 @@ h1 {
   }
 }
 
-/* One square plus a pixel, so the ring sits on the gridlines either side;
-   the negative margin keeps that pixel from making the row taller */
+/* One square plus a pixel, so the ring sits on the gridlines above and
+   below it (and is centred on the one between its sides); the negative
+   margin keeps that pixel from making the row taller */
 .card-num {
   grid-area: num;
   align-self: start;
@@ -785,8 +822,15 @@ h1 {
   color: var(--muted);
 }
 
+/* A card's tags pick that filter (app.js) */
 .card-link .tags {
   grid-area: tags;
+}
+
+.card-link .tag {
+  position: relative;
+  cursor: pointer;
+  transition: color 0.15s;
 }
 
 /* ---- A project opened in place -------------------------------------------- */
