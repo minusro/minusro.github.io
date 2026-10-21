@@ -55,7 +55,7 @@
         "C++",
         "Flash"
       ],
-      "summary": "",
+      "summary": "I was a software engineer on the C++ codebase at EA Bucharest, working in the Game Modes team.",
       "links": [],
       "cover": "media/fifa-14-cover.webp",
       "video": "media/fifa-14-video.mp4",
@@ -95,7 +95,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game designer and developer",
+      "role": "Game design, art direction and software development",
       "studio": "Pronetis",
       "platforms": [
         "iOS",
@@ -105,7 +105,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "",
+      "summary": "We're hiring for a new intern here at Company Incorporated! Your role is distributing office supplies around the workplace. The ideal candidate can move through cramped office spaces without bumping into things. No experience required. Zombies allowed to apply!",
       "links": [],
       "cover": "media/zombie-intern-cover.webp",
       "video": "media/zombie-intern-video.mp4",
@@ -120,7 +120,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game designer and developer",
+      "role": "Game design, art direction and software development",
       "studio": "Pronetis",
       "platforms": [
         "iOS",
@@ -131,7 +131,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "",
+      "summary": "Tiny car chase simulator with a twist: police cars follow you by copying your exact moves one lap later, so you have to plan routes and use quick reflexes to shake them off. Controls: swipe or tap to switch lanes, hold the big red button for Turbo speed, time rewind or firing weapons. Nine locations, sixteen vehicles, mines, missiles and a 70s cop-show soundtrack.",
       "links": [],
       "cover": "media/race-yourself-cover.webp",
       "video": "media/race-yourself-video.mp4",
@@ -183,7 +183,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "",
+      "summary": "Springboard is a rhythm platformer inside ROLI Learn. A seven-piece cartoon band hops across lava and ice, and each jump is a note of a real song  like \"Jump\", \"Eye of the Tiger\" or \"Kids\", played on the light-up LUMI keyboard. Hit the note on time and the critter clears the gap, miss and they fall. It teaches timing and note recognition to people who would never open a lesson.",
       "links": [],
       "cover": "media/springboard-cover-2.webp",
       "video": "media/springboard-video.mp4",
@@ -209,7 +209,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "",
+      "summary": "Superluminal is an arcade shooter inside ROLI Learn: asteroids and enemy ships fly at you, and the only way to shoot is to play the right key on the light-up keyboard. Every dimension is a key signature, asteroid waves arrive as scales and chords, and 144 levels take a beginner from single notes to two-handed finger patterns without ever feeling like an exercise.",
       "links": [],
       "cover": "media/superluminal-cover.webp",
       "video": "media/superluminal-video.mp4",
@@ -255,7 +255,7 @@
         "MRTK",
         "Photon Engine"
       ],
-      "summary": "",
+      "summary": "Sphere is holo|one's off-the-shelf mixed-reality platform for industry: remote expert calls, 3D models pinned in the workspace, and step-by-step task guidance, all synced through one cloud back end. I was an XR software engineer on the headset apps, building for HoloLens and Magic Leap.",
       "links": [],
       "cover": "media/holo-one-sphere-cover.webp",
       "video": "media/holo-one-sphere-video-2.mp4",
@@ -279,7 +279,7 @@
         "Objective-C",
         "C++"
       ],
-      "summary": "",
+      "summary": "BeatSpiral is an iOS groove box built around a \"spiral\" sequencer, allowing you to make and perform electronic music by rearranging the steps of four loops. I designed the app and wrote the audio engine and UI in Objective-C and C++, my first shipped music app.",
       "links": [],
       "cover": "media/beatspiral-cover.webp",
       "video": "media/beatspiral-video.mp4",
@@ -309,7 +309,7 @@
         "C++",
         "Max MSP"
       ],
-      "summary": "",
+      "summary": "Airwave Player is the instrument that ships with ROLI Airwave, a camera that tracks both hands above a keyboard and turns gestures into expression. It runs as a VST3/AUv2 plug-in in DAWs or standalone, with a preset library and 3D visuals that react to every raise, tilt and glide of your hands.",
       "links": [],
       "cover": "media/airwave-player-cover.webp",
       "video": "media/airwave-player-video.mp4",
@@ -418,7 +418,7 @@
         "Unity",
         "C#"
       ],
-      "summary": "",
+      "summary": "ROLI Learn (launched as LUMI) is the companion app for ROLI's light-up keyboards: lessons, a 1,000-song library, chord and scale drills and arcade games, all driven by the keys lighting up under your fingers. I implemented musical notation support as well as its two integrated games, Springboard and Superluminal.",
       "links": [],
       "cover": "media/roli-learn-cover.webp",
       "video": "media/roli-learn-video.mp4",
