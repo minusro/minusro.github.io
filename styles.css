@@ -78,6 +78,10 @@
 html {
   scroll-behavior: smooth;
   overflow-anchor: none;
+  /* Phones (iOS Safari especially) may otherwise enlarge some blocks of
+     text on their own, which knocks it off the grid */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -478,22 +482,15 @@ h1 {
 
 /* ---- Project grid: drawing sheets with crop marks ------------------------- */
 
-/* Column count, card width (in squares) and picture height come from app.js.
-   Rows fill right to left (the newest project top right), while the grid
-   itself stays against the left edge and each card reads left to right. */
+/* Column count, card width (in squares) and picture height come from app.js,
+   which also places each card (rows fill right to left) */
 .projects {
   display: grid;
-  direction: rtl;
-  justify-content: left;
   grid-template-columns: repeat(var(--cols, 1), calc(var(--card-cells, 14) * var(--g)));
   gap: var(--g);
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.card {
-  direction: ltr;
 }
 
 /* The filters let go once the last card's bottom edge has reached their

@@ -429,6 +429,7 @@
     if (!card) return null;
     card.classList.add('is-expanded');
     card.insertAdjacentHTML('beforeend', `<div class="card-detail" data-cat="${primary(p)}">${detailHTML(p)}</div>`);
+    placeCards();
     snapWidths(card.querySelector('.card-detail'));
     return card;
   }
@@ -439,6 +440,7 @@
       card.querySelector('.card-detail')?.remove();
     }
     expandedId = null;
+    placeCards();
   }
 
   function detailHTML(p) {
@@ -534,8 +536,27 @@
       const p = projects.find((x) => x.id === expandedId);
       if (!p || !attachDetail(p)) closeAll();
     }
+    placeCards();
     snapWidths(els.list);
     NAV.refresh();
+  }
+
+  // Rows fill right to left: the newest project top right. Every card gets
+  // its row and column explicitly (rather than an rtl grid, which some
+  // browsers let leak into the cards' contents); an opened card takes a
+  // whole row of its own.
+  function placeCards() {
+    let slot = 0;
+    for (const card of els.list.querySelectorAll('.card')) {
+      if (card.classList.contains('is-expanded')) {
+        slot = Math.ceil(slot / grid.cols) * grid.cols;
+        card.style.gridArea = `${slot / grid.cols + 1} / 1 / auto / -1`;
+        slot += grid.cols;
+      } else {
+        card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${grid.cols - (slot % grid.cols)}`;
+        slot += 1;
+      }
+    }
   }
 
   function cardHTML(p) {
