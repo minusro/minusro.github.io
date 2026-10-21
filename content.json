@@ -52,7 +52,8 @@
         "Windows"
       ],
       "tech": [
-        "C++"
+        "C++",
+        "Flash"
       ],
       "summary": "",
       "links": [],
@@ -124,7 +125,7 @@
       "platforms": [
         "iOS",
         "Android",
-        "AppleTV"
+        "tvOS"
       ],
       "tech": [
         "Unity",
@@ -149,7 +150,8 @@
       "studio": "Pronetis",
       "platforms": [
         "iOS",
-        "Android"
+        "Android",
+        "tvOS"
       ],
       "tech": [
         "Unity",
@@ -173,8 +175,14 @@
       "personal": false,
       "role": "",
       "studio": "ROLI",
-      "platforms": [],
-      "tech": [],
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/springboard-cover-2.webp",
@@ -193,8 +201,14 @@
       "personal": false,
       "role": "",
       "studio": "ROLI",
-      "platforms": [],
-      "tech": [],
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/superluminal-cover.webp",
@@ -235,7 +249,12 @@
         "HoloLens",
         "Magic Leap"
       ],
-      "tech": [],
+      "tech": [
+        "Unity",
+        "C#",
+        "MRTK",
+        "Photon Engine"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/holo-one-sphere-cover.webp",
@@ -278,8 +297,18 @@
       "personal": false,
       "role": "",
       "studio": "ROLI",
-      "platforms": [],
-      "tech": [],
+      "platforms": [
+        "macOS",
+        "Windows",
+        "iOS"
+      ],
+      "tech": [
+        "Unity",
+        "C#",
+        "JUCE",
+        "C++",
+        "Max MSP"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/airwave-player-cover.webp",
@@ -381,8 +410,14 @@
       "personal": false,
       "role": "",
       "studio": "ROLI",
-      "platforms": [],
-      "tech": [],
+      "platforms": [
+        "iOS",
+        "Android"
+      ],
+      "tech": [
+        "Unity",
+        "C#"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/roli-learn-cover.webp",
