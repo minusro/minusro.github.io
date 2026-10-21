@@ -556,6 +556,7 @@
     const card = expandedId && els.list.querySelector(`.card[data-id="${expandedId}"]`);
     const before = card?.getBoundingClientRect();
     collapse();
+    NAV.markYear();
     document.title = baseTitle;
     if (location.hash.startsWith('#/')) replaceUrl(location.pathname + location.search);
     if (!scrollBack || !card) return;
@@ -593,6 +594,9 @@
     if (card && jumpNext) instantly(() => card.scrollIntoView({ block: 'start' }));
     else card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     jumpNext = false;
+    // The year timeline follows (the glide there updates it too, but a card
+    // already in place doesn't scroll at all)
+    NAV.markYear();
     // Its video keeps playing (or starts) while the project is open
     if (card) {
       setHovered(card);

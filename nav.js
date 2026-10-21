@@ -598,18 +598,20 @@ const NAV = (() => {
   function yearAt(y) {
     const cards = [...document.querySelectorAll('#projects .card[data-year]')].filter((c) => c.dataset.year);
     if (!cards.length) return null;
-    const margin = parseFloat(getComputedStyle(cards[0]).scrollMarginTop) || 0;
+    // Each row counts from where scrolling to it stops (an opened card stops
+    // a square lower than the others, see .card.is-expanded's scroll margin)
     const rows = [];
     for (const card of cards) {
       const r = card.getBoundingClientRect();
       const row = rows.at(-1);
       if (row && Math.abs(row.top - (r.top + scrollY)) < 1) row.cards.push(card);
-      else rows.push({ top: r.top + scrollY, bottom: r.bottom + scrollY, cards: [card] });
+      else rows.push({ top: r.top + scrollY, bottom: r.bottom + scrollY, cards: [card], margin: parseFloat(getComputedStyle(card).scrollMarginTop) || 0 });
     }
     const marks = [];
     rows.forEach((row, i) => {
-      const from = row.top - margin;
-      const to = (rows[i + 1]?.top ?? row.bottom) - margin;
+      const next = rows[i + 1];
+      const from = row.top - row.margin;
+      const to = next ? next.top - next.margin : row.bottom - row.margin;
       row.cards.forEach((card, j) => marks.push({ year: card.dataset.year, at: from + ((to - from) * j) / row.cards.length }));
     });
     const max = document.scrollingElement.scrollHeight - innerHeight;
@@ -646,5 +648,5 @@ const NAV = (() => {
     return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   }
 
-  return { init, refresh };
+  return { init, refresh, markYear: () => scrubber && markYear() };
 })();

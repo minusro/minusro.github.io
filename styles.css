@@ -952,7 +952,6 @@ h1 a {
 }
 
 .detail-body p {
-  max-width: 60ch;
   margin: 0 0 var(--g);
 }
 
