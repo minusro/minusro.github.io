@@ -260,9 +260,11 @@
   // The filters hide once About is in place (its heading three squares from
   // the top, or as far up as the page's end lets it come) and below that.
   // The side links follow them: Work while the filters are on screen (or
-  // still to come, further down a small screen), About once they've gone.
-  // A clicked link stays lit until its scroll has ended. Also keeps the
-  // stuck filter bar's grid background lined up with the page's.
+  // still to come further down), About once they've gone. In the narrow
+  // layout Work is only lit while the Work section is actually on screen,
+  // and neither is above it, in the intro. A clicked link stays lit until
+  // its scroll has ended. Also keeps the stuck filter bar's grid background
+  // lined up with the page's.
   let heldSection = null;
   let heldTimer = 0;
 
@@ -279,8 +281,9 @@
       els.toolbar.style.setProperty('--bg-x', `${-t.left}px`);
       els.toolbar.style.setProperty('--bg-y', `${-t.top}px`);
     }
-    const workLit = !aboutInPlace && t.bottom > 0;
-    if (!heldSection) markSection(workLit ? 'work' : 'about');
+    let lit = !aboutInPlace && t.bottom > 0 ? 'work' : 'about';
+    if (lit === 'work' && !wide.matches && $('#work .section-head').getBoundingClientRect().top >= innerHeight) lit = null;
+    if (!heldSection) markSection(lit);
   }
 
   function holdSection(id) {
@@ -294,9 +297,10 @@
     }, 1500);
   }
 
+  // (null clears it)
   function markSection(id) {
     const links = [...document.querySelectorAll('.side-nav a')];
-    if (!links.some((a) => a.dataset.section === id)) return;
+    if (id != null && !links.some((a) => a.dataset.section === id)) return;
     for (const a of links) {
       if (a.dataset.section === id) a.setAttribute('aria-current', 'true');
       else a.removeAttribute('aria-current');

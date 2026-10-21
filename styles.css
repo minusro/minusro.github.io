@@ -905,6 +905,25 @@ h1 {
   margin-left: 1ch;
 }
 
+/* A bigger target than the text: from the row's outer edge (taking in the
+   arrow) at least five squares inwards, and half a square above and below */
+.nav-prev::after,
+.nav-next::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--g) / -2);
+  bottom: calc(var(--g) / -2);
+  width: max(calc(100% + var(--g)), calc(var(--g) * 5));
+}
+
+.nav-prev::after {
+  left: calc(var(--g) * -1);
+}
+
+.nav-next::after {
+  right: calc(var(--g) * -1);
+}
+
 /* Project names in capitals, as on the cards */
 .detail-nav a {
   color: var(--muted);
