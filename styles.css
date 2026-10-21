@@ -381,6 +381,43 @@ h1 {
   }
 }
 
+/* Close: a small ✕ on an opened card, styled like the chevrons, near the
+   card's bottom-right corner: half a square right of and below the tags
+   row's last square. It sits over the card in the card's own grid cell.
+   It's part of the details, so a closed card has none. */
+.detail-close {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  justify-self: end;
+  margin: 0 calc(var(--g) / 2) calc(var(--g) / 2) 0;
+  display: grid;
+  place-items: center;
+  width: var(--g);
+  height: var(--g);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  cursor: pointer;
+}
+
+.detail-close svg {
+  width: calc(10 * var(--px));
+  height: calc(10 * var(--px));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+
+@media (hover: hover) {
+  .detail-close:hover {
+    color: var(--fg);
+  }
+}
+
 /* Section numbers are circled detail callouts, one square across */
 .section-num {
   flex: none;
@@ -498,6 +535,14 @@ h1 {
   text-transform: uppercase;
   cursor: pointer;
   transition: color 0.15s, background-color 0.15s;
+  position: relative;
+}
+
+/* A bigger target than the button: half a square above and below */
+.chip::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--g) / -2) 0;
 }
 
 /* Hover styles only where there's a pointer that hovers: on touch screens
@@ -738,13 +783,16 @@ h1 {
 /* ---- A project opened in place -------------------------------------------- */
 
 /* The card keeps its column, with the previous/next row under it; the
-   description and details take the rest of the row. With only one column
-   it all stacks: card, previous/next, description, details. (The detail
-   wrapper steps aside so its parts can be placed in this grid.) */
+   description and details take the rest of the row (when they run longer
+   than the card, the extra goes below the previous/next row, which stays
+   right under the card). With only one column it all stacks: card,
+   previous/next, description, details. (The detail wrapper steps aside so
+   its parts can be placed in this grid.) */
 .card.is-expanded {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: calc(var(--card-cells, 14) * var(--g)) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   align-items: start;
   gap: var(--g);
 }
@@ -753,9 +801,14 @@ h1 {
   display: contents;
 }
 
-.card.is-expanded > .card-link,
+.card.is-expanded > .card-link {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .card-detail > .detail-nav {
   grid-column: 1;
+  grid-row: 2;
 }
 
 .card-detail > .detail-info {
@@ -765,11 +818,12 @@ h1 {
 
 .projects[data-cols="1"] .card.is-expanded {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: none;
 }
 
 .projects[data-cols="1"] .card-detail > .detail-info {
   grid-column: 1;
-  grid-row: auto;
+  grid-row: 3;
 }
 
 .card.is-expanded > .card-link {
