@@ -362,7 +362,7 @@ h1 {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--muted);
+  color: var(--faint); /* like the section links that aren't selected */
   cursor: pointer;
 }
 
@@ -1053,13 +1053,14 @@ h1 {
 }
 
 /* Narrow windows (phones, tablets): the section links sit side by side at
-   the top right, in the "Portfolio" row two squares from the top. They and
-   the dimension line end where the rightmost card does. Two squares
-   between sections, and an opened project lands where any card does, a
-   square below the filters, with no extra space around it (app.js). */
+   the top right, in the "Portfolio" row a square from the top (where a jump
+   to About puts its heading too). They and the dimension line end where
+   the rightmost card does. Two squares between sections, and an opened
+   project lands where any card does, a square below the filters, with no
+   extra space around it (app.js). */
 @media (max-width: 1023px) {
   :root {
-    --kicker-row: 2;
+    --kicker-row: 1;
   }
 
   .section {
@@ -1067,7 +1068,7 @@ h1 {
   }
 
   .section + .section {
-    scroll-margin-top: calc(var(--g) * 2);
+    scroll-margin-top: var(--g);
   }
 
   .card.is-expanded {
@@ -1099,6 +1100,11 @@ h1 {
 
   .side-nav-line {
     display: none;
+  }
+
+  /* No highlight for the current section here: both links look the same */
+  .side-nav a[aria-current] {
+    color: var(--faint);
   }
 }
 
