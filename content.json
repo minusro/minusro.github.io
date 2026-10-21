@@ -332,7 +332,7 @@
       "tech": [
         "C++"
       ],
-      "summary": "",
+      "summary": "A 7-track stereo loop recorder with timestretching and automatic tempo detection, running on the Teensy-based M8 music handheld.",
       "links": [],
       "cover": "media/l7-cover.webp",
       "video": "media/l7-video.mp4",
@@ -357,7 +357,7 @@
         "C++",
         "JUCE"
       ],
-      "summary": "",
+      "summary": "DAW plugin with 97 classic Jungle breaks you can switch and layer intuitively by using a wholesome, meme-inspired interface.",
       "links": [],
       "cover": "media/loop-brother-cover.webp",
       "video": "media/loop-brother-video-2.mp4",
