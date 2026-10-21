@@ -393,10 +393,9 @@ h1 {
 
 /* Sticks to the top of the window while the projects scroll under it. The
    third of a square of padding below the buttons hides the cards, so they're
-   cut off on a clean edge; the background repeats the page grid, pinned to
-   the window like the real one. It reaches a square past the content on
-   each side to cover the cards' crop marks, and leaves with the last row
-   (.work-list ends there). */
+   cut off on a clean edge. It reaches a square past the content on each side
+   to cover the cards' crop marks, and leaves with the last row (.work-list
+   ends there). */
 .toolbar {
   position: sticky;
   top: 0;
@@ -404,6 +403,13 @@ h1 {
   max-width: calc(var(--rail, 100vw) + var(--g) * 2);
   margin: 0 calc(var(--g) * -1) calc(var(--g) - var(--mask));
   padding: 0 var(--g) var(--mask);
+}
+
+/* Only while it's actually stuck (app.js) does it need a background: the
+   page grid, lined up with the real one behind it. app.js keeps the offset
+   from the window's corner up to date (phones ignore fixed backgrounds);
+   with a mouse the browser pins it to the window itself. */
+.toolbar.is-stuck {
   background-color: var(--bg);
   background-image:
     linear-gradient(var(--grid-major) 1px, transparent 1px),
@@ -415,7 +421,14 @@ h1 {
     calc(var(--g) * 5) calc(var(--g) * 5),
     var(--g) var(--g),
     var(--g) var(--g);
-  background-attachment: fixed;
+  background-position: var(--bg-x, 0) var(--bg-y, 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toolbar.is-stuck {
+    background-position: 0 0;
+    background-attachment: fixed;
+  }
 }
 
 /* The buttons go once the About section is in place (app.js); the bar and
@@ -454,9 +467,13 @@ h1 {
   transition: color 0.15s, background-color 0.15s;
 }
 
-.chip:hover {
-  --fc: color-mix(in srgb, var(--c) 50%, var(--line-strong));
-  color: var(--fg);
+/* Hover styles only where there's a pointer that hovers: on touch screens
+   they would stick to whatever was last tapped */
+@media (hover: hover) {
+  .chip:hover {
+    --fc: color-mix(in srgb, var(--c) 50%, var(--line-strong));
+    color: var(--fg);
+  }
 }
 
 .chip[aria-pressed="true"] {
@@ -503,7 +520,7 @@ h1 {
 /* ---- Project grid: drawing sheets with crop marks ------------------------- */
 
 /* Column count, card width (in squares) and picture height come from app.js,
-   which also places each card (rows fill right to left) */
+   which also places each card (rows fill left to right) */
 .projects {
   display: grid;
   grid-template-columns: repeat(var(--cols, 1), calc(var(--card-cells, 14) * var(--g)));
@@ -558,8 +575,10 @@ h1 {
   text-decoration: none;
 }
 
-.card-link:hover {
-  --fc: var(--fg);
+@media (hover: hover) {
+  .card-link:hover {
+    --fc: var(--fg);
+  }
 }
 
 .card-link:focus-visible {
@@ -584,8 +603,10 @@ h1 {
     linear-gradient(var(--m), var(--m)) calc(100% - 6px) 100% / 1px 13px no-repeat;
 }
 
-.card-link:hover::before {
-  --m: var(--accent);
+@media (hover: hover) {
+  .card-link:hover::before {
+    --m: var(--accent);
+  }
 }
 
 .card-media {
@@ -639,8 +660,10 @@ h1 {
   transition: transform 0.6s var(--ease);
 }
 
-.card-link:hover .ph {
-  transform: scale(1.08);
+@media (hover: hover) {
+  .card-link:hover .ph {
+    transform: scale(1.08);
+  }
 }
 
 /* One square plus a pixel, so the ring sits on the gridlines either side;
@@ -821,7 +844,17 @@ h1 {
 
 .detail-nav a {
   position: relative;
+  min-width: 0;
+  max-width: calc(50% - var(--g) / 2);
   white-space: nowrap;
+}
+
+/* On a narrow phone a long name is cut short (…) on its inner end, so the
+   two never run into each other; the aligned outer ends stay put */
+.nav-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-arrow {
@@ -846,8 +879,10 @@ h1 {
   text-transform: uppercase;
 }
 
-.detail-nav a:hover {
-  color: var(--fg);
+@media (hover: hover) {
+  .detail-nav a:hover {
+    color: var(--fg);
+  }
 }
 
 /* ---- Side column ---------------------------------------------------------- */
@@ -882,12 +917,20 @@ h1 {
   transition: width 0.25s var(--ease);
 }
 
-.side-nav a:hover,
 .side-nav a[aria-current] {
   color: var(--fg);
 }
 
-.side-nav a:hover .side-nav-line,
+@media (hover: hover) {
+  .side-nav a:hover {
+    color: var(--fg);
+  }
+
+  .side-nav a:hover .side-nav-line {
+    width: calc(var(--g) * 2);
+  }
+}
+
 .side-nav a[aria-current] .side-nav-line {
   width: calc(var(--g) * 2);
 }
@@ -907,8 +950,10 @@ h1 {
   text-decoration: none;
 }
 
-.side-contact a:hover {
-  color: var(--fg);
+@media (hover: hover) {
+  .side-contact a:hover {
+    color: var(--fg);
+  }
 }
 
 @media (min-width: 1024px) {
@@ -1279,9 +1324,14 @@ h1 {
   transition: left 0.2s var(--ease), width 0.2s var(--ease);
 }
 
-.scrubber button:hover,
 .scrubber button[aria-current] {
   color: var(--fg);
+}
+
+@media (hover: hover) {
+  .scrubber button:hover {
+    color: var(--fg);
+  }
 }
 
 /* The current year's line is a square longer than the other years' dashes,

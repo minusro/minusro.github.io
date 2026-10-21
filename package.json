@@ -4,7 +4,8 @@
   "description": "Daniel Stanciu's portfolio — danielstanciu.com",
   "scripts": {
     "edit": "node tools/server.mjs --open=editor",
-    "dev": "node tools/server.mjs --open=site"
+    "dev": "node tools/server.mjs --open=site",
+    "stamp": "node tools/stamp.mjs"
   },
   "engines": {
     "node": ">=18"

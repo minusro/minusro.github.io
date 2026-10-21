@@ -14,6 +14,7 @@ import path from 'node:path';
 import { execFile, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { stampAssets } from './stamp.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EDITOR_DIR = path.join(ROOT, 'tools', 'editor');
@@ -219,6 +220,7 @@ async function publish(message) {
 
   try {
     const branch = await git('rev-parse', '--abbrev-ref', 'HEAD');
+    if (await stampAssets(ROOT)) log.push('Stamped the stylesheet and script links in index.html with their new versions.');
     await run('add', '-A');
     const staged = await git('diff', '--cached', '--name-only');
     if (staged) await run('commit', '-m', message);

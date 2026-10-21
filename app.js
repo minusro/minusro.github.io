@@ -27,6 +27,18 @@
   let tag = 'all';
   let expandedId = null;
   let hovered = null;
+  // Touch screens can't hover, so there an opened project's video plays while
+  // its picture is on screen, stops as it scrolls away and starts again from
+  // the beginning when it comes back: scrolling stands in for hovering off
+  // and on.
+  const noHover = matchMedia('(hover: none)');
+  const onScreen = new IntersectionObserver((entries) => {
+    if (!noHover.matches) return;
+    for (const entry of entries) {
+      const card = entry.target.closest('.card.is-expanded');
+      if (card) setHovered(entry.isIntersecting ? card : null);
+    }
+  }, { threshold: 0.25 });
   let jumpNext = false; // the next project opens without a smooth scroll
   // Card grid, in grid squares (see layoutGrid)
   let grid = { cols: 1, cells: 14, mediaRows: 9 };
@@ -81,9 +93,19 @@
     bindEvents();
     NAV.init(navApi());
     // Text widths change once the web fonts arrive
+    // Scrolling by the visitor, from here on
+    let scrolledByHand = false;
+    for (const type of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
+      window.addEventListener(type, () => (scrolledByHand = true), { once: true, passive: true });
+    }
     document.fonts?.ready.then(() => {
       snapWidths();
       alignNavNames();
+      // Headings settle to their exact height with the web fonts too, so a
+      // project opened from its link is glided back exactly into place
+      // (touch screens don't snap to the grid afterwards)
+      const card = !scrolledByHand && els.list.querySelector('.card.is-expanded');
+      if (card) card.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     });
 
     // The browser jumped to #about before the projects rendered and
@@ -153,8 +175,16 @@
       update({ then: pinned ? () => instantly(() => els.list.querySelector('.card')?.scrollIntoView({ block: 'start' })) : null });
     });
 
-    els.list.addEventListener('pointermove', (e) => setHovered(e.target.closest('.card')));
-    els.list.addEventListener('pointerleave', () => setHovered(null));
+    // Hovering means a mouse (or pen). A finger on the screen is a scroll or
+    // a tap, which would otherwise start and stop videos as it goes; on
+    // touch screens an opened project's video plays while it's in view
+    // instead (see onScreen).
+    els.list.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'touch') setHovered(e.target.closest('.card'));
+    });
+    els.list.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'touch') setHovered(null);
+    });
     // Scrolling moves cards out from under a still pointer, so their videos
     // stop; an opened card's carries on until the pointer moves off it.
     window.addEventListener('scroll', () => {
@@ -217,8 +247,10 @@
 
   // The filters hide once About is in place (its heading three squares from
   // the top, or as far up as the page's end lets it come) and below that.
-  // The side links follow them: Work while the filters are on screen, About
-  // otherwise. A clicked link stays lit until its scroll has ended.
+  // The side links follow them: Work while the filters are on screen (or
+  // still to come, further down a small screen), About once they've gone.
+  // A clicked link stays lit until its scroll has ended. Also keeps the
+  // stuck filter bar's grid background lined up with the page's.
   let heldSection = null;
   let heldTimer = 0;
 
@@ -229,8 +261,14 @@
     const aboutInPlace = about.top <= G * 3 + 0.5 || (atEnd && about.top < innerHeight);
     els.toolbar.classList.toggle('is-gone', aboutInPlace);
     const t = els.toolbar.getBoundingClientRect();
-    const filtersShown = !aboutInPlace && t.bottom > 0 && t.top < innerHeight;
-    if (!heldSection) markSection(filtersShown ? 'work' : 'about');
+    const stuck = t.top > els.toolbar.parentElement.getBoundingClientRect().top + 0.5;
+    els.toolbar.classList.toggle('is-stuck', stuck);
+    if (stuck) {
+      els.toolbar.style.setProperty('--bg-x', `${-t.left}px`);
+      els.toolbar.style.setProperty('--bg-y', `${-t.top}px`);
+    }
+    const workLit = !aboutInPlace && t.bottom > 0;
+    if (!heldSection) markSection(workLit ? 'work' : 'about');
   }
 
   function holdSection(id) {
@@ -489,7 +527,10 @@
     else card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     jumpNext = false;
     // Its video keeps playing (or starts) while the project is open
-    if (card) setHovered(card);
+    if (card) {
+      setHovered(card);
+      onScreen.observe(card.querySelector('.card-media'));
+    }
   }
 
   function attachDetail(p) {
@@ -504,6 +545,7 @@
   }
 
   function collapse() {
+    onScreen.disconnect();
     for (const card of els.list.querySelectorAll('.card.is-expanded')) {
       card.classList.remove('is-expanded');
       card.querySelector('.card-detail')?.remove();
@@ -515,10 +557,10 @@
   function detailHTML(p) {
     const nav = visible();
     const i = nav.indexOf(p);
-    // The list runs newest first: < goes back to the older project (the
-    // lower number), > on to the newer one
-    const prev = nav[i + 1];
-    const next = nav[i - 1];
+    // The list runs newest first: < goes to the project before this one (the
+    // newer, higher number), > to the one after it (older, lower number)
+    const prev = nav[i - 1];
+    const next = nav[i + 1];
 
     const meta = [
       ['Year', p.year],
@@ -609,11 +651,10 @@
     NAV.refresh();
   }
 
-  // Rows fill right to left: the newest project top right. Every card gets
-  // its row and column explicitly (rather than an rtl grid, which some
-  // browsers let leak into the cards' contents); an opened card takes a
-  // whole row of its own, with two squares to the rows above and below it
-  // (and to the filters, when it's first).
+  // Rows fill left to right, the newest project top left. Every card gets its
+  // row and column explicitly: an opened card takes a whole row of its own,
+  // with two squares to the rows above and below it (and to the filters,
+  // when it's first).
   function placeCards() {
     let slot = 0;
     const cards = [...els.list.querySelectorAll('.card')];
@@ -625,7 +666,7 @@
         card.style.margin = `${G}px 0 ${i < cards.length - 1 ? G : 0}px`;
         slot += grid.cols;
       } else {
-        card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${grid.cols - (slot % grid.cols)}`;
+        card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${(slot % grid.cols) + 1}`;
         slot += 1;
       }
     }
