@@ -686,11 +686,16 @@ h1 {
   }
 }
 
+/* The picture spreads over the card's top and side padding, up to its
+   outline: a pixel in at the top and left (where the outline is drawn just
+   inside the card), right to the edge on the right (where it's drawn just
+   outside). Its bottom stays on the gridline above the title. */
 .card-media {
   --fc: var(--line);
   grid-area: media;
   position: relative;
   overflow: hidden;
+  margin: calc(1px - var(--g)) calc(var(--g) * -1) 0 calc(1px - var(--g));
   background: var(--bg);
 }
 
@@ -699,6 +704,11 @@ h1 {
 .card-media:has(img, video) {
   background: none;
   box-shadow: none;
+}
+
+/* A placeholder keeps only its bottom line: its other sides are the card's */
+.card-media:not(:has(img, video)) {
+  box-shadow: 0 1px 0 var(--fc);
 }
 
 .card-media img,

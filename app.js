@@ -315,10 +315,11 @@
   // ---- Keeping things on the grid ------------------------------------------
 
   // Fit as many cards across as will go, up to three (at least 12 squares
-  // wide, at most 16), one free square between them; the picture is about
-  // 4:3 in whole squares. With three columns the cards only grow past 12
-  // squares as far as still leaves the year timeline its five free squares
-  // to the right (see nav.js). Returns true if anything changed.
+  // wide, at most 16), one free square between them; the picture, which runs
+  // to the card's top and sides, is about 4:3 in whole squares (mediaRows is
+  // its height below the top padding). With three columns the cards only grow
+  // past 12 squares as far as still leaves the year timeline its five free
+  // squares to the right (see nav.js). Returns true if anything changed.
   function layoutGrid() {
     const across = Math.floor(els.list.clientWidth / G + 0.01);
     const cols = Math.min(3, Math.max(1, Math.floor((across + 1) / 13)));
@@ -717,12 +718,12 @@
   }
 
   // Cover image (or a pattern seeded from the project id) plus an optional video loop.
-  // The placeholder's circle is centred on a grid crossing inside the picture.
+  // The placeholder's circle is centred on a grid crossing inside the picture
+  // (which runs to the card's top and sides, starting a pixel in from its corner).
   function mediaHTML(p) {
     const h = hash(p.id);
-    const across = grid.cells - 2;
-    const x = G * (1 + (h % Math.max(1, across - 1)));
-    const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows - 1)));
+    const x = G * (1 + (h % Math.max(1, grid.cells - 1))) - 1;
+    const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows))) - 1;
     const gap = [6, 8, 12][(h >>> 24) % 3];
     const fit = `object-position: 50% ${(1 - p.mediaAlign) * 50}%`;
     const gif = /\.gif$/i.test(p.video);
