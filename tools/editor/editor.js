@@ -501,6 +501,12 @@
           </label>
         </div>
 
+        <label class="check-row">
+          <input type="checkbox" data-flag="personal"${p.personal ? ' checked' : ''}>
+          Personal project
+          <span class="hint">The site says “Personal project” where the studio would go (the studio above is ignored).</span>
+        </label>
+
         <div class="row">
           <label class="field">
             <span class="label">Platforms</span>
@@ -780,7 +786,7 @@
   }
 
   function blankProject() {
-    return { id: '', title: '', year: null, tags: [], hidden: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
+    return { id: '', title: '', year: null, tags: [], hidden: false, personal: false, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
   }
 
   // Same order as the site: newest first, undated last, ties keep file order.

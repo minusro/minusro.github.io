@@ -72,8 +72,12 @@
   display: none !important;
 }
 
+/* No scroll anchoring: opening or closing a project reflows the cards, and
+   the browser's own correction made the page jump before app.js scrolled
+   it. The media boxes have fixed sizes, so nothing else needs it. */
 html {
   scroll-behavior: smooth;
+  overflow-anchor: none;
 }
 
 body {
@@ -200,8 +204,7 @@ code {
 /* When the cards sit in more than one column, app.js sets --rail to their
    total width and the section lines stop at the rightmost card, not the
    page edge (narrow windows add the intro's line and links, below) */
-.section-head,
-.toolbar {
+.section-head {
   max-width: var(--rail, none);
 }
 
@@ -364,8 +367,42 @@ h1 {
 
 /* ---- Category filters and tags ------------------------------------------- */
 
+/* Sticks to the top of the window while the projects scroll under it. The
+   third of a square of padding below the buttons hides the cards, so they're
+   cut off on a clean edge; the background repeats the page grid, pinned to
+   the window like the real one. It reaches a square past the content on
+   each side to cover the cards' crop marks, and leaves with the last row
+   (.work-list ends there). */
 .toolbar {
-  margin-bottom: var(--g);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  max-width: calc(var(--rail, 100vw) + var(--g) * 2);
+  margin: 0 calc(var(--g) * -1) calc(var(--g) * 2 / 3);
+  padding: 0 var(--g) calc(var(--g) / 3);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:
+    calc(var(--g) * 5) calc(var(--g) * 5),
+    calc(var(--g) * 5) calc(var(--g) * 5),
+    var(--g) var(--g),
+    var(--g) var(--g);
+  background-attachment: fixed;
+}
+
+/* The buttons go once the About section is in place (app.js); the bar and
+   its mask stay, so cards still slide under a clean edge */
+.toolbar .filters {
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.toolbar.is-gone .filters {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .filters {
@@ -441,9 +478,13 @@ h1 {
 
 /* ---- Project grid: drawing sheets with crop marks ------------------------- */
 
-/* Column count, card width (in squares) and picture height come from app.js */
+/* Column count, card width (in squares) and picture height come from app.js.
+   Rows fill right to left (the newest project top right), while the grid
+   itself stays against the left edge and each card reads left to right. */
 .projects {
   display: grid;
+  direction: rtl;
+  justify-content: left;
   grid-template-columns: repeat(var(--cols, 1), calc(var(--card-cells, 14) * var(--g)));
   gap: var(--g);
   margin: 0;
@@ -451,9 +492,27 @@ h1 {
   list-style: none;
 }
 
+.card {
+  direction: ltr;
+}
+
+/* The filters let go once the last card's bottom edge has reached their
+   mask: this extra square at the end of the list (taken back by the negative
+   margin, so nothing below moves) holds them one square longer. */
+.work-list {
+  margin-bottom: calc(var(--g) * -1);
+}
+
+.work-list::after {
+  content: "";
+  display: block;
+  height: var(--g);
+}
+
+/* Scrolled to, a card lands just below the filters (app.js measures them) */
 .card,
 .card-link {
-  scroll-margin-top: var(--g);
+  scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
 }
 
 /* One square of padding; picture; the title row, centred on the gridline
@@ -597,12 +656,6 @@ h1 {
   grid-area: tags;
 }
 
-/* Cards slide to their new places when the filter changes (View Transitions) */
-::view-transition-group(*) {
-  animation-duration: 0.45s;
-  animation-timing-function: var(--ease);
-}
-
 /* ---- A project opened in place -------------------------------------------- */
 
 /* The card keeps its column; the details take the rest of the row
@@ -677,6 +730,11 @@ h1 {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
+}
+
+/* "Personal project", coloured like a value */
+.detail-meta .meta-value {
+  color: var(--fg);
 }
 
 .detail-meta dd {

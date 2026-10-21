@@ -475,11 +475,33 @@ const NAV = (() => {
       const b = e.target.closest('[data-year]');
       if (!b) return;
       const year = b.dataset.year;
-      const target =
-        document.querySelector(`#projects .tl-year[data-year="${year}"]`) ??
-        document.querySelector(`#projects .card:not([data-dup])[data-year="${year}"]`);
-      target?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      const target = document.querySelector(`#projects .card[data-year="${year}"]`);
+      if (!target) return;
+      // On the way the highlight runs through the years in between (never
+      // outside them), and lands on the clicked year once the scroll has
+      // ended, or straight away if there's nowhere to scroll.
+      const page = document.scrollingElement;
+      const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+      const to = Math.max(0, Math.min(page.scrollHeight - innerHeight, scrollY + target.getBoundingClientRect().top - margin));
+      clearTimeout(clickedTimer);
+      if (Math.abs(to - scrollY) < 1) {
+        clickedYear = null;
+        setYear(year);
+        return;
+      }
+      clickedFrom = scrubber.querySelector('[aria-current]')?.dataset.year ?? null;
+      clickedYear = year;
+      // In case the scroll's end isn't reported
+      clickedTimer = setTimeout(() => settleYear(), 2000);
+      target.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'instant' : 'smooth' });
     });
+    window.addEventListener('scrollend', () => settleYear());
+    // Scrolling by hand takes over from a click
+    for (const type of ['wheel', 'touchstart', 'keydown']) {
+      window.addEventListener(type, () => {
+        if (clickedYear) settleYear(false);
+      }, { passive: true });
+    }
 
     // Only show it while the project index is on screen.
     new IntersectionObserver(([entry]) => {
@@ -539,12 +561,70 @@ const NAV = (() => {
     scrubber.classList.toggle('is-visible', scrubberVisible && scrubber.querySelector('li') !== null);
   }
 
-  // Highlight the year of the first project below the header.
+  // Highlight the year being read. Every year gets its own stretch of
+  // scrolling, so none is skipped: each row of cards is current from when
+  // it reaches the filters until the next row does, and that stretch is
+  // shared between its cards in reading order. Near the end of the page,
+  // where the last rows can't reach the filters, the remaining stretches
+  // are squeezed into the scrolling that's left.
   function markYear() {
-    const top = 40;
-    const first = [...document.querySelectorAll('#projects .card:not([data-dup])[data-year]')]
-      .find((el) => el.dataset.year && el.getBoundingClientRect().bottom > top);
-    const year = first?.dataset.year;
+    let year = yearAt(scrollY);
+    if (clickedYear && year) {
+      // Mid-scroll after a click: only the years from the one lit when it was
+      // clicked to the clicked one
+      const years = [...scrubber.querySelectorAll('button')].map((b) => b.dataset.year);
+      const a = years.indexOf(clickedFrom ?? clickedYear);
+      const b = years.indexOf(clickedYear);
+      const i = Math.min(Math.max(years.indexOf(year), Math.min(a, b)), Math.max(a, b));
+      year = years[i];
+    }
+    setYear(year);
+  }
+
+  function yearAt(y) {
+    const cards = [...document.querySelectorAll('#projects .card[data-year]')].filter((c) => c.dataset.year);
+    if (!cards.length) return null;
+    const margin = parseFloat(getComputedStyle(cards[0]).scrollMarginTop) || 0;
+    const rows = [];
+    for (const card of cards) {
+      const r = card.getBoundingClientRect();
+      const row = rows.at(-1);
+      if (row && Math.abs(row.top - (r.top + scrollY)) < 1) row.cards.push(card);
+      else rows.push({ top: r.top + scrollY, bottom: r.bottom + scrollY, cards: [card] });
+    }
+    const marks = [];
+    rows.forEach((row, i) => {
+      const from = row.top - margin;
+      const to = (rows[i + 1]?.top ?? row.bottom) - margin;
+      row.cards.forEach((card, j) => marks.push({ year: card.dataset.year, at: from + ((to - from) * j) / row.cards.length }));
+    });
+    const max = document.scrollingElement.scrollHeight - innerHeight;
+    const last = marks.at(-1).at;
+    const squeeze = Math.max(0, max - innerHeight / 2);
+    if (last > max && last > squeeze) {
+      for (const m of marks) if (m.at > squeeze) m.at = squeeze + ((m.at - squeeze) * (max - squeeze)) / (last - squeeze);
+    }
+    let year = marks[0].year;
+    for (const m of marks) if (m.at <= y + 0.5) year = m.year;
+    return year;
+  }
+
+  // A year clicked in the scrubber, waiting for its scroll to end
+  let clickedYear = null;
+  let clickedFrom = null;
+  let clickedTimer = 0;
+
+  function settleYear(keep = true) {
+    if (!clickedYear) return;
+    const year = clickedYear;
+    clickedYear = null;
+    clearTimeout(clickedTimer);
+    if (keep === false) markYear();
+    else setYear(year);
+  }
+
+  function setYear(year) {
+    if (year == null) return;
     for (const b of scrubber.querySelectorAll('button')) b.toggleAttribute('aria-current', b.dataset.year === year);
   }
 

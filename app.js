@@ -60,6 +60,7 @@
         video: safeMedia(p.video),
         // Vertical alignment of the cover and video: 1 top, 0 middle, -1 bottom
         mediaAlign: Math.max(-1, Math.min(1, Number(p.mediaAlign) || 0)),
+        personal: p.personal === true,
         order,
       }))
       .sort((a, b) => compare(a, b, 1))
@@ -72,7 +73,7 @@
     renderFilters();
     markSection(location.hash === '#about' ? 'about' : 'work');
     layoutGrid();
-    update({ syncUrl: false, animate: false });
+    update({ syncUrl: false });
     route();
     bindEvents();
     NAV.init(navApi());
@@ -89,7 +90,7 @@
   function bindEvents() {
     $('.side-nav').addEventListener('click', (e) => {
       const a = e.target.closest('a[data-section]');
-      if (a) markSection(a.dataset.section);
+      if (a) holdSection(a.dataset.section);
     });
 
     // Re-fit the card grid when the space for it changes.
@@ -102,6 +103,13 @@
       });
     }).observe(els.list);
 
+    // Cards scrolled into view land below the sticky filters, however many
+    // rows of buttons they wrap to.
+    new ResizeObserver(() => {
+      const h = els.toolbar.getBoundingClientRect().height + parseFloat(getComputedStyle(els.toolbar).marginBottom);
+      els.page.style.setProperty('--sticky-h', `${Math.ceil(h / G - 0.01) * G}px`);
+    }).observe(els.toolbar);
+
     // Re-fit the page length when the content or the window changes height.
     let lengthening = 0;
     const refit = () => {
@@ -113,24 +121,30 @@
 
     settleOnGrid();
 
-    let edgeCheck = 0;
-    window.addEventListener('scroll', () => {
-      if (edgeCheck) return;
-      edgeCheck = requestAnimationFrame(() => {
-        edgeCheck = 0;
-        const page = document.scrollingElement;
-        if (page.scrollHeight <= window.innerHeight + 1) return;
-        const links = document.querySelectorAll('.side-nav a');
-        if (page.scrollTop <= 0) markSection(links[0]?.dataset.section);
-        else if (page.scrollTop + window.innerHeight >= page.scrollHeight - 1) markSection(links[links.length - 1]?.dataset.section);
+    let following = 0;
+    const follow = () => {
+      if (following) return;
+      following = requestAnimationFrame(() => {
+        following = 0;
+        followScroll();
       });
-    }, { passive: true });
+    };
+    window.addEventListener('scroll', follow, { passive: true });
+    window.addEventListener('resize', follow);
+    window.addEventListener('scrollend', () => {
+      heldSection = null;
+      followScroll();
+    });
+    followScroll();
 
     els.toolbar.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-cat]');
       if (!b) return;
       tag = b.dataset.cat;
-      update();
+      // With the filters pinned to the top, jump to the first project of the
+      // new selection (as the timeline's newest year would); otherwise stay.
+      const pinned = els.toolbar.getBoundingClientRect().top <= 0.5;
+      update({ then: pinned ? () => els.list.querySelector('.card')?.scrollIntoView({ block: 'start', behavior: 'instant' }) : null });
     });
 
     els.list.addEventListener('pointermove', (e) => setHovered(e.target.closest('.card')));
@@ -195,9 +209,35 @@
     }
   }
 
-  // Highlight a side-nav link. It follows what was clicked, not the scroll
-  // position, except that reaching the very top or bottom of the page selects
-  // the first or last link.
+  // The filters hide once About is in place (its heading three squares from
+  // the top, or as far up as the page's end lets it come) and below that.
+  // The side links follow them: Work while the filters are on screen, About
+  // otherwise. A clicked link stays lit until its scroll has ended.
+  let heldSection = null;
+  let heldTimer = 0;
+
+  function followScroll() {
+    const page = document.scrollingElement;
+    const about = $('#about .section-head').getBoundingClientRect();
+    const atEnd = page.scrollHeight > innerHeight + 1 && page.scrollTop + innerHeight >= page.scrollHeight - 1;
+    const aboutInPlace = about.top <= G * 3 + 0.5 || (atEnd && about.top < innerHeight);
+    els.toolbar.classList.toggle('is-gone', aboutInPlace);
+    const t = els.toolbar.getBoundingClientRect();
+    const filtersShown = !aboutInPlace && t.bottom > 0 && t.top < innerHeight;
+    if (!heldSection) markSection(filtersShown ? 'work' : 'about');
+  }
+
+  function holdSection(id) {
+    heldSection = id;
+    markSection(id);
+    clearTimeout(heldTimer);
+    // In case the scroll's end isn't reported (or there was nothing to scroll)
+    heldTimer = setTimeout(() => {
+      heldSection = null;
+      followScroll();
+    }, 1500);
+  }
+
   function markSection(id) {
     const links = [...document.querySelectorAll('.side-nav a')];
     if (!links.some((a) => a.dataset.section === id)) return;
@@ -310,19 +350,10 @@
 
   // ---- State ---------------------------------------------------------------
 
-  function update({ syncUrl = true, animate = true } = {}) {
-    const apply = () => {
-      for (const b of els.filters.querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.cat === tag);
-      renderProjects();
-    };
-
-    // Cards slide to their new places when the filter changes.
-    if (animate && document.startViewTransition && !reduceMotion.matches) {
-      // A quick second click skips the running transition, which rejects `ready`.
-      document.startViewTransition(apply).ready.catch(() => {});
-    } else {
-      apply();
-    }
+  function update({ syncUrl = true, then = null } = {}) {
+    for (const b of els.filters.querySelectorAll('button')) b.setAttribute('aria-pressed', b.dataset.cat === tag);
+    renderProjects();
+    then?.();
 
     if (syncUrl) {
       // Keep any other parameters as they are.
@@ -359,7 +390,7 @@
     const p = m && projects.find((x) => x.id === m[1]);
     if (!p) {
       // #work / #about (typed, or via Back/Forward) count like a click on that link
-      markSection(location.hash.slice(1));
+      holdSection(location.hash.slice(1));
       return closeAll();
     }
     expandCard(p);
@@ -377,7 +408,7 @@
       // Filtered out: show everything so the card exists.
       tag = 'all';
       expandedId = p.id;
-      update({ animate: false });
+      update();
     }
     collapse();
     expandedId = p.id;
@@ -427,7 +458,10 @@
         <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8"/></svg>
       </button>
       <dl class="detail-meta">
-        ${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
+        ${meta.map(([k, v]) => k === 'Studio' && p.personal
+          // Personal projects say so, on two rows, instead of naming a studio
+          ? '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
+          : `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
       </dl>
       <div class="detail-body${p.summary ? '' : ' is-todo'}">
         ${p.summary
@@ -501,7 +535,7 @@
 
   function cardHTML(p) {
     return `
-      <li class="card" data-id="${p.id}" data-cat="${primary(p)}" data-year="${p.year ?? ''}" style="view-transition-name: card-${p.id}">
+      <li class="card" data-id="${p.id}" data-cat="${primary(p)}" data-year="${p.year ?? ''}">
         <a class="card-link" href="#/${p.id}">
           <div class="card-media" aria-hidden="true">${mediaHTML(p)}</div>
           <span class="card-num">${p.num}</span>
@@ -557,7 +591,7 @@
       },
       goto(section) {
         closeAll();
-        markSection(section);
+        holdSection(section);
         const smooth = reduceMotion.matches ? 'auto' : 'smooth';
         if (section === 'top') window.scrollTo({ top: 0, behavior: smooth });
         else document.getElementById(section)?.scrollIntoView({ behavior: smooth });

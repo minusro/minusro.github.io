@@ -146,6 +146,7 @@ function validate(c) {
     if (!String(p.title ?? '').trim()) return `Project "${p.id}" needs a title`;
     if (p.year != null && !(Number.isInteger(p.year) && p.year > 1900 && p.year < 2200)) return `"${name}": year must be a number like 2019`;
     if (!Array.isArray(p.tags) || p.tags.some((t) => !catIds.has(t))) return `"${name}" has a tag that isn't a category`;
+    if (p.personal != null && typeof p.personal !== 'boolean') return `"${name}": "personal" must be true or false`;
     if (p.mediaAlign != null && !(typeof p.mediaAlign === 'number' && p.mediaAlign >= -1 && p.mediaAlign <= 1)) return `"${name}": vertical alignment must be between -1 and 1`;
     for (const key of ['cover', 'video']) {
       if (p[key] && !MEDIA_PATH.test(p[key]) && !/^https?:\/\/\S+$/.test(p[key])) return `"${name}": ${key} must be a file in media/ or a web address`;

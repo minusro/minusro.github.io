@@ -56,11 +56,15 @@
           <h2 id="work-title">Work</h2>
         </header>
 
-        <div class="toolbar mono" id="toolbar">
-          <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
-        </div>
+        <!-- The filters stick to the top while the projects scroll under
+             them, and leave with the last row -->
+        <div class="work-list">
+          <div class="toolbar mono" id="toolbar">
+            <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+          </div>
 
-        <ol class="projects" id="projects"></ol>
+          <ol class="projects" id="projects"></ol>
+        </div>
         <noscript><p class="placeholder">The project index needs JavaScript.</p></noscript>
       </section>
 
