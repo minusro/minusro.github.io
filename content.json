@@ -1,7 +1,7 @@
 {
   "site": {
-    "tagline": "Games, AR and music software.",
-    "about": "14 years of games, AR and music software development experience.",
+    "tagline": "Games + music + XR software",
+    "about": "14 years of games, music and XR software development experience.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.",
     "email": "minusro@gmail.com",
     "links": [
       {
@@ -22,16 +22,16 @@
       "color": "#ff7a45"
     },
     {
-      "id": "ar",
-      "label": "AR",
-      "short": "AR",
-      "color": "#3fd5ff"
-    },
-    {
       "id": "music",
       "label": "Music",
       "short": "Music",
       "color": "#c18bff"
+    },
+    {
+      "id": "xr",
+      "label": "XR",
+      "short": "XR",
+      "color": "#3fd5ff"
     }
   ],
   "projects": [
@@ -43,6 +43,7 @@
         "games"
       ],
       "hidden": false,
+      "personal": false,
       "role": "Software engineer",
       "studio": "EA Sports",
       "platforms": [
@@ -55,8 +56,8 @@
       ],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
+      "cover": "media/fifa-14-cover.webp",
+      "video": "media/fifa-14-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -67,6 +68,7 @@
         "games"
       ],
       "hidden": true,
+      "personal": false,
       "role": "Game developer",
       "studio": "Pronetis Games",
       "platforms": [
@@ -91,6 +93,7 @@
         "games"
       ],
       "hidden": false,
+      "personal": false,
       "role": "Game designer and developer",
       "studio": "Pronetis",
       "platforms": [
@@ -103,9 +106,9 @@
       ],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
-      "mediaAlign": 0
+      "cover": "media/zombie-intern-cover.webp",
+      "video": "media/zombie-intern-video.mp4",
+      "mediaAlign": 0.7
     },
     {
       "id": "race-yourself",
@@ -115,6 +118,7 @@
         "games"
       ],
       "hidden": false,
+      "personal": false,
       "role": "Game designer and developer",
       "studio": "Pronetis",
       "platforms": [
@@ -128,9 +132,9 @@
       ],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
-      "mediaAlign": 0
+      "cover": "media/race-yourself-cover.webp",
+      "video": "media/race-yourself-video.mp4",
+      "mediaAlign": -0.95
     },
     {
       "id": "sector-escape",
@@ -140,6 +144,7 @@
         "games"
       ],
       "hidden": false,
+      "personal": false,
       "role": "Game design, art direction and software development",
       "studio": "Pronetis",
       "platforms": [
@@ -159,39 +164,41 @@
     {
       "id": "springboard",
       "title": "Springboard",
+      "year": 2021,
+      "tags": [
+        "music",
+        "games"
+      ],
+      "hidden": false,
+      "personal": false,
+      "role": "",
+      "studio": "ROLI",
+      "platforms": [],
+      "tech": [],
+      "summary": "",
+      "links": [],
+      "cover": "media/springboard-cover.webp",
+      "video": "media/springboard-video.mp4",
+      "mediaAlign": 0
+    },
+    {
+      "id": "superluminal",
+      "title": "Superluminal",
       "year": 2022,
       "tags": [
         "music",
         "games"
       ],
       "hidden": false,
+      "personal": false,
       "role": "",
       "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
-      "mediaAlign": 0
-    },
-    {
-      "id": "superluminal",
-      "title": "Superluminal",
-      "year": 2023,
-      "tags": [
-        "music",
-        "games"
-      ],
-      "hidden": false,
-      "role": "",
-      "studio": "ROLI",
-      "platforms": [],
-      "tech": [],
-      "summary": "",
-      "links": [],
-      "cover": "",
-      "video": "",
+      "cover": "media/superluminal-cover.webp",
+      "video": "media/superluminal-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -202,6 +209,7 @@
         "games"
       ],
       "hidden": true,
+      "personal": true,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -217,9 +225,10 @@
       "title": "holo|one Sphere",
       "year": 2018,
       "tags": [
-        "ar"
+        "xr"
       ],
       "hidden": false,
+      "personal": false,
       "role": "Augmented Reality software engineer",
       "studio": "holo|one",
       "platforms": [
@@ -229,8 +238,8 @@
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
+      "cover": "media/holo-one-sphere-cover.webp",
+      "video": "media/holo-one-sphere-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -241,6 +250,7 @@
         "music"
       ],
       "hidden": false,
+      "personal": false,
       "role": "App designer and Audio / UI programmer",
       "studio": "Xylio",
       "platforms": [
@@ -252,8 +262,8 @@
       ],
       "summary": "",
       "links": [],
-      "cover": "",
-      "video": "",
+      "cover": "media/beatspiral-cover.webp",
+      "video": "media/beatspiral-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -261,18 +271,19 @@
       "title": "Airwave Player",
       "year": 2025,
       "tags": [
-        "ar",
+        "xr",
         "music"
       ],
       "hidden": false,
+      "personal": false,
       "role": "",
       "studio": "ROLI",
       "platforms": [],
       "tech": [],
       "summary": "",
       "links": [],
-      "cover": "media/airwave-player-cover-2.webp",
-      "video": "media/airwave-player-video-2.mp4",
+      "cover": "media/airwave-player-cover.webp",
+      "video": "media/airwave-player-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -283,14 +294,19 @@
         "music"
       ],
       "hidden": false,
+      "personal": true,
       "role": "",
-      "studio": "side project",
-      "platforms": [],
-      "tech": [],
+      "studio": "",
+      "platforms": [
+        "Teensy"
+      ],
+      "tech": [
+        "C++"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/l7-cover.webp",
-      "video": "media/l7-video-2.mp4",
+      "video": "media/l7-video.mp4",
       "mediaAlign": 0
     },
     {
@@ -301,15 +317,22 @@
         "music"
       ],
       "hidden": false,
+      "personal": true,
       "role": "",
-      "studio": "side project",
-      "platforms": [],
-      "tech": [],
+      "studio": "",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ],
+      "tech": [
+        "C++",
+        "JUCE"
+      ],
       "summary": "",
       "links": [],
       "cover": "media/loop-brother-cover-2.webp",
       "video": "media/loop-brother-video.mp4",
-      "mediaAlign": -1
+      "mediaAlign": -0.95
     },
     {
       "id": "gk-rowing",
@@ -317,6 +340,7 @@
       "year": 2014,
       "tags": [],
       "hidden": true,
+      "personal": false,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -335,6 +359,7 @@
         "music"
       ],
       "hidden": true,
+      "personal": false,
       "role": "",
       "studio": "",
       "platforms": [],
@@ -353,6 +378,7 @@
         "music"
       ],
       "hidden": false,
+      "personal": false,
       "role": "",
       "studio": "ROLI",
       "platforms": [],
