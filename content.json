@@ -95,7 +95,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game design, art direction and software development",
+      "role": "Game design, art direction, software development",
       "studio": "Pronetis",
       "platforms": [
         "iOS",
@@ -120,7 +120,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game design, art direction and software development",
+      "role": "Game design, art direction, software development",
       "studio": "Pronetis",
       "platforms": [
         "iOS",
@@ -146,7 +146,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game design, art direction and software development",
+      "role": "Game design, art direction, software development",
       "studio": "Pronetis",
       "platforms": [
         "iOS",
@@ -173,7 +173,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game design and software development",
+      "role": "Game design, software development",
       "studio": "ROLI",
       "platforms": [
         "iOS",
@@ -199,7 +199,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Game design and software development",
+      "role": "Game design, software development",
       "studio": "ROLI",
       "platforms": [
         "iOS",
@@ -243,7 +243,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "UX design and software development",
+      "role": "UX design, software development",
       "studio": "holo|one",
       "platforms": [
         "HoloLens",
@@ -270,7 +270,7 @@
       ],
       "hidden": false,
       "personal": false,
-      "role": "Instrument design and software development",
+      "role": "Instrument design, software development",
       "studio": "Xylio",
       "platforms": [
         "iOS"
@@ -324,7 +324,7 @@
       ],
       "hidden": false,
       "personal": true,
-      "role": "App design and firmware development",
+      "role": "App design, firmware development",
       "studio": "",
       "platforms": [
         "Teensy 4.x"
@@ -347,7 +347,7 @@
       ],
       "hidden": false,
       "personal": true,
-      "role": "Instrument design, art direction and software development",
+      "role": "Instrument design, art direction, software development",
       "studio": "",
       "platforms": [
         "macOS",
