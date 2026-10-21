@@ -249,9 +249,10 @@ code {
   mask-image: radial-gradient(ellipse 80% 90% at 65% 40%, #000 25%, transparent 80%);
 }
 
-/* "Portfolio", with the target mark on the left edge line. It's drawn half
-   a square lower than its slot (centred in a row of squares, not on a
-   gridline) without moving anything after it. */
+/* "Portfolio", with the target mark on the left edge line, drawn half a
+   square lower than its slot (centred in a row of squares, not on a
+   gridline) without moving anything after it. Hidden for now: the row
+   keeps its place, so nothing else moves. */
 .kicker {
   position: relative;
   top: calc(var(--g) / 2);
@@ -263,6 +264,7 @@ code {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
+  visibility: hidden;
 }
 
 /* Odd size, so the mark has a centre pixel to put on the gridline */
@@ -837,7 +839,6 @@ h1 {
 .detail-nav {
   display: flex;
   justify-content: space-between;
-  gap: var(--g);
   padding-inline: var(--g);
   font: calc(13 * var(--px))/var(--g) var(--font-mono);
 }
@@ -845,12 +846,13 @@ h1 {
 .detail-nav a {
   position: relative;
   min-width: 0;
-  max-width: calc(50% - var(--g) / 2);
+  max-width: 50%;
   white-space: nowrap;
 }
 
-/* On a narrow phone a long name is cut short (…) on its inner end, so the
-   two never run into each other; the aligned outer ends stay put */
+/* The two names may come right up to each other; only a name longer than
+   half the row is cut short (…), on its inner end, so they never overlap.
+   The aligned outer ends stay put. */
 .nav-name {
   display: block;
   overflow: hidden;
@@ -921,13 +923,11 @@ h1 {
   color: var(--fg);
 }
 
+/* Hovering only changes the colour (the dash follows it), as in the year
+   list; the current section's dash is the long one */
 @media (hover: hover) {
   .side-nav a:hover {
     color: var(--fg);
-  }
-
-  .side-nav a:hover .side-nav-line {
-    width: calc(var(--g) * 2);
   }
 }
 
@@ -1015,10 +1015,28 @@ h1 {
   }
 }
 
-/* Narrow windows (one column): the section links sit side by side at the
-   top right, on the same gridline as "Portfolio". They and the dimension
-   line end where the rightmost card does. */
+/* Narrow windows (phones, tablets): the section links sit side by side at
+   the top right, in the "Portfolio" row two squares from the top. They and
+   the dimension line end where the rightmost card does. Two squares
+   between sections, and an opened project lands where any card does, a
+   square below the filters, with no extra space around it (app.js). */
 @media (max-width: 1023px) {
+  :root {
+    --kicker-row: 2;
+  }
+
+  .section {
+    padding-block: calc(var(--g) * 2);
+  }
+
+  .section + .section {
+    scroll-margin-top: calc(var(--g) * 2);
+  }
+
+  .card.is-expanded {
+    scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
+  }
+
   .page-side {
     position: relative;
   }

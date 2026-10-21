@@ -503,7 +503,8 @@ const NAV = (() => {
       }, { passive: true });
     }
 
-    // Only show it while the project index is on screen.
+    // Only show it while the project index is on screen, and the filters are.
+    new MutationObserver(showScrubber).observe($('#toolbar'), { attributes: true, attributeFilter: ['class'] });
     new IntersectionObserver(([entry]) => {
       scrubberVisible = entry.isIntersecting;
       showScrubber();
@@ -518,6 +519,8 @@ const NAV = (() => {
     };
     window.addEventListener('resize', replace);
     new ResizeObserver(replace).observe($('#work .section-head'));
+    // The side column settles once the web fonts are in
+    document.fonts?.ready.then(replace);
     placeScrubber();
 
     let ticking = false;
@@ -549,17 +552,27 @@ const NAV = (() => {
 
   // It needs five free squares right of the content (the end of the Work
   // heading's line, which stops at the rightmost card), and sits with its
-  // year labels three squares from the content.
+  // year labels three squares from the content. The first year is on the
+  // row of the side column's Work link and the rest run down from there
+  // (centred in the window if that link isn't shown).
   function placeScrubber() {
     const right = $('#work .section-head').getBoundingClientRect().right;
     const G = gridStep();
     const room = document.documentElement.clientWidth - right >= G * 5;
     scrubber.hidden = !room;
-    if (room) scrubber.style.left = `${right + G * 2}px`;
+    if (!room) return;
+    scrubber.style.left = `${right + G * 2}px`;
+    const work = $('.side-nav a[data-section="work"]');
+    const top = work?.offsetParent ? work.getBoundingClientRect().top : null;
+    scrubber.style.top = top == null ? '' : `${top}px`;
+    scrubber.style.transform = top == null ? '' : 'none';
   }
 
+  // Shown while the project index is on screen, and not once the filters
+  // have been hidden (About in place, see app.js)
   function showScrubber() {
-    scrubber.classList.toggle('is-visible', scrubberVisible && scrubber.querySelector('li') !== null);
+    const filtersGone = $('#toolbar').classList.contains('is-gone');
+    scrubber.classList.toggle('is-visible', scrubberVisible && !filtersGone && scrubber.querySelector('li') !== null);
   }
 
   // Highlight the year being read. Every year gets its own stretch of

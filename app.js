@@ -19,6 +19,11 @@
   const readG = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--g')) || 24;
   let G = readG();
   window.addEventListener('resize', () => (G = readG()));
+  // The wide layout (side column) or the narrow one (phones, tablets)
+  const wide = matchMedia('(min-width: 1024px)');
+  // How far below the top of the window About's heading sits once it's in
+  // place: where jumping to it puts it (its scroll margin, styles.css)
+  const aboutGap = () => parseFloat(getComputedStyle($('#about')).scrollMarginTop) || G * 3;
 
   let site = {};
   let categories = [];
@@ -130,6 +135,8 @@
         snapWidths();
       });
     }).observe(els.list);
+    // An opened card's extra space differs between the wide and narrow layouts
+    wide.addEventListener('change', placeCards);
 
     // Cards scrolled into view land below the sticky filters, however many
     // rows of buttons they wrap to.
@@ -258,7 +265,7 @@
     const page = document.scrollingElement;
     const about = $('#about .section-head').getBoundingClientRect();
     const atEnd = page.scrollHeight > innerHeight + 1 && page.scrollTop + innerHeight >= page.scrollHeight - 1;
-    const aboutInPlace = about.top <= G * 3 + 0.5 || (atEnd && about.top < innerHeight);
+    const aboutInPlace = about.top <= aboutGap() + 0.5 || (atEnd && about.top < innerHeight);
     els.toolbar.classList.toggle('is-gone', aboutInPlace);
     const t = els.toolbar.getBoundingClientRect();
     const stuck = t.top > els.toolbar.parentElement.getBoundingClientRect().top + 0.5;
@@ -364,9 +371,9 @@
   // line up when the scroll position is a whole number of squares. Padding
   // under the content keeps the page a whole number of squares taller than
   // the window, which makes the very bottom one of those positions too.
-  // The page is also long enough for the About heading to scroll up to three
-  // squares from the top, level with where the Work heading starts (and the
-  // Portfolio label), however short About is.
+  // The page is also long enough for the About heading to scroll up to where
+  // a jump to it puts it (three squares from the top, two in the narrow
+  // layout: level with the page's first row), however short About is.
   // (innerHeight rather than clientHeight: on phones it follows the browser
   // bars sliding away, and so does how far the page can scroll.)
   function fitPageLength() {
@@ -374,7 +381,7 @@
     const tail = parseFloat(els.main.style.paddingBottom) || 0;
     const over = page.scrollHeight - tail - window.innerHeight;
     const about = $('#about .section-head').getBoundingClientRect().top + scrollY;
-    const need = Math.max(over, about - G * 3);
+    const need = Math.max(over, about - aboutGap());
     const pad = need > 0 ? need - over + ((G - (need % G)) % G) : 0;
     if (Math.abs(pad - tail) > 0.5) els.main.style.paddingBottom = pad ? `${pad}px` : '';
   }
@@ -654,16 +661,18 @@
   // Rows fill left to right, the newest project top left. Every card gets its
   // row and column explicitly: an opened card takes a whole row of its own,
   // with two squares to the rows above and below it (and to the filters,
-  // when it's first).
+  // when it's first); in the narrow layout (phones, tablets) just the usual
+  // one.
   function placeCards() {
     let slot = 0;
     const cards = [...els.list.querySelectorAll('.card')];
+    const extra = wide.matches ? G : 0;
     for (const [i, card] of cards.entries()) {
       card.style.margin = '';
       if (card.classList.contains('is-expanded')) {
         slot = Math.ceil(slot / grid.cols) * grid.cols;
         card.style.gridArea = `${slot / grid.cols + 1} / 1 / auto / -1`;
-        card.style.margin = `${G}px 0 ${i < cards.length - 1 ? G : 0}px`;
+        card.style.margin = `${extra}px 0 ${i < cards.length - 1 ? extra : 0}px`;
         slot += grid.cols;
       } else {
         card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${(slot % grid.cols) + 1}`;
