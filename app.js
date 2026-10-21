@@ -583,12 +583,12 @@
     const prev = nav[i - 1];
     const next = nav[i + 1];
 
-    // Studio and platforms share the first row; role and tech get a full row
-    // each. (The year is on the card.)
+    // Role gets a full row, studio and platforms share the next, and tech
+    // gets a full row last. (The year is on the card.)
     const meta = [
+      ['Role', p.role, 'wide'],
       ['Studio', p.studio],
       ['Platforms', p.platforms.join(', ')],
-      ['Role', p.role, 'wide'],
       ['Tech', p.tech.join(', '), 'wide'],
     ];
     const links = p.links.filter((l) => l.label && safeUrl(l.url));

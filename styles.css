@@ -830,8 +830,9 @@ h1 {
   height: auto;
 }
 
-/* A square below the description. Studio takes five squares and platforms
-   runs on to the right edge; then role and tech have a full row each. */
+/* A square below the description. Role has a full row; then studio takes
+   five squares and platforms runs on to the right edge; tech has the last
+   row to itself. */
 .detail-meta {
   display: grid;
   grid-template-columns: calc(var(--g) * 5) minmax(0, 1fr);
