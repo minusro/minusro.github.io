@@ -207,6 +207,11 @@
     window.addEventListener('hashchange', route);
 
     document.addEventListener('click', (e) => {
+      // The ^^ buttons in the section title rows go back to the top
+      if (e.target.closest('[data-to-top]')) {
+        window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        return;
+      }
       const a = e.target.closest('a[href^="#/"]');
       // Re-clicking the current hash doesn't fire hashchange: clicking an open
       // card again folds it back up.

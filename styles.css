@@ -350,6 +350,43 @@ h1 {
   box-shadow: 0 1px 0 var(--line-strong);
 }
 
+/* Back to the top: a double chevron, no outline, in the last square of a
+   section's title row */
+.to-top {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--g);
+  height: var(--g);
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.to-top svg {
+  width: calc(10 * var(--px));
+  height: calc(10 * var(--px));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+
+@media (hover: hover) {
+  .to-top:hover {
+    color: var(--fg);
+  }
+}
+
+/* With the side column, Work's title row is already at the top of the page */
+@media (min-width: 1024px) {
+  #work .to-top {
+    display: none;
+  }
+}
+
 /* Section numbers are circled detail callouts, one square across */
 .section-num {
   flex: none;
