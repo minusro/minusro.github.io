@@ -1,6 +1,6 @@
 {
   "site": {
-    "tagline": "Games + music + XR software",
+    "tagline": "Games + music + XR",
     "about": "",
     "email": "minusro@gmail.com",
     "links": [
@@ -88,7 +88,7 @@
     {
       "id": "zombie-intern",
       "title": "Zombie INTERN",
-      "year": 2016,
+      "year": 2015,
       "tags": [
         "games"
       ],
@@ -223,7 +223,7 @@
     {
       "id": "holo-one-sphere",
       "title": "Sphere",
-      "year": 2018,
+      "year": 2019,
       "tags": [
         "xr"
       ],
