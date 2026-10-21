@@ -830,9 +830,8 @@ h1 {
   height: auto;
 }
 
-/* A square below the description. Year and studio take five squares; role
-   and platforms run on to the card's right edge, and tech has a full row of
-   its own. */
+/* A square below the description. Studio takes five squares and platforms
+   runs on to the right edge; then role and tech have a full row each. */
 .detail-meta {
   display: grid;
   grid-template-columns: calc(var(--g) * 5) minmax(0, 1fr);
@@ -841,7 +840,7 @@ h1 {
   font-family: var(--font-mono);
 }
 
-.detail-meta > :last-child {
+.detail-meta > .meta-wide {
   grid-column: 1 / -1;
 }
 

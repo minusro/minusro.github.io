@@ -583,12 +583,13 @@
     const prev = nav[i - 1];
     const next = nav[i + 1];
 
+    // Studio and platforms share the first row; role and tech get a full row
+    // each. (The year is on the card.)
     const meta = [
-      ['Year', p.year],
-      ['Role', p.role],
       ['Studio', p.studio],
       ['Platforms', p.platforms.join(', ')],
-      ['Tech', p.tech.join(', ')],
+      ['Role', p.role, 'wide'],
+      ['Tech', p.tech.join(', '), 'wide'],
     ];
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
@@ -605,10 +606,10 @@
             : '<p>TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
         </div>
         <dl class="detail-meta">
-          ${meta.map(([k, v]) => k === 'Studio' && p.personal
+          ${meta.map(([k, v, wide]) => k === 'Studio' && p.personal
             // Personal projects say so, on two rows, instead of naming a studio
             ? '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
-            : `<div><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
+            : `<div${wide ? ' class="meta-wide"' : ''}><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
         </dl>
         ${links.length
           ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
