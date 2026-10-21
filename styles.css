@@ -598,7 +598,8 @@ h1 {
 }
 
 .card.is-playing .card-media video,
-.card.is-playing .card-media .card-anim {
+.card.is-playing .card-media .card-anim,
+.card-media video.is-still {
   opacity: 1;
 }
 

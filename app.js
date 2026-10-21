@@ -199,13 +199,18 @@
     if (!v) return;
     const play = on && !reduceMotion.matches;
     card.classList.toggle('is-playing', play);
+    // Each hover starts from the beginning
     if (v.tagName !== 'VIDEO') {
-      // GIFs animate on their own; they're just shown and hidden
-      if (play && !v.src) v.src = v.dataset.src;
+      // GIFs can't be paused; a fresh address (same file, new #fragment)
+      // makes the browser restart the animation
+      if (play) v.src = `${v.dataset.src}#${Date.now()}`;
     } else if (play) {
+      v.currentTime = 0;
       v.play().catch(() => {});
     } else {
       v.pause();
+      // Standing in for the cover: back to the first frame
+      if (v.classList.contains('is-still')) v.currentTime = 0;
     }
   }
 
@@ -561,13 +566,19 @@
     const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows - 1)));
     const gap = [6, 8, 12][(h >>> 24) % 3];
     const fit = `object-position: 50% ${(1 - p.mediaAlign) * 50}%`;
+    const gif = /\.gif$/i.test(p.video);
+    // With no cover, a video stands in for it, paused on its first frame
+    // (#t= makes browsers draw that frame without loading the whole file)
+    if (!p.cover && p.video && !gif) {
+      return `<video class="is-still" src="${esc(p.video)}#t=0.001" muted loop playsinline preload="metadata" style="${fit}"></video>`;
+    }
     const still = p.cover
       ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async" style="${fit}">`
       : `<span class="ph" style="--a:${h % 180}deg;--x:${x}px;--y:${y}px;--gap:${gap}px"></span>`;
     // An animated GIF stands in for a video; it loads the first time it's shown
     const video = !p.video
       ? ''
-      : /\.gif$/i.test(p.video)
+      : gif
         ? `<img class="card-anim" data-src="${esc(p.video)}" alt="" style="${fit}">`
         : `<video src="${esc(p.video)}" muted loop playsinline preload="none" style="${fit}"></video>`;
     return still + video;
