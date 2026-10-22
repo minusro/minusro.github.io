@@ -289,7 +289,7 @@
         "Objective-C",
         "C++"
       ],
-      "summary": "BeatSpiral is an iOS groove box built around a \"spiral\" sequencer, allowing you to make and perform electronic music by rearranging slices of four loops. I designed this and wrote the audio engine and UI in Objective-C and C++. My first shipped music app.",
+      "summary": "BeatSpiral is an iOS groovebox built around a \"spiral\" sequencer, allowing you to make and perform electronic music by rearranging slices of four loops. I designed this and wrote the audio engine and UI in Objective-C and C++. My first shipped music app.",
       "links": [],
       "cover": "media/beatspiral-cover.webp",
       "video": "media/beatspiral-video.mp4",
