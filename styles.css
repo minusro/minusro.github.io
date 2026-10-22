@@ -314,13 +314,6 @@ code {
   padding-right: var(--edge-right);
 }
 
-/* When the cards sit in more than one column, app.js sets --rail to their
-   total width and the section lines stop at the rightmost card, not the
-   page edge (narrow windows add the intro's line and links, below) */
-.section-head {
-  max-width: var(--rail, none);
-}
-
 /* ---- Intro ---------------------------------------------------------------- */
 
 /* flow-root keeps the first line's top margin inside, so the intro (and the
@@ -444,8 +437,12 @@ h1 a {
   scroll-margin-top: calc(var(--g) * 3);
 }
 
-/* Title row, then a ruled line on the gridline below it */
+/* Title row, then a ruled line on the gridline below it. When the cards sit
+   in more than one column, app.js sets --rail to their total width and the
+   line stops at the rightmost card, not the page edge (narrow windows add
+   the intro's line and links, below). */
 .section-head {
+  max-width: var(--rail, none);
   display: flex;
   align-items: flex-start;
   gap: var(--g);
@@ -737,14 +734,10 @@ h1 a {
 }
 
 /* Scrolled to, a card lands just below the filters (app.js measures them);
-   an opened one a square lower, matching the two squares around it */
+   an opened one a square lower (see .card.is-expanded below) */
 .card,
 .card-link {
   scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
-}
-
-.card.is-expanded {
-  scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) + var(--g));
 }
 
 /* The picture (half a square in from the card's top) runs on half a square
@@ -945,6 +938,9 @@ h1 a {
    previous/next, description, details. (The detail wrapper steps aside so
    its parts can be placed in this grid.) */
 .card.is-expanded {
+  /* A square lower than other cards when scrolled to, matching the two
+     squares around it */
+  scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) + var(--g));
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: calc(var(--card-cells, 14) * var(--g)) minmax(0, 1fr);
@@ -958,8 +954,10 @@ h1 a {
 }
 
 .card.is-expanded > .card-link {
+  --fc: var(--c);
   grid-column: 1;
   grid-row: 1;
+  height: auto;
 }
 
 .card-detail > .detail-nav {
@@ -980,11 +978,6 @@ h1 a {
 .projects[data-cols="1"] .card-detail > .detail-info {
   grid-column: 1;
   grid-row: 3;
-}
-
-.card.is-expanded > .card-link {
-  --fc: var(--c);
-  height: auto;
 }
 
 /* A square below the description. Role has a full row; then studio takes
@@ -1125,11 +1118,15 @@ h1 a {
   font: calc(13 * var(--px))/var(--g) var(--font-mono);
 }
 
+/* Project names in capitals, as on the cards */
 .detail-nav a {
   position: relative;
   min-width: 0;
   max-width: 50%;
   white-space: nowrap;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 /* The two names may come right up to each other; only a name longer than
@@ -1173,13 +1170,6 @@ h1 a {
 
 .nav-next::after {
   right: calc(var(--g) * -1);
-}
-
-/* Project names in capitals, as on the cards */
-.detail-nav a {
-  color: var(--muted);
-  text-decoration: none;
-  text-transform: uppercase;
 }
 
 @media (hover: hover) {

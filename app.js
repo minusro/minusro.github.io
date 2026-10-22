@@ -74,7 +74,7 @@
     projects = (content.projects ?? [])
       .filter((p) => SLUG.test(p.id) && !p.hidden)
       .map((p, order) => ({
-        year: null, role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '',
+        year: null, role: '', studio: '', platforms: [], tech: [], summary: '', links: [],
         ...p,
         tags: (p.tags ?? []).filter((t) => catById[t]),
         cover: safeMedia(p.cover),
