@@ -21,13 +21,14 @@
   <link rel="preload" href="fonts/ibm-plex-mono-500-latin.woff2" as="font" type="font/woff2" crossorigin>
   <!-- The newest project's cover, the first picture on the page (set by tools/stamp.mjs) -->
   <link rel="preload" href="media/loop-brother-cover.webp" as="image" fetchpriority="high" data-first-cover>
-  <!-- The project list, requested before the scripts have loaded (app.js picks it up) -->
-  <script>window.contentRequest = fetch('content.json', { cache: 'no-cache' });</script>
-  <link rel="stylesheet" href="styles.css?v=c381a625">
+  <!-- The project list, requested before the scripts have loaded (app.js picks
+       it up). Until it's shown, the About section waits unseen below (styles.css). -->
+  <script>window.contentRequest = fetch('content.json', { cache: 'no-cache' }); document.documentElement.classList.add('is-loading');</script>
+  <link rel="stylesheet" href="styles.css?v=c3c6d482">
 
   <script src="fx.js?v=24e39399" defer></script>
   <script src="nav.js?v=e804e76f" defer></script>
-  <script src="app.js?v=1ec8f5c7" defer></script>
+  <script src="app.js?v=78766c5c" defer></script>
 </head>
 <body>
   <a class="skip" href="#work">Skip to work</a>
@@ -41,7 +42,7 @@
           <p class="kicker mono"><span class="cursor" aria-hidden="true"></span>Portfolio</p>
           <h1><a href="./" class="home" data-home>Daniel Stanciu</a></h1>
           <span class="dim" aria-hidden="true"></span>
-          <p class="lede" id="tagline">Games, AR, music and educational software</p>
+          <p class="lede" id="tagline">Games + music + XR</p>
         </div>
       </section>
 
@@ -51,7 +52,7 @@
       </nav>
 
       <!-- Email and links, from the editor's Site tab -->
-      <div class="side-contact mono" id="side-contact"></div>
+      <div class="side-contact mono" id="side-contact"><a href="https://github.com/minusro" target="_blank" rel="noopener">GitHub <span class="link-arrow" aria-hidden="true">↗</span></a><a href="https://www.linkedin.com/in/daniel-stanciu" target="_blank" rel="noopener">LinkedIn <span class="link-arrow" aria-hidden="true">↗</span></a><a href="mailto:minusro@gmail.com">minusro@gmail.com</a></div>
     </aside>
 
     <div class="page-main">
@@ -82,8 +83,12 @@
           </button>
         </header>
         <div class="about-body" id="about-body">
-          <p class="placeholder">TODO: short bio — what you do, where you've worked, what you're into. Add it in the editor (npm run edit).</p>
+          <p>Hey there!</p>
+          <p>I&#39;m a senior software engineer and creative technologist with 14+ years of experience building games, user interfaces and audio software.</p>
+          <p>Particularly interested in creating original musical instruments and unique interactive experiences.</p>
+          <p>When not coding, prompting or designing, I like to make quirky electronic music.</p>
         </div>
+        <div class="about-contact mono" id="about-contact"><a href="https://github.com/minusro" target="_blank" rel="noopener">GitHub <span class="link-arrow" aria-hidden="true">↗</span></a><a href="https://www.linkedin.com/in/daniel-stanciu" target="_blank" rel="noopener">LinkedIn <span class="link-arrow" aria-hidden="true">↗</span></a><a href="mailto:minusro@gmail.com">minusro@gmail.com</a></div>
       </section>
     </div>
   </main>

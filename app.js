@@ -58,7 +58,8 @@
       console.error(err);
       els.list.outerHTML =
         '<p class="placeholder">Couldn’t load content.json. To preview the site locally, run <code>npm run dev</code> instead of opening index.html directly.</p>';
-    });
+    })
+    .finally(() => document.documentElement.classList.remove('is-loading'));
 
   function start(content) {
     site = content.site ?? {};
@@ -695,11 +696,14 @@
       $('#about-body').innerHTML = paragraphs.map((p) => `<p>${esc(p)}</p>`).join('');
     }
 
+    // In the side column, and on narrow screens again after the About text
     const links = (site.links ?? []).filter((l) => l.label && safeUrl(l.url));
-    $('#side-contact').innerHTML = [
+    const contact = [
       ...links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} <span class="link-arrow" aria-hidden="true">↗</span></a>`),
       site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '',
     ].join('');
+    $('#side-contact').innerHTML = contact;
+    $('#about-contact').innerHTML = contact;
     alignLinkArrows();
   }
 
@@ -708,7 +712,7 @@
   // .meta-arrow in styles.css): as far short of a gridline, as far down
   // their row, on whole pixels, where a small nudge gets them there.
   function alignLinkArrows() {
-    const arrows = document.querySelectorAll('#side-contact .link-arrow');
+    const arrows = [...document.querySelectorAll('#side-contact .link-arrow, #about-contact .link-arrow')].filter((a) => a.getClientRects().length);
     if (!arrows.length) return;
     const px = G / 24;
     const lede = parseFloat(getComputedStyle(arrows[0]).fontSize);

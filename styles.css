@@ -427,6 +427,12 @@ h1 a {
 
 /* ---- Sections ------------------------------------------------------------ */
 
+/* While the project list loads, About would sit just under the Work heading
+   and then jump down; it stays unseen until the projects are in. */
+.is-loading #about {
+  visibility: hidden;
+}
+
 .section {
   padding-block: calc(var(--g) * 3);
 }
@@ -1230,8 +1236,10 @@ h1 a {
   width: calc(var(--g) * 2);
 }
 
-/* Email and links, the same size as the tagline */
-.side-contact {
+/* Email and links, the same size as the tagline. On narrow screens they
+   come again at the end of the page, two squares below the About text. */
+.side-contact,
+.about-contact {
   display: flex;
   flex-direction: column;
   margin-top: var(--g);
@@ -1240,18 +1248,21 @@ h1 a {
 }
 
 /* Arrows placed like the opened project's link arrow (app.js) */
-.side-contact .link-arrow {
+.side-contact .link-arrow,
+.about-contact .link-arrow {
   position: relative;
 }
 
-.side-contact a {
+.side-contact a,
+.about-contact a {
   width: fit-content;
   color: var(--muted);
   text-decoration: none;
 }
 
 @media (hover: hover) {
-  .side-contact a:hover {
+  .side-contact a:hover,
+  .about-contact a:hover {
     color: var(--fg);
   }
 }
@@ -1259,6 +1270,10 @@ h1 a {
 @media (min-width: 1024px) {
   :root {
     --lede-size: calc(20 * var(--px));
+  }
+
+  .about-contact {
+    display: none;
   }
 
   /* No elastic bounce at the top or bottom of the page, so the side column
@@ -1368,6 +1383,15 @@ h1 a {
     display: none;
   }
 
+  .about-contact {
+    margin-top: calc(var(--g) * 2);
+  }
+
+  /* Here the side column's arrows keep their word's spacing (app.js), so
+     this one does without the fifth of a square closer too */
+  .detail-meta .meta-arrow {
+    --shift-x: calc(-0.3 * 11 * var(--px));
+  }
 }
 
 /* ---- Command palette (⌘K / Ctrl+K or /) ----------------------------------- */
