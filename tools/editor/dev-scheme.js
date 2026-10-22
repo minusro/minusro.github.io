@@ -11,6 +11,7 @@
   const KEY = 'portfolio-dev-scheme';
   const root = document.documentElement;
   let scheme = 'auto';
+
   try {
     scheme = localStorage.getItem(KEY) || 'auto';
   } catch {}
@@ -18,6 +19,7 @@
   const apply = () => {
     root.style.colorScheme = scheme === 'auto' ? '' : scheme;
   };
+
   apply();
 
   const host = document.createElement('div');
@@ -53,16 +55,20 @@
 
   shadow.addEventListener('click', (e) => {
     const b = e.target.closest('button');
+
     if (!b) return;
     scheme = b.dataset.scheme;
+
     try {
       localStorage.setItem(KEY, scheme);
     } catch {}
+
     apply();
     render();
   });
 
   render();
+
   // Loaded in <head> so the scheme applies before first paint; the switch
   // itself goes in once the page body exists.
   if (document.body) document.body.append(host);

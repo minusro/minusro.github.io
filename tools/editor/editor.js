@@ -41,8 +41,10 @@
       content = await api('GET', '/api/content');
     } catch (err) {
       setStatus('error', `Couldn’t load content: ${err.message}. Is the editor server running (npm run edit)?`);
+
       return;
     }
+
     content.site = { tagline: '', about: '', email: '', links: [], ...content.site };
     content.categories ??= [];
     content.projects = (content.projects ?? []).map((p) => ({ ...blankProject(), ...p }));
@@ -61,6 +63,7 @@
   function bind() {
     els.tabs.addEventListener('click', (e) => {
       const b = e.target.closest('[data-tab]');
+
       if (!b) return;
       tab = b.dataset.tab;
       renderSidebar();
@@ -70,20 +73,25 @@
 
     els.sidebar.addEventListener('click', (e) => {
       const item = e.target.closest('.pitem');
+
       if (item) {
         selected = content.projects[Number(item.dataset.index)];
         renderSidebar();
         renderForm();
         els.form.scrollTop = 0;
         reloadPreview();
+
         return;
       }
+
       const a = e.target.closest('[data-action]');
+
       if (a) action(a);
     });
 
     els.form.addEventListener('click', (e) => {
       const a = e.target.closest('[data-action]');
+
       if (a) action(a);
     });
     els.form.addEventListener('input', onInput);
@@ -92,6 +100,7 @@
     // Drag and drop onto the media boxes
     els.form.addEventListener('dragover', (e) => {
       const zone = e.target.closest('[data-drop]');
+
       if (!zone) return;
       e.preventDefault();
       zone.classList.add('is-over');
@@ -99,10 +108,12 @@
     els.form.addEventListener('dragleave', (e) => e.target.closest('[data-drop]')?.classList.remove('is-over'));
     els.form.addEventListener('drop', (e) => {
       const zone = e.target.closest('[data-drop]');
+
       if (!zone) return;
       e.preventDefault();
       zone.classList.remove('is-over');
       const file = e.dataTransfer.files[0];
+
       if (file) handleFile(zone.dataset.drop, file);
     });
     // A file dropped anywhere else shouldn't make the browser navigate away.
@@ -113,6 +124,7 @@
       input.addEventListener('change', () => {
         const file = input.files[0];
         input.value = '';
+
         if (file) handleFile(kind, file);
       });
     }
@@ -140,6 +152,7 @@
 
   function onInput(e) {
     const t = e.target;
+
     if (t.dataset.field) {
       updateProject(selected, t.dataset.field, t.value);
     } else if (t.dataset.site) {
@@ -148,15 +161,18 @@
       linkList(t.dataset.link)[Number(t.dataset.index)][t.dataset.prop] = t.value.trim();
     } else if (t.dataset.catIndex && t.dataset.prop !== 'id') {
       content.categories[Number(t.dataset.catIndex)][t.dataset.prop] = t.value;
+
       if (t.dataset.prop === 'color') applyCategoryColours();
     } else {
       return;
     }
+
     changed();
   }
 
   function onChange(e) {
     const t = e.target;
+
     if (t.dataset.flag) {
       selected[t.dataset.flag] = t.checked;
       renderSidebar();
@@ -190,6 +206,7 @@
         title.select();
         break;
       }
+
       case 'delete-project': {
         if (!confirm(`Delete “${selected.title || 'Untitled'}”? Its cover and video files are deleted too.`)) return;
         content.projects.splice(content.projects.indexOf(selected), 1);
@@ -199,6 +216,7 @@
         changed();
         break;
       }
+
       case 'add-link':
         linkList(a.dataset.list).push({ label: '', url: '' });
         rerenderLinks(a.dataset.list, true);
@@ -223,6 +241,7 @@
         break;
       case 'add-cat': {
         let id = 'new-category';
+
         for (let i = 2; content.categories.some((c) => c.id === id); i++) id = `new-category-${i}`;
         content.categories.push({ id, label: 'New category', short: 'New', color: '#9aa0a6' });
         applyCategoryColours();
@@ -230,12 +249,15 @@
         changed();
         break;
       }
+
       case 'remove-cat': {
         const i = Number(a.dataset.index);
         const c = content.categories[i];
         const used = content.projects.filter((p) => p.tags.includes(c.id)).length;
+
         if (used && !confirm(`${used} project${used === 1 ? ' uses' : 's use'} “${c.label}”. Remove the category and untag ${used === 1 ? 'it' : 'them'}?`)) return;
         content.categories.splice(i, 1);
+
         for (const p of content.projects) p.tags = p.tags.filter((t) => t !== c.id);
         applyCategoryColours();
         rerenderCategories();
@@ -243,6 +265,7 @@
         changed();
         break;
       }
+
       case 'move-cat': {
         const i = Number(a.dataset.index);
         const j = i + Number(a.dataset.dir);
@@ -262,11 +285,13 @@
       case 'title':
         p.title = value;
         $('#form-title').textContent = value || 'Untitled';
+
         if (autoId.has(p)) {
           p.id = uniqueId(slugify(value) || 'project', p);
           $('[data-field="id"]', els.form).value = p.id;
           showIdState(p);
         }
+
         break;
       case 'id':
         autoId.delete(p);
@@ -278,6 +303,7 @@
         p.year = Number.isFinite(n) ? n : null;
         break;
       }
+
       case 'platforms':
       case 'tech':
         p[field] = value.split(',').map((s) => s.trim()).filter(Boolean);
@@ -293,6 +319,7 @@
       default:
         p[field] = value;
     }
+
     if (field === 'title' || field === 'id' || field === 'year') renderSidebar();
   }
 
@@ -302,6 +329,7 @@
       : content.projects.some((x) => x !== p && x.id === p.id)
         ? 'Another project already uses this id.'
         : '';
+
     $('[data-field="id"]', els.form).setAttribute('aria-invalid', String(Boolean(problem)));
     $('#id-error').textContent = problem;
     $('#id-preview').textContent = p.id;
@@ -310,12 +338,16 @@
   function renameCategory(i, input) {
     const c = content.categories[i];
     const next = input.value.trim();
+
     if (next === c.id) return;
+
     if (!SLUG.test(next) || content.categories.some((x, j) => j !== i && x.id === next)) {
       alert('Category ids must be unique and use only lowercase letters, numbers and dashes.');
       input.value = c.id;
+
       return;
     }
+
     for (const p of content.projects) p.tags = p.tags.map((t) => (t === c.id ? next : t));
     c.id = next;
     applyCategoryColours();
@@ -328,32 +360,41 @@
 
   async function handleFile(kind, file) {
     const p = selected;
+
     if (!p) return;
+
     try {
       let blob = file;
       let ext;
+
       if (kind === 'cover') {
         if (!file.type.startsWith('image/')) throw new Error('That file isn’t an image.');
         ({ blob, ext } = await prepareImage(file));
       } else {
         if (!/^(video\/(mp4|webm)|image\/gif)$/.test(file.type)) throw new Error('Use an MP4 or WebM video, or an animated GIF.');
         const mb = file.size / 1024 / 1024;
+
         if (mb > 95) throw new Error(`That video is ${mb.toFixed(0)} MB; GitHub only accepts files under 100 MB.`);
+
         if (mb > 25 && !confirm(`This video is ${mb.toFixed(0)} MB. Big videos make the site slow to load. Use it anyway?`)) return;
         ext = { 'video/webm': 'webm', 'image/gif': 'gif' }[file.type] ?? 'mp4';
       }
 
       setStatus('saving', `Uploading ${kind}…`);
       const base = SLUG.test(p.id) ? p.id : 'project';
+
       const res = await fetch(`/api/upload?name=${encodeURIComponent(`${base}-${kind}.${ext}`)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/octet-stream' },
         body: blob,
       });
+
       const data = await res.json().catch(() => ({}));
+
       if (!res.ok) throw new Error(data.error || `Upload failed (${res.status})`);
 
       p[kind] = data.path;
+
       if (p === selected && tab === 'projects') rerenderMedia();
       changed();
       await save();
@@ -367,11 +408,13 @@
   async function prepareImage(file) {
     if (file.type === 'image/gif') return { blob: file, ext: 'gif' };
     let bitmap;
+
     try {
       bitmap = await createImageBitmap(file);
     } catch {
       throw new Error('This browser can’t read that image. Try a JPEG, PNG or WebP.');
     }
+
     const scale = Math.min(1, 1600 / bitmap.width);
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(bitmap.width * scale);
@@ -379,7 +422,9 @@
     canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     const encode = (type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
     const webp = await encode('image/webp', 0.85);
+
     if (webp?.type === 'image/webp') return { blob: webp, ext: 'webp' };
+
     return { blob: await encode('image/jpeg', 0.88), ext: 'jpg' };
   }
 
@@ -395,7 +440,9 @@
   // Resolves true once everything is on disk, false if the save was rejected.
   async function save() {
     clearTimeout(saveTimer);
+
     while (saving) await saving;
+
     if (!dirty) return true;
     dirty = false;
     setStatus('saving', 'Saving…');
@@ -403,16 +450,19 @@
       .then(() => {
         if (!dirty) setStatus('saved', 'All changes saved');
         reloadPreview();
+
         return true;
       })
       .catch((err) => {
         dirty = true;
         setStatus('error', err.message);
+
         return false;
       })
       .finally(() => {
         saving = null;
       });
+
     return saving;
   }
 
@@ -420,6 +470,7 @@
 
   function renderSidebar() {
     els.count.textContent = content.projects.length;
+
     for (const b of els.tabs.querySelectorAll('[data-tab]')) b.setAttribute('aria-pressed', String(b.dataset.tab === tab));
 
     if (tab === 'site') {
@@ -430,6 +481,7 @@
           <li><a href="#sec-contact">Contact</a></li>
           <li><a href="#sec-categories">Categories</a></li>
         </ul>`;
+
       return;
     }
 
@@ -450,8 +502,10 @@
   function renderForm() {
     if (tab === 'site') return renderSiteForm();
     const p = selected;
+
     if (!p) {
       els.form.innerHTML = '<p class="empty">No projects yet. Click “+ New project” to add one.</p>';
+
       return;
     }
 
@@ -592,6 +646,7 @@
       .map((c) => {
         const i = p.tags.indexOf(c.id);
         const order = i >= 0 && p.tags.length > 1 ? `<span class="check-order">${i + 1}</span>` : '';
+
         return `<label class="check" data-cat="${esc(c.id)}"><input type="checkbox" data-tag="${esc(c.id)}"${i >= 0 ? ' checked' : ''}>${esc(c.label)}${order}</label>`;
       })
       .join('');
@@ -601,6 +656,7 @@
     const isVideo = kind === 'video';
     const value = p[kind];
     const src = /^https?:/.test(value) ? value : `/${value}`;
+
     const shown = value
       ? isVideo && !/\.gif$/i.test(value)
         ? `<video src="${esc(src)}" muted loop autoplay playsinline></video>`
@@ -608,6 +664,7 @@
       : isVideo
         ? 'Drop a video here<br>MP4, WebM or GIF'
         : 'Drop an image here';
+
     return `
       <div class="field">
         <span class="label">${isVideo ? 'Hover video (optional)' : 'Cover image'}</span>
@@ -649,6 +706,7 @@
 
   function categoryRows() {
     const last = content.categories.length - 1;
+
     return `
       <div class="cat-row cat-head"><span>Colour</span><span>Label</span><span>Short</span><span>Id</span><span></span><span></span><span></span></div>
       ${content.categories.map((c, i) => `
@@ -668,6 +726,7 @@
   function rerenderLinks(key, focusNew = false) {
     const box = $(`[data-rows="${key}"]`, els.form);
     box.outerHTML = linkRows(linkList(key), key);
+
     if (focusNew) [...els.form.querySelectorAll(`[data-link="${key}"][data-prop="label"]`)].pop()?.focus();
   }
 
@@ -690,27 +749,33 @@
 
   function initPreview() {
     let on = false;
+
     try {
       on = localStorage.getItem('portfolio-editor-preview') === '1';
     } catch {}
+
     els.previewToggle.checked = on;
     setPreview(on);
   }
 
   function setPreview(on) {
     els.previewPane.hidden = !on;
+
     try {
       localStorage.setItem('portfolio-editor-preview', on ? '1' : '0');
     } catch {}
+
     reloadPreview();
   }
 
   function reloadPreview() {
     if (els.previewPane.hidden) return;
+
     const hash =
       tab === 'site' ? '#about'
       : selected && SLUG.test(selected.id) ? `#/${selected.id}`
       : '';
+
     els.preview.src = `/?v=${Date.now()}${hash}`;
   }
 
@@ -725,6 +790,7 @@
 
     if (!(await save())) {
       els.publishInfo.innerHTML = `<p class="result-error">Your last edit couldn’t be saved: ${esc(els.status.textContent)}. Fix that first.</p>`;
+
       return;
     }
 
@@ -755,6 +821,7 @@
     els.publishGo.textContent = 'Publishing…';
     els.publishLog.hidden = false;
     els.publishLog.textContent = '';
+
     try {
       const r = await api('POST', '/api/publish', { message: els.publishMessage.value });
       els.publishLog.textContent = r.log.join('\n');
@@ -773,6 +840,7 @@
   function describeChange(line) {
     const code = line.slice(0, 2).replace(/\s/g, '')[0];
     const label = { '?': 'new', A: 'new', M: 'edited', D: 'deleted', R: 'renamed' }[code] ?? 'changed';
+
     return `${label.padEnd(8)} ${line.slice(3)}`;
   }
 
@@ -784,8 +852,11 @@
       headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
+
     const data = await res.json().catch(() => ({}));
+
     if (!res.ok) throw new Error(data.error || `${res.status} ${res.statusText}`);
+
     return data;
   }
 
@@ -805,9 +876,12 @@
       .sort(([a, i], [b, j]) => {
         if (a.year !== b.year) {
           if (a.year == null) return 1;
+
           if (b.year == null) return -1;
+
           return b.year - a.year;
         }
+
         return i - j;
       })
       .map(([p]) => p);
@@ -819,7 +893,9 @@
 
   function uniqueId(base, self) {
     let id = base;
+
     for (let i = 2; content.projects.some((p) => p !== self && p.id === id); i++) id = `${base}-${i}`;
+
     return id;
   }
 

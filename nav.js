@@ -29,12 +29,16 @@ const NAV = (() => {
   function bindKeys() {
     document.addEventListener('keydown', (e) => {
       const mod = e.metaKey || e.ctrlKey;
+
       if (mod && e.key.toLowerCase() === 'k') {
         e.preventDefault();
+
         if (palette.open) palette.close();
         else openPalette();
+
         return;
       }
+
       if (e.key === '`' && !mod && !e.altKey) {
         if (consoleOpen()) {
           e.preventDefault();
@@ -43,9 +47,12 @@ const NAV = (() => {
           e.preventDefault();
           openConsole();
         }
+
         return;
       }
+
       if (mod || e.altKey || typing(e) || consoleOpen() || document.querySelector('dialog[open]')) return;
+
       if (e.key === '/') {
         e.preventDefault();
         openPalette();
@@ -63,16 +70,20 @@ const NAV = (() => {
   // Move focus to the next/previous project, starting from what's on screen.
   function step(dir) {
     const links = [...document.querySelectorAll('#projects .card:not([data-dup]) > .card-link')].filter((l) => l.offsetParent);
+
     if (!links.length) return;
     let i = links.indexOf(document.activeElement);
+
     if (i === -1) {
       i = dir > 0
         ? links.findIndex((l) => l.getBoundingClientRect().top >= 0)
         : links.findLastIndex((l) => l.getBoundingClientRect().bottom <= innerHeight);
+
       if (i === -1) i = dir > 0 ? 0 : links.length - 1;
     } else {
       i = Math.max(0, Math.min(links.length - 1, i + dir));
     }
+
     links[i].focus({ preventScroll: true });
     links[i].scrollIntoView({ block: 'nearest', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
   }
@@ -110,10 +121,12 @@ const NAV = (() => {
     const list = $('.palette-list', palette);
     list.addEventListener('pointermove', (e) => {
       const li = e.target.closest('[data-index]');
+
       if (li && Number(li.dataset.index) !== active) setActive(Number(li.dataset.index), false);
     });
     list.addEventListener('click', (e) => {
       const li = e.target.closest('[data-index]');
+
       if (li) runItem(paletteShown[Number(li.dataset.index)]);
     });
     // (The dialog hands focus back to where it was by itself when it closes.)
@@ -144,6 +157,7 @@ const NAV = (() => {
     const label = (id) => cats.find((c) => c.id === id)?.short || id;
     const items = [];
     const add = (group, text, run, extra = {}) => items.push({ group, text, run, ...extra });
+
     const show = (fn) => () => {
       fn();
       api.goto('work');
@@ -156,22 +170,31 @@ const NAV = (() => {
         cat: p.tags[0],
       });
     }
+
     add('Filter', 'Show all projects', show(() => api.filter('all')), { current: s.tag === 'all' });
+
     for (const c of cats) add('Filter', `Show ${c.label}`, show(() => api.filter(c.id)), { cat: c.id, current: s.tag === c.id });
+
     for (const [id, text] of [['top', 'Top'], ['work', 'Work'], ['about', 'About']]) {
       add('Go to', text, () => api.goto(id));
     }
+
     const site = api.site();
+
     if (site.email) add('Contact', `Email ${site.email}`, () => (location.href = `mailto:${site.email}`));
+
     for (const l of site.links ?? []) {
       if (l.label && /^https?:/i.test(l.url ?? '')) add('Contact', `Open ${l.label}`, () => window.open(l.url, '_blank', 'noopener'));
     }
+
     add('More', 'Open console', openConsole);
+
     return items;
   }
 
   function renderPalette(query) {
     const q = query.trim().toLowerCase();
+
     if (q) {
       paletteShown = paletteItems
         .map((item) => ({ item, s: Math.max(score(item.text, q) * 1.5, score(`${item.text} ${item.hint ?? ''} ${item.keywords ?? ''} ${item.group}`, q)) }))
@@ -189,6 +212,7 @@ const NAV = (() => {
           .map((item, i) => {
             const head = !q && item.group !== lastGroup ? `<li class="palette-group" role="presentation">${item.group}</li>` : '';
             lastGroup = item.group;
+
             return `${head}<li class="palette-item" id="pal-${i}" role="option" data-index="${i}"${item.cat ? ` data-cat="${item.cat}"` : ''}>
               ${item.cat ? '<span class="dot" aria-hidden="true"></span>' : '<span class="palette-icon" aria-hidden="true">›</span>'}
               <span class="palette-text">${esc(item.text)}</span>
@@ -204,11 +228,14 @@ const NAV = (() => {
   function setActive(i, scroll = true) {
     if (!paletteShown.length) return;
     active = (i + paletteShown.length) % paletteShown.length;
+
     for (const li of palette.querySelectorAll('.palette-item')) {
       li.setAttribute('aria-selected', String(Number(li.dataset.index) === active));
     }
+
     const input = $('.palette-input', palette);
     input.setAttribute('aria-activedescendant', `pal-${active}`);
+
     if (scroll) document.getElementById(`pal-${active}`)?.scrollIntoView({ block: 'nearest' });
   }
 
@@ -218,13 +245,16 @@ const NAV = (() => {
     let from = 0;
     let total = 0;
     let run = 0;
+
     for (const ch of q) {
       const i = t.indexOf(ch, from);
+
       if (i < 0) return 0;
       run = i === from ? run + 1 : 0;
       total += 1 + run * 2 + (i === 0 || /[\s\-·/]/.test(t[i - 1]) ? 3 : 0);
       from = i + 1;
     }
+
     return total - t.length * 0.01;
   }
 
@@ -282,15 +312,18 @@ const NAV = (() => {
     if (!api || consoleOpen()) return;
     focusBeforeConsole = document.activeElement;
     con.hidden = false;
+
     if (!$('.console-out', con).childElementCount) {
       print('danielstanciu.com — portfolio shell');
       print("Type 'help' for commands or 'ls' to list projects.", 'dim');
     }
+
     $('.console-input', con).focus();
   }
 
   function closeConsole() {
     con.hidden = true;
+
     if (focusBeforeConsole?.isConnected) focusBeforeConsole.focus({ preventScroll: true });
   }
 
@@ -320,6 +353,7 @@ const NAV = (() => {
   function run(line) {
     const trimmed = line.trim();
     print(`$ ${trimmed}`, 'echo');
+
     if (!trimmed) return;
     history.push(trimmed);
     historyIndex = history.length;
@@ -335,62 +369,85 @@ const NAV = (() => {
         break;
       case 'ls': {
         const cat = arg ? findCategory(arg) : null;
+
         if (arg && !cat) return print(`ls: no category '${arg}'. Try: ${cats.map((c) => c.id).join(', ')}`, 'err');
         const list = projects.filter((p) => !cat || p.tags.includes(cat.id));
+
         for (const p of list) print(`  ${p.num}  ${String(p.year ?? '----')}  ${p.title.padEnd(24)} ${p.tags.map(catLabel).join(', ')}`);
         print(`${list.length} project${list.length === 1 ? '' : 's'}`, 'dim');
         break;
       }
+
       case 'open': {
         const p = findProject(arg);
+
         if (!p) return print(`open: no project matching '${arg}'`, 'err');
         closeConsole();
         api.open(p.id);
         break;
       }
+
       case 'cat': {
         const p = findProject(arg);
+
         if (!p) return print(`cat: ${arg || 'which project?'}: no such project`, 'err');
         print(`${p.title}  (#${p.num}${p.year ? ` · ${p.year}` : ''})`, 'strong');
+
         for (const [k, v] of [['role', p.role], ['studio', p.studio], ['platforms', p.platforms.join(', ')], ['tech', p.tech.join(', ')], ['tags', p.tags.map(catLabel).join(', ')]]) {
           print(`  ${k.padEnd(10)} ${v || '—'}`);
         }
+
         print(p.summary || '(no summary yet)', p.summary ? '' : 'dim');
+
         for (const l of p.links) print(`  ${l.label}: ${l.url}`);
         break;
       }
+
       case 'filter': {
         if (!arg || arg === 'all') {
           api.filter('all');
+
           return print(`showing all ${projects.length} projects`);
         }
+
         const cat = findCategory(arg);
+
         if (!cat) return print(`filter: no category '${arg}'`, 'err');
         api.filter(cat.id);
         print(`showing ${projects.filter((p) => p.tags.includes(cat.id)).length} ${cat.label.toLowerCase()} projects`);
         break;
       }
+
       case 'cd': {
         const target = SECTIONS[arg.replace(/^\/|\/$/g, '') || '~'];
+
         if (!target) return print(`cd: no such section: ${arg}`, 'err');
         closeConsole();
         api.goto(target);
         break;
       }
+
       case 'whoami': {
         const site = api.site();
         print('Daniel Stanciu', 'strong');
+
         if (site.tagline) print(site.tagline);
+
         if (site.about) print(site.about.split(/\n\s*\n/)[0]);
         break;
       }
+
       case 'contact': {
         const site = api.site();
+
         if (site.email) print(`  email     ${site.email}`);
+
         for (const l of site.links ?? []) print(`  ${l.label.toLowerCase().padEnd(9)} ${l.url}`);
+
         if (!site.email && !site.links?.length) print('No contact details yet.', 'dim');
         break;
       }
+
       case 'history':
         history.forEach((h, i) => print(`  ${String(i + 1).padStart(3)}  ${h}`));
         break;
@@ -417,6 +474,7 @@ const NAV = (() => {
 
   function findCategory(q) {
     const s = q.toLowerCase();
+
     return api.categories().find((c) => c.id === s || c.label.toLowerCase() === s || (c.short ?? '').toLowerCase() === s)
       ?? api.categories().find((c) => c.id.startsWith(s) || c.label.toLowerCase().startsWith(s));
   }
@@ -425,6 +483,7 @@ const NAV = (() => {
     if (!q) return null;
     const s = q.toLowerCase().trim();
     const projects = api.projects();
+
     return projects.find((p) => p.id === s || p.num === s.padStart(2, '0') || p.title.toLowerCase() === s)
       ?? projects
         .map((p) => ({ p, s: Math.max(score(p.title, s), score(p.id, s)) }))
@@ -437,6 +496,7 @@ const NAV = (() => {
     const value = input.value;
     const parts = value.split(/\s+/);
     let options;
+
     if (parts.length <= 1) {
       options = Object.keys(COMMANDS);
     } else {
@@ -449,13 +509,17 @@ const NAV = (() => {
         cd: ['work', 'about', '~'],
       }[cmd] ?? [];
     }
+
     const word = parts[parts.length - 1].toLowerCase();
     const matches = options.filter((o) => o.startsWith(word));
+
     if (!matches.length) return;
     let common = matches[0];
+
     for (const m of matches) while (!m.startsWith(common)) common = common.slice(0, -1);
     parts[parts.length - 1] = matches.length === 1 ? `${matches[0]} ` : common;
     input.value = parts.join(' ');
+
     if (matches.length > 1) print(matches.join('  '), 'dim');
   }
 
@@ -473,9 +537,11 @@ const NAV = (() => {
 
     scrubber.addEventListener('click', (e) => {
       const b = e.target.closest('[data-year]');
+
       if (!b) return;
       const year = b.dataset.year;
       const target = document.querySelector(`#projects .card[data-year="${year}"]`);
+
       if (!target) return;
       // On the way the highlight runs through the years in between (never
       // outside them), and lands on the clicked year once the scroll has
@@ -484,11 +550,14 @@ const NAV = (() => {
       const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
       const to = Math.max(0, Math.min(page.scrollHeight - innerHeight, scrollY + target.getBoundingClientRect().top - margin));
       clearTimeout(clickedTimer);
+
       if (Math.abs(to - scrollY) < 1) {
         clickedYear = null;
         setYear(year);
+
         return;
       }
+
       clickedFrom = scrubber.querySelector('[aria-current]')?.dataset.year ?? null;
       clickedYear = year;
       // In case the scroll's end isn't reported
@@ -496,6 +565,7 @@ const NAV = (() => {
       target.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     });
     window.addEventListener('scrollend', () => settleYear());
+
     // Scrolling by hand takes over from a click
     for (const type of ['wheel', 'touchstart', 'keydown']) {
       window.addEventListener(type, () => {
@@ -513,10 +583,12 @@ const NAV = (() => {
 
     // Keep it beside the content as the window or the card grid changes.
     let placing = 0;
+
     const replace = () => {
       cancelAnimationFrame(placing);
       placing = requestAnimationFrame(placeScrubber);
     };
+
     window.addEventListener('resize', replace);
     new ResizeObserver(replace).observe($('#work .section-head'));
     // The side column settles once the web fonts are in
@@ -538,10 +610,13 @@ const NAV = (() => {
   function refresh() {
     if (!api || !scrubber) return;
     const years = [];
+
     for (const el of document.querySelectorAll('#projects .card:not([data-dup])[data-year]')) {
       const y = el.dataset.year;
+
       if (y && !years.includes(y)) years.push(y);
     }
+
     scrubber.style.setProperty('--years', years.length);
     $('ol', scrubber).innerHTML = years.length > 1
       ? years.map((y) => `<li><button type="button" data-year="${y}">${y}</button></li>`).join('')
@@ -560,6 +635,7 @@ const NAV = (() => {
     const G = gridStep();
     const room = document.documentElement.clientWidth - right >= G * 5;
     scrubber.hidden = !room;
+
     if (!room) return;
     scrubber.style.left = `${right + G * 2}px`;
     const work = $('.side-nav a[data-section="work"]');
@@ -583,6 +659,7 @@ const NAV = (() => {
   // are squeezed into the scrolling that's left.
   function markYear() {
     let year = yearAt(scrollY);
+
     if (clickedYear && year) {
       // Mid-scroll after a click: only the years from the one lit when it was
       // clicked to the clicked one
@@ -592,21 +669,26 @@ const NAV = (() => {
       const i = Math.min(Math.max(years.indexOf(year), Math.min(a, b)), Math.max(a, b));
       year = years[i];
     }
+
     setYear(year);
   }
 
   function yearAt(y) {
     const cards = [...document.querySelectorAll('#projects .card[data-year]')].filter((c) => c.dataset.year);
+
     if (!cards.length) return null;
     // Each row counts from where scrolling to it stops (an opened card stops
     // a square lower than the others, see .card.is-expanded's scroll margin)
     const rows = [];
+
     for (const card of cards) {
       const r = card.getBoundingClientRect();
       const row = rows.at(-1);
+
       if (row && Math.abs(row.top - (r.top + scrollY)) < 1) row.cards.push(card);
       else rows.push({ top: r.top + scrollY, bottom: r.bottom + scrollY, cards: [card], margin: parseFloat(getComputedStyle(card).scrollMarginTop) || 0 });
     }
+
     const marks = [];
     rows.forEach((row, i) => {
       const next = rows[i + 1];
@@ -617,11 +699,15 @@ const NAV = (() => {
     const max = document.scrollingElement.scrollHeight - innerHeight;
     const last = marks.at(-1).at;
     const squeeze = Math.max(0, max - innerHeight / 2);
+
     if (last > max && last > squeeze) {
       for (const m of marks) if (m.at > squeeze) m.at = squeeze + ((m.at - squeeze) * (max - squeeze)) / (last - squeeze);
     }
+
     let year = marks[0].year;
+
     for (const m of marks) if (m.at <= y + 0.5) year = m.year;
+
     return year;
   }
 
@@ -635,12 +721,14 @@ const NAV = (() => {
     const year = clickedYear;
     clickedYear = null;
     clearTimeout(clickedTimer);
+
     if (keep === false) markYear();
     else setYear(year);
   }
 
   function setYear(year) {
     if (year == null) return;
+
     for (const b of scrubber.querySelectorAll('button')) b.toggleAttribute('aria-current', b.dataset.year === year);
   }
 

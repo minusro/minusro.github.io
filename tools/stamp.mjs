@@ -20,25 +20,32 @@ export async function stampAssets(root) {
   const before = await readFile(file, 'utf8');
   const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
   let html = before;
+
   for (const name of ASSETS) {
     const hash = createHash('sha1').update(await readFile(path.join(root, name))).digest('hex').slice(0, 8);
     const link = new RegExp(`(["'])${name.replace('.', '\\.')}(?:\\?v=[0-9a-f]*)?\\1`, 'g');
     html = html.replace(link, `$1${name}?v=${hash}$1`);
   }
+
   // The tagline, contact links and About text, written into the page as
   // app.js would render them, so the first paint already has them and
   // nothing moves when the script fills them in.
   const site = content.site ?? {};
+
   if (site.tagline) html = html.replace(/(<p class="lede" id="tagline">)[\s\S]*?(<\/p>)/, (_, a, b) => a + esc(site.tagline) + b);
   html = html.replace(/(<div class="side-contact mono" id="side-contact">)[\s\S]*?(<\/div>)/, (_, a, b) => a + contactHTML(site) + b);
   html = html.replace(/(<div class="about-contact mono" id="about-contact">)[\s\S]*?(<\/div>)/, (_, a, b) => a + contactHTML(site) + b);
   const about = aboutHTML(site);
+
   if (about) html = html.replace(/(<div class="about-body" id="about-body">)[\s\S]*?(\n {8}<\/div>)/, (_, a, b) => a + about + b);
   html = html.replace(/<link rel="preload" href="[^"]*" as="image" fetchpriority="high" data-first-cover>/, () => {
     const cover = firstCover(content);
+
     return `<link rel="preload" href="${cover}" as="image" fetchpriority="high" data-first-cover>`;
   });
+
   if (html !== before) await writeFile(file, html);
+
   return html !== before;
 }
 
@@ -48,6 +55,7 @@ const safeUrl = (url) => (/^(https?:|mailto:)/i.test(url ?? '') ? url : '');
 
 function contactHTML(site) {
   const links = (site.links ?? []).filter((l) => l.label && safeUrl(l.url));
+
   return [
     ...links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} <span class="link-arrow" aria-hidden="true">↗</span></a>`),
     site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '',
@@ -56,6 +64,7 @@ function contactHTML(site) {
 
 function aboutHTML(site) {
   const paragraphs = String(site.about ?? '').split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
+
   return paragraphs.map((t) => `\n          <p>${esc(t)}</p>`).join('');
 }
 
@@ -66,19 +75,26 @@ function aboutHTML(site) {
 function firstCover(content) {
   const SLUG = /^[a-z0-9][a-z0-9-]*$/;
   const MEDIA = /^media\/[\w.-]+$/i;
+
   const projects = (content.projects ?? [])
     .map((p, order) => ({ ...p, order }))
     .filter((p) => SLUG.test(p.id ?? '') && !p.hidden)
     .sort((a, b) => {
       const ay = a.year ?? null, by = b.year ?? null;
+
       if (ay !== by) {
         if (ay == null) return 1;
+
         if (by == null) return -1;
+
         return by - ay;
       }
+
       return b.order - a.order;
     });
+
   const cover = projects[0]?.cover;
+
   return MEDIA.test(cover ?? '') ? cover : 'favicon.svg';
 }
 

@@ -36,13 +36,17 @@
   // the beginning when it comes back: scrolling stands in for hovering off
   // and on.
   const noHover = matchMedia('(hover: none)');
+
   const onScreen = new IntersectionObserver((entries) => {
     if (!noHover.matches) return;
+
     for (const entry of entries) {
       const card = entry.target.closest('.card.is-expanded');
+
       if (card) setHovered(entry.isIntersecting ? card : null);
     }
   }, { threshold: 0.25 });
+
   let jumpNext = false; // the next project opens without a smooth scroll
   // Card grid, in grid squares (see layoutGrid)
   let grid = { cols: 1, cells: 14, mediaRows: 9 };
@@ -51,6 +55,7 @@
   (window.contentRequest ?? fetch('content.json', { cache: 'no-cache' }))
     .then((r) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
+
       return r.json();
     })
     .then(start)
@@ -103,9 +108,11 @@
     // Text widths change once the web fonts arrive
     // Scrolling by the visitor, from here on
     let scrolledByHand = false;
+
     for (const type of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
       window.addEventListener(type, () => (scrolledByHand = true), { once: true, passive: true });
     }
+
     document.fonts?.ready.then(() => {
       snapWidths();
       alignNavNames();
@@ -115,6 +122,7 @@
       // project opened from its link is glided back exactly into place
       // (touch screens don't snap to the grid afterwards)
       const card = !scrolledByHand && els.list.querySelector('.card.is-expanded');
+
       if (card) card.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     });
 
@@ -128,6 +136,7 @@
   function bindEvents() {
     $('.side-nav').addEventListener('click', (e) => {
       const a = e.target.closest('a[data-section]');
+
       if (a) holdSection(a.dataset.section);
     });
 
@@ -152,16 +161,19 @@
 
     // Re-fit the page length when the content or the window changes height.
     let lengthening = 0;
+
     const refit = () => {
       cancelAnimationFrame(lengthening);
       lengthening = requestAnimationFrame(fitPageLength);
     };
+
     new ResizeObserver(refit).observe(els.main);
     window.addEventListener('resize', refit);
 
     settleOnGrid();
 
     let following = 0;
+
     const follow = () => {
       if (following) return;
       following = requestAnimationFrame(() => {
@@ -169,6 +181,7 @@
         followScroll();
       });
     };
+
     window.addEventListener('scroll', follow, { passive: true });
     window.addEventListener('resize', follow);
     window.addEventListener('resize', alignLinkArrows);
@@ -180,6 +193,7 @@
 
     els.toolbar.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-cat]');
+
       if (b) selectTag(b.dataset.cat);
     });
 
@@ -187,6 +201,7 @@
     // on the way down, before the card's link or the page's handlers see it)
     els.list.addEventListener('click', (e) => {
       const t = e.target.closest('.card-link .tag');
+
       if (!t) return;
       e.preventDefault();
       e.stopPropagation();
@@ -213,6 +228,7 @@
     // straight to the project rather than scrolling smoothly.
     els.list.addEventListener('click', (e) => {
       const newTab = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
+
       if (e.target.closest('.detail-nav a') && !newTab) jumpNext = true;
     });
     window.addEventListener('hashchange', route);
@@ -221,26 +237,34 @@
       // The x on an opened card closes it (as does clicking the card itself, below)
       if (e.target.closest('[data-close]')) {
         closeAll({ scrollBack: true });
+
         return;
       }
+
       // The name loads the page afresh: no filter, no open project, at the
       // top (scrolling there first, so the reload doesn't put it back)
       if (e.target.closest('[data-home]') && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) {
         e.preventDefault();
         instantly(() => window.scrollTo(0, 0));
         location.assign(new URL('./', location.href));
+
         return;
       }
+
       // The ^^ buttons in the section title rows go back to the top
       if (e.target.closest('[data-to-top]')) {
         window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+
         return;
       }
+
       const a = e.target.closest('a[href^="#/"]');
+
       // Re-clicking the current hash doesn't fire hashchange: clicking an open
       // card again folds it back up.
       if (a && a.getAttribute('href') === location.hash) {
         e.preventDefault();
+
         if (expandedId && a.getAttribute('href') === `#/${expandedId}`) closeAll({ scrollBack: true });
         else route();
       }
@@ -248,6 +272,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape' || e.defaultPrevented || document.querySelector('dialog[open]')) return;
+
       if (expandedId) closeAll({ scrollBack: true });
     });
   }
@@ -256,16 +281,20 @@
   // it has one; the others show their still.
   function setHovered(card) {
     if (card === hovered) return;
+
     if (hovered) playVideo(hovered, false);
     hovered = card;
+
     if (card) playVideo(card, true);
   }
 
   function playVideo(card, on) {
     const v = $('video, .card-anim', card);
+
     if (!v) return;
     const play = on && !reduceMotion.matches;
     card.classList.toggle('is-playing', play);
+
     // Each hover starts from the beginning
     if (v.tagName !== 'VIDEO') {
       // GIFs can't be paused; a fresh address (same file, new #fragment)
@@ -276,6 +305,7 @@
       v.play().catch(() => {});
     } else {
       v.pause();
+
       // Standing in for the cover: back to the first frame
       if (v.classList.contains('is-still')) v.currentTime = 0;
     }
@@ -301,12 +331,16 @@
     const t = els.toolbar.getBoundingClientRect();
     const stuck = t.top > els.toolbar.parentElement.getBoundingClientRect().top + 0.5;
     els.toolbar.classList.toggle('is-stuck', stuck);
+
     if (stuck) {
       els.toolbar.style.setProperty('--bg-x', `${-t.left}px`);
       els.toolbar.style.setProperty('--bg-y', `${-t.top}px`);
     }
+
     let lit = !aboutInPlace && t.bottom > 0 ? 'work' : 'about';
+
     if (lit === 'work' && !wide.matches && $('#work .section-head').getBoundingClientRect().top >= innerHeight) lit = null;
+
     if (!heldSection) markSection(lit);
     placeContact();
   }
@@ -318,10 +352,13 @@
   function placeContact() {
     const box = $('#side-contact');
     const last = $('#about-body').lastElementChild;
+
     if (!wide.matches || !last) {
       box.style.removeProperty('--lift');
+
       return;
     }
+
     const lift = parseFloat(box.style.getPropertyValue('--lift')) || 0;
     const r = box.getBoundingClientRect();
     const aboutLink = $('.side-nav a[data-section="about"]');
@@ -345,7 +382,9 @@
   // (null clears it)
   function markSection(id) {
     const links = [...document.querySelectorAll('.side-nav a')];
+
     if (id != null && !links.some((a) => a.dataset.section === id)) return;
+
     for (const a of links) {
       if (a.dataset.section === id) a.setAttribute('aria-current', 'true');
       else a.removeAttribute('aria-current');
@@ -364,10 +403,12 @@
     const across = Math.floor(els.list.clientWidth / G + 0.01);
     const cols = Math.min(3, Math.max(1, Math.floor((across + 1) / 13)));
     let cells = Math.max(6, Math.min(16, Math.floor((across + 1) / cols) - 1));
+
     if (cols === 3) {
       const room = Math.floor((document.documentElement.clientWidth - els.list.getBoundingClientRect().left) / G + 0.01);
       cells = Math.max(12, Math.min(cells, Math.floor((room - 5 - 2) / 3)));
     }
+
     const mediaRows = Math.round(((cells - 2) * 3) / 4);
     const changed = cols !== grid.cols || cells !== grid.cells || mediaRows !== grid.mediaRows;
     grid = { cols, cells, mediaRows };
@@ -375,10 +416,12 @@
     els.list.style.setProperty('--card-cells', cells);
     els.list.style.setProperty('--media-rows', mediaRows);
     els.list.dataset.cols = cols;
+
     // With more than one column, lines and headings end where the rightmost
     // card does (--rail in styles.css)
     if (cols > 1) els.page.style.setProperty('--rail', `${(cols * (cells + 1) - 1) * G}px`);
     else els.page.style.removeProperty('--rail');
+
     return changed;
   }
 
@@ -392,6 +435,7 @@
       const cs = getComputedStyle(name);
       measure.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
       const text = name.textContent.trim().toUpperCase();
+
       if (name.parentElement.classList.contains('nav-prev')) {
         name.style.marginLeft = `${measure.measureText(text[0]).actualBoundingBoxLeft}px`;
       } else {
@@ -415,6 +459,7 @@
   // next thing along starts on a gridline too.
   function snapWidths(root = document) {
     const items = root.querySelectorAll('.chip, .tag, .detail-links a');
+
     for (const el of items) el.style.width = '';
     const widths = [...items].map((el) => el.getBoundingClientRect().width);
     items.forEach((el, i) => {
@@ -438,6 +483,7 @@
     const about = $('#about .section-head').getBoundingClientRect().top + scrollY;
     const need = Math.max(over, about - aboutGap());
     const pad = need > 0 ? need - over + ((G - (need % G)) % G) : 0;
+
     if (Math.abs(pad - tail) > 0.5) els.main.style.paddingBottom = pad ? `${pad}px` : '';
   }
 
@@ -449,19 +495,24 @@
     const mouse = matchMedia('(pointer: fine)');
     const page = document.scrollingElement;
     let glide = 0;
+
     const stop = () => {
       cancelAnimationFrame(glide);
       glide = 0;
     };
+
     const settle = () => {
       // Left alone while pinch-zoomed in
       if (glide || !mouse.matches || (window.visualViewport?.scale ?? 1) > 1.01) return;
       const max = page.scrollHeight - window.innerHeight;
       const target = Math.min(Math.round(page.scrollTop / G) * G, max - (max % G));
       let y = page.scrollTop;
+
       if (Math.abs(target - y) < 0.5) return;
+
       if (reduceMotion.matches) return instantly(() => window.scrollTo(0, target));
       let last = 0;
+
       const step = (now) => {
         y = target + (y - target) * Math.exp(-(last ? now - last : 16) / 40);
         last = now;
@@ -469,9 +520,12 @@
         instantly(() => window.scrollTo(0, done ? target : y));
         glide = done ? 0 : requestAnimationFrame(step);
       };
+
       glide = requestAnimationFrame(step);
     };
+
     for (const type of ['wheel', 'touchstart', 'pointerdown', 'keydown']) window.addEventListener(type, stop, { passive: true });
+
     if ('onscrollend' in window) {
       // Fires once the finger is lifted and any fling has run out
       window.addEventListener('scrollend', settle);
@@ -479,12 +533,15 @@
       // Otherwise: after a pause in scrolling, with no finger on the screen
       let timer = 0;
       let touching = false;
+
       const later = () => {
         clearTimeout(timer);
         timer = setTimeout(() => touching || settle(), 150);
       };
+
       window.addEventListener('scroll', later, { passive: true });
       window.addEventListener('touchstart', () => (touching = true), { passive: true });
+
       for (const type of ['touchend', 'touchcancel']) {
         window.addEventListener(type, (e) => {
           touching = e.touches.length > 0;
@@ -515,6 +572,7 @@
     if (syncUrl) {
       // Keep any other parameters as they are.
       const q = new URLSearchParams(location.search);
+
       if (tag === 'all') q.delete('tag');
       else q.set('tag', tag);
       const qs = q.toString();
@@ -534,9 +592,12 @@
   function compare(a, b, dir) {
     if (a.year !== b.year) {
       if (a.year == null) return 1;
+
       if (b.year == null) return -1;
+
       return (a.year - b.year) * dir;
     }
+
     return (a.order - b.order) * dir;
   }
 
@@ -545,11 +606,14 @@
   function route() {
     const m = location.hash.match(/^#\/([\w-]+)$/);
     const p = m && projects.find((x) => x.id === m[1]);
+
     if (!p) {
       // #work / #about (typed, or via Back/Forward) count like a click on that link
       holdSection(location.hash.slice(1));
+
       return closeAll({ scrollBack: !location.hash });
     }
+
     expandCard(p);
   }
 
@@ -562,11 +626,14 @@
     const before = card?.getBoundingClientRect();
     collapse();
     NAV.markYear();
+
     if (location.hash.startsWith('#/')) replaceUrl(location.pathname + location.search);
+
     if (!scrollBack || !card) return;
     const keep = scrollY + card.getBoundingClientRect().top - before.top;
     // Where the filters start sticking to the top of the window
     const pinned = els.toolbar.parentElement.getBoundingClientRect().top + scrollY;
+
     if (keep >= pinned - 0.5 || reduceMotion.matches) {
       instantly(() => window.scrollTo(0, keep));
       card.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
@@ -576,6 +643,7 @@
       // filters stay put) and let just the card glide up the last stretch.
       instantly(() => card.scrollIntoView({ block: 'start' }));
       const dy = before.top - card.getBoundingClientRect().top;
+
       if (dy > 0) card.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 250, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' });
     }
   }
@@ -587,6 +655,7 @@
       expandedId = p.id;
       update();
     }
+
     // The clicked card keeps its place on screen while the cards around it
     // rearrange (so nothing jumps under the pointer), then glides into
     // position. The previous/next links jump straight there instead.
@@ -594,13 +663,16 @@
     collapse();
     expandedId = p.id;
     const card = attachDetail(p);
+
     if (card && before != null && !jumpNext) instantly(() => window.scrollBy(0, card.getBoundingClientRect().top - before));
+
     if (card && jumpNext) instantly(() => card.scrollIntoView({ block: 'start' }));
     else card?.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     jumpNext = false;
     // The year timeline follows (the glide there updates it too, but a card
     // already in place doesn't scroll at all)
     NAV.markYear();
+
     // Its video keeps playing (or starts) while the project is open
     if (card) {
       setHovered(card);
@@ -610,21 +682,25 @@
 
   function attachDetail(p) {
     const card = els.list.querySelector(`.card[data-id="${p.id}"]`);
+
     if (!card) return null;
     card.classList.add('is-expanded');
     card.insertAdjacentHTML('beforeend', `<div class="card-detail" data-cat="${primary(p)}">${detailHTML(p)}</div>`);
     placeCards();
     snapWidths(card.querySelector('.card-detail'));
     alignNavNames(card);
+
     return card;
   }
 
   function collapse() {
     onScreen.disconnect();
+
     for (const card of els.list.querySelectorAll('.card.is-expanded')) {
       card.classList.remove('is-expanded');
       card.querySelector('.card-detail')?.remove();
     }
+
     expandedId = null;
     placeCards();
   }
@@ -645,6 +721,7 @@
       ['Platforms', p.platforms.join(', ')],
       ['Tech', p.tech.join(', '), 'wide'],
     ];
+
     const links = p.links.filter((l) => l.label && safeUrl(l.url));
 
     return `
@@ -692,16 +769,19 @@
       .split(/\n\s*\n/)
       .map((s) => s.trim())
       .filter(Boolean);
+
     if (paragraphs.length) {
       $('#about-body').innerHTML = paragraphs.map((p) => `<p>${esc(p)}</p>`).join('');
     }
 
     // In the side column, and on narrow screens again after the About text
     const links = (site.links ?? []).filter((l) => l.label && safeUrl(l.url));
+
     const contact = [
       ...links.map((l) => `<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} <span class="link-arrow" aria-hidden="true">↗</span></a>`),
       site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '',
     ].join('');
+
     $('#side-contact').innerHTML = contact;
     $('#about-contact').innerHTML = contact;
     alignLinkArrows();
@@ -713,13 +793,17 @@
   // their row, on whole pixels, where a small nudge gets them there.
   function alignLinkArrows() {
     const arrows = [...document.querySelectorAll('#side-contact .link-arrow, #about-contact .link-arrow')].filter((a) => a.getClientRects().length);
+
     if (!arrows.length) return;
     const px = G / 24;
     const lede = parseFloat(getComputedStyle(arrows[0]).fontSize);
+
     const font = (el) => {
       const cs = getComputedStyle(el);
+
       return `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     };
+
     // Where the browser puts a line's baseline, below the line's top
     const baseline = (line) => {
       const mark = document.createElement('span');
@@ -727,8 +811,10 @@
       line.append(mark);
       const y = mark.getBoundingClientRect().top - line.getBoundingClientRect().top;
       mark.remove();
+
       return y;
     };
+
     measure.font = font(arrows[0]);
     const ink = measure.measureText('↗');
     // The project arrow: its start, from the label's gridline, and its tip
@@ -745,12 +831,14 @@
     // square away). So it moves at most 70% of a space towards the word and
     // a quarter of a space away from it, and otherwise stays where it falls.
     const space = measure.measureText(' ').width + (parseFloat(getComputedStyle(arrows[0]).letterSpacing) || 0);
+
     for (const arrow of arrows) {
       arrow.style.left = '';
       arrow.style.top = '';
       const right = arrow.getBoundingClientRect().left + ink.actualBoundingBoxRight;
       const spots = [Math.floor((right + gap) / G), Math.ceil((right + gap) / G)].map((k) => k * G - gap - right);
       const move = spots.find((d) => d >= -0.7 * space && d <= 0.25 * space);
+
       if (move != null) arrow.style.left = `${move}px`;
       arrow.style.top = `${tip - baseline(arrow.parentElement)}px`;
     }
@@ -763,6 +851,7 @@
       .map((c) => ({ ...c, n: projects.filter((p) => p.tags.includes(c.id)).length }))
       .concat({ id: 'all', label: 'All', n: projects.length })
       .filter((c) => c.n > 0);
+
     els.filters.innerHTML = options
       .map((c) => `
         <button type="button" class="chip" data-cat="${c.id}">
@@ -775,10 +864,13 @@
   function renderProjects() {
     const list = visible();
     els.list.innerHTML = list.map((p, i) => cardHTML(p, i)).join('');
+
     if (expandedId) {
       const p = projects.find((x) => x.id === expandedId);
+
       if (!p || !attachDetail(p)) closeAll();
     }
+
     placeCards();
     snapWidths(els.list);
     NAV.refresh();
@@ -793,8 +885,10 @@
     let slot = 0;
     const cards = [...els.list.querySelectorAll('.card')];
     const extra = wide.matches ? G : 0;
+
     for (const [i, card] of cards.entries()) {
       card.style.margin = '';
+
       if (card.classList.contains('is-expanded')) {
         slot = Math.ceil(slot / grid.cols) * grid.cols;
         card.style.gridArea = `${slot / grid.cols + 1} / 1 / auto / -1`;
@@ -838,20 +932,24 @@
     const gap = [6, 8, 12][(h >>> 24) % 3];
     const fit = `object-position: 50% ${(1 - p.mediaAlign) * 50}%`;
     const gif = /\.gif$/i.test(p.video);
+
     // With no cover, a video stands in for it, paused on its first frame
     // (#t= makes browsers draw that frame without loading the whole file)
     if (!p.cover && p.video && !gif) {
       return `<video class="is-still" src="${esc(p.video)}#t=0.001" muted loop playsinline preload="metadata" style="${fit}"></video>`;
     }
+
     const still = p.cover
       ? `<img src="${esc(p.cover)}" alt=""${load === 'lazy' ? ' loading="lazy"' : ''}${load === 'first' ? ' fetchpriority="high"' : ''} decoding="async" style="${fit}">`
       : `<span class="ph" style="--a:${h % 180}deg;--x:${x}px;--y:${y}px;--gap:${gap}px"></span>`;
+
     // An animated GIF stands in for a video; it loads the first time it's shown
     const video = !p.video
       ? ''
       : gif
         ? `<img class="card-anim" data-src="${esc(p.video)}" alt="" style="${fit}">`
         : `<video src="${esc(p.video)}" muted loop playsinline preload="none" style="${fit}"></video>`;
+
     return still + video;
   }
 
@@ -876,6 +974,7 @@
         closeAll();
         holdSection(section);
         const smooth = reduceMotion.matches ? 'auto' : 'smooth';
+
         if (section === 'top') window.scrollTo({ top: 0, behavior: smooth });
         else document.getElementById(section)?.scrollIntoView({ behavior: smooth });
       },
@@ -907,7 +1006,9 @@
 
   function webUrl(url) {
     const u = String(url ?? '').trim();
+
     if (!u) return '';
+
     return /^[a-z][\w+.-]*:/i.test(u) ? (/^https?:/i.test(u) ? u : '') : `https://${u}`;
   }
 
@@ -924,7 +1025,9 @@
 
   function hash(s) {
     let h = 2166136261;
+
     for (const ch of s) h = Math.imul(h ^ ch.codePointAt(0), 16777619);
+
     return h >>> 0;
   }
 

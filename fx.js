@@ -13,6 +13,7 @@ const FX = (() => {
 
   function field(canvas) {
     const noop = { setCategories() {} };
+
     if (!canvas?.getContext) return noop;
 
     const ctx = canvas.getContext('2d');
@@ -48,11 +49,13 @@ const FX = (() => {
       if (cat) probe.dataset.cat = cat;
       else delete probe.dataset.cat;
       probe.style.color = value;
+
       return getComputedStyle(probe).color;
     }
 
     function readColors() {
       const palette = categoryIds.map((id) => resolve('var(--c)', id));
+
       return {
         dot: resolve('var(--field-dot)'),
         hot: resolve('var(--accent)'),
@@ -82,12 +85,14 @@ const FX = (() => {
       // +0.5: the centre of the 1px gridline
       const x0 = 0.5;
       const y0 = 0.5;
+
       for (let r = 0, i = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++, i++) {
           hx[i] = x0 + c * spacing;
           hy[i] = y0 + r * spacing;
         }
       }
+
       draw();
     }
 
@@ -100,6 +105,7 @@ const FX = (() => {
       raf = 0;
       const now = performance.now();
       const t = now / 1000;
+
       if (now - lastPulse > AUTO_PULSE * 1000) addRipple(w * (0.2 + Math.random() * 0.6), h * (0.2 + Math.random() * 0.6), now);
       ripples = ripples.filter((r) => (now - r.start) / 1000 < RIPPLE_LIFE);
 
@@ -113,11 +119,13 @@ const FX = (() => {
         const dx = x + ox[i] - pointer.x;
         const dy = y + oy[i] - pointer.y;
         const d2 = dx * dx + dy * dy;
+
         if (d2 < RADIUS * RADIUS) {
           const d = Math.sqrt(d2) || 1;
           const f = (1 - d / RADIUS) ** 2 * 2.4;
           fx += (dx / d) * f;
           fy += (dy / d) * f;
+
           if (d < RADIUS * 0.55) b = 1;
         }
 
@@ -127,10 +135,12 @@ const FX = (() => {
           const ry = y - r.y;
           const d = Math.sqrt(rx * rx + ry * ry) || 1;
           const band = Math.abs(d - age * RIPPLE_SPEED);
+
           if (band < 36) {
             const f = (1 - band / 36) * (1 - age / RIPPLE_LIFE) * 3;
             fx += (rx / d) * f;
             fy += (ry / d) * f;
+
             if (f > 0.5) b = 2 + r.color;
           }
         }
@@ -149,8 +159,10 @@ const FX = (() => {
     function draw() {
       ctx.clearRect(0, 0, w, h);
       const fills = [colors.dot, colors.hot, ...colors.palette];
+
       for (let b = 0; b < fills.length; b++) {
         ctx.fillStyle = fills[b];
+
         for (let i = 0; i < hx.length; i++) {
           if (bucket[i] !== b) continue;
           const s = 1.5 + Math.min(Math.hypot(ox[i], oy[i]) * 0.08, 2.2);
@@ -161,7 +173,9 @@ const FX = (() => {
 
     function schedule() {
       const run = onScreen && !document.hidden && !reduceMotion.matches;
+
       if (run && !raf) raf = requestAnimationFrame(step);
+
       if (!run && raf) {
         cancelAnimationFrame(raf);
         raf = 0;
@@ -194,10 +208,12 @@ const FX = (() => {
       draw();
       schedule();
     });
+
     const refresh = () => {
       colors = readColors();
       draw();
     };
+
     darkMode.addEventListener('change', refresh);
     // ...and when the page forces a colour scheme on <html> (the local dev switch does)
     new MutationObserver(refresh).observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
