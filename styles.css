@@ -1335,8 +1335,8 @@ h1 a {
 /* Narrow windows (phones, tablets): the section links sit side by side at
    the top right, in the "Portfolio" row a square from the top. They and the
    dimension line end where the rightmost card does. Two squares between
-   sections; About's heading lands two squares from the top (also as far as
-   the page's end lets it scroll, see app.js). An opened project lands where
+   sections; a section's heading lands a square from the top when gone to
+   (and About's is as far as the page's end lets it scroll, see app.js). An opened project lands where
    any card does, a square below the filters, with no extra space around
    it. */
 @media (max-width: 1023px) {
@@ -1348,8 +1348,12 @@ h1 a {
     padding-block: calc(var(--g) * 2);
   }
 
+  #work {
+    scroll-margin-top: calc(var(--g) * -1);
+  }
+
   .section + .section {
-    scroll-margin-top: calc(var(--g) * 2);
+    scroll-margin-top: var(--g);
   }
 
   .card.is-expanded {
