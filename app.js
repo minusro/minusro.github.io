@@ -494,11 +494,12 @@
 
   // ---- State ---------------------------------------------------------------
 
-  // A new filter closes any opened project. With the filters pinned to the
+  // Picking a filter (even the one already selected) closes any opened
+  // project. With the filters pinned to the
   // top, jump to the first project of the new selection (as the timeline's
   // newest year would); otherwise stay.
   function selectTag(cat) {
-    if (cat !== tag) closeAll();
+    closeAll();
     tag = cat;
     const pinned = els.toolbar.getBoundingClientRect().top <= 0.5;
     update({ then: pinned ? () => instantly(() => els.list.querySelector('.card')?.scrollIntoView({ block: 'start' })) : null });
@@ -853,7 +854,7 @@
         else location.hash = `#/${id}`;
       },
       filter(next) {
-        if (next !== tag) closeAll();
+        closeAll();
         tag = next;
         update();
       },
