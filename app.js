@@ -47,7 +47,8 @@
   // Card grid, in grid squares (see layoutGrid)
   let grid = { cols: 1, cells: 14, mediaRows: 9 };
 
-  fetch('content.json', { cache: 'no-cache' })
+  // (index.html starts this request before the scripts load)
+  (window.contentRequest ?? fetch('content.json', { cache: 'no-cache' }))
     .then((r) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
@@ -705,7 +706,7 @@
   // The side column's link arrows sit in their squares exactly where the
   // arrow after an opened personal project's "Personal project" does (see
   // .meta-arrow in styles.css): as far short of a gridline, as far down
-  // their row, on whole pixels. Each is nudged to the nearest such spot.
+  // their row, on whole pixels, where a small nudge gets them there.
   function alignLinkArrows() {
     const arrows = document.querySelectorAll('#side-contact .link-arrow');
     if (!arrows.length) return;
@@ -735,11 +736,18 @@
     document.body.append(label);
     const tip = baseline(label) + Math.round(0.4224 * lede - 0.698 * 11 * px);
     label.remove();
+    // Moving an arrow far would leave it touching its word or adrift from it
+    // (with smaller text, as on phones, the nearest spot can be up to half a
+    // square away). So it moves at most 70% of a space towards the word and
+    // a quarter of a space away from it, and otherwise stays where it falls.
+    const space = measure.measureText(' ').width + (parseFloat(getComputedStyle(arrows[0]).letterSpacing) || 0);
     for (const arrow of arrows) {
       arrow.style.left = '';
       arrow.style.top = '';
       const right = arrow.getBoundingClientRect().left + ink.actualBoundingBoxRight;
-      arrow.style.left = `${Math.round((right + gap) / G) * G - gap - right}px`;
+      const spots = [Math.floor((right + gap) / G), Math.ceil((right + gap) / G)].map((k) => k * G - gap - right);
+      const move = spots.find((d) => d >= -0.7 * space && d <= 0.25 * space);
+      if (move != null) arrow.style.left = `${move}px`;
       arrow.style.top = `${tip - baseline(arrow.parentElement)}px`;
     }
   }
@@ -762,7 +770,7 @@
 
   function renderProjects() {
     const list = visible();
-    els.list.innerHTML = list.map(cardHTML).join('');
+    els.list.innerHTML = list.map((p, i) => cardHTML(p, i)).join('');
     if (expandedId) {
       const p = projects.find((x) => x.id === expandedId);
       if (!p || !attachDetail(p)) closeAll();
@@ -795,11 +803,13 @@
     }
   }
 
-  function cardHTML(p) {
+  // The first row's covers load straight away (the first one first); the
+  // rest as they're scrolled near.
+  function cardHTML(p, i = Infinity) {
     return `
       <li class="card" data-id="${p.id}" data-cat="${primary(p)}" data-year="${p.year ?? ''}">
         <a class="card-link" href="#/${p.id}">
-          <div class="card-media" aria-hidden="true">${mediaHTML(p)}</div>
+          <div class="card-media" aria-hidden="true">${mediaHTML(p, i < grid.cols ? (i === 0 ? 'first' : 'eager') : 'lazy')}</div>
           <span class="card-num">${p.num}</span>
           <h3 class="card-title">${esc(p.title)}</h3>
           <span class="card-year">${p.year ?? '—'}</span>
@@ -817,7 +827,7 @@
   // Cover image (or a pattern seeded from the project id) plus an optional video loop.
   // The placeholder's circle is centred on a grid crossing inside the picture
   // (which starts half a square in from the card's corner).
-  function mediaHTML(p) {
+  function mediaHTML(p, load = 'lazy') {
     const h = hash(p.id);
     const x = G * (1 + (h % Math.max(1, grid.cells - 1))) - G / 2;
     const y = G * (1 + ((h >>> 8) % Math.max(1, grid.mediaRows))) - G / 2;
@@ -830,7 +840,7 @@
       return `<video class="is-still" src="${esc(p.video)}#t=0.001" muted loop playsinline preload="metadata" style="${fit}"></video>`;
     }
     const still = p.cover
-      ? `<img src="${esc(p.cover)}" alt="" loading="lazy" decoding="async" style="${fit}">`
+      ? `<img src="${esc(p.cover)}" alt=""${load === 'lazy' ? ' loading="lazy"' : ''}${load === 'first' ? ' fetchpriority="high"' : ''} decoding="async" style="${fit}">`
       : `<span class="ph" style="--a:${h % 180}deg;--x:${x}px;--y:${y}px;--gap:${gap}px"></span>`;
     // An animated GIF stands in for a video; it loads the first time it's shown
     const video = !p.video

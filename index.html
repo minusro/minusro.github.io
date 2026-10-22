@@ -15,14 +15,19 @@
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=df320476">
+  <!-- The fonts the first screen uses, fetched straight away -->
+  <link rel="preload" href="fonts/ibm-plex-sans-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/ibm-plex-mono-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- The newest project's cover, the first picture on the page (set by tools/stamp.mjs) -->
+  <link rel="preload" href="media/loop-brother-cover.webp" as="image" fetchpriority="high" data-first-cover>
+  <!-- The project list, requested before the scripts have loaded (app.js picks it up) -->
+  <script>window.contentRequest = fetch('content.json', { cache: 'no-cache' });</script>
+  <link rel="stylesheet" href="styles.css?v=c381a625">
 
   <script src="fx.js?v=24e39399" defer></script>
   <script src="nav.js?v=e804e76f" defer></script>
-  <script src="app.js?v=59cce3c1" defer></script>
+  <script src="app.js?v=1ec8f5c7" defer></script>
 </head>
 <body>
   <a class="skip" href="#work">Skip to work</a>

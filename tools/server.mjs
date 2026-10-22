@@ -44,6 +44,7 @@ const TYPES = {
   '.mp4': 'video/mp4',
   '.webm': 'video/webm',
   '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
   '.txt': 'text/plain; charset=utf-8',
 };
 
