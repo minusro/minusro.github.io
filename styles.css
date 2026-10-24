@@ -852,6 +852,13 @@ h1 a {
   object-fit: cover;
 }
 
+/* Stretched to the frame, whatever their own shape (the project's
+   "Stretch" setting, on unless turned off in the editor) */
+.card-media.is-stretched img,
+.card-media.is-stretched video {
+  object-fit: fill;
+}
+
 /* The hover video (or animated GIF) fades in over the still */
 .card-media video,
 .card-media .card-anim {

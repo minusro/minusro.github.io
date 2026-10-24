@@ -87,6 +87,9 @@
         // Vertical alignment of the cover and video: 1 top, 0 middle, -1 bottom
         mediaAlign: Math.max(-1, Math.min(1, Number(p.mediaAlign) || 0)),
         personal: p.personal === true,
+        // Cover and video stretched to the card's frame (on unless turned
+        // off); otherwise cropped, with mediaAlign choosing what stays
+        stretch: p.stretch !== false,
         // A personal project's own page (a bare address gets https://)
         url: webUrl(p.url),
         order,
@@ -395,8 +398,8 @@
 
   // Fit as many cards across as will go, up to three (at least 12 squares
   // wide, at most 16), one free square between them; the picture, half a
-  // square in from the card's top and sides, is roughly 4:3 (mediaRows + 1
-  // squares tall). With three columns the cards only grow
+  // square in from the card's top and sides, is the whole number of squares
+  // tall (mediaRows + 1) that comes closest to 4:3. With three columns the cards only grow
   // past 12 squares as far as still leaves the year timeline its five free
   // squares to the right (see nav.js). Returns true if anything changed.
   function layoutGrid() {
@@ -409,7 +412,10 @@
       cells = Math.max(12, Math.min(cells, Math.floor((room - 5 - 2) / 3)));
     }
 
-    const mediaRows = Math.round(((cells - 2) * 3) / 4);
+    const pictureWidth = cells - 1;
+    const tall = [Math.floor((pictureWidth * 3) / 4), Math.ceil((pictureWidth * 3) / 4)]
+      .reduce((best, h) => (Math.abs(pictureWidth / h - 4 / 3) < Math.abs(pictureWidth / best - 4 / 3) ? h : best));
+    const mediaRows = tall - 1;
     const changed = cols !== grid.cols || cells !== grid.cells || mediaRows !== grid.mediaRows;
     grid = { cols, cells, mediaRows };
     els.list.style.setProperty('--cols', cols);
@@ -907,7 +913,7 @@
     return `
       <li class="card" data-id="${p.id}" data-cat="${primary(p)}" data-year="${p.year ?? ''}">
         <a class="card-link" href="#/${p.id}">
-          <div class="card-media" aria-hidden="true">${mediaHTML(p, i < grid.cols ? (i === 0 ? 'first' : 'eager') : 'lazy')}</div>
+          <div class="card-media${p.stretch ? ' is-stretched' : ''}" aria-hidden="true">${mediaHTML(p, i < grid.cols ? (i === 0 ? 'first' : 'eager') : 'lazy')}</div>
           <span class="card-num">${p.num}</span>
           <h3 class="card-title">${esc(p.title)}</h3>
           <span class="card-year">${p.year ?? '—'}</span>

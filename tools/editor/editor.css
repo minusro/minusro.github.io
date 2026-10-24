@@ -561,6 +561,18 @@ input[type="color"] {
   object-position: 50% var(--media-y, 50%);
 }
 
+/* Hidden fields stay hidden whatever their display (the alignment slider
+   while "Stretch to fit the card" is on) */
+.field[hidden] {
+  display: none;
+}
+
+/* The project's "Stretch to fit the card" setting */
+.is-stretched .drop img,
+.is-stretched .drop video {
+  object-fit: fill;
+}
+
 /* Same spacing as the rest of the form */
 #media-pickers {
   display: flex;

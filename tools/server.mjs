@@ -179,6 +179,7 @@ function validate(c) {
     if (!Array.isArray(p.tags) || p.tags.some((t) => !catIds.has(t))) return `"${name}" has a tag that isn't a category`;
 
     if (p.personal != null && typeof p.personal !== 'boolean') return `"${name}": "personal" must be true or false`;
+    if (p.stretch != null && typeof p.stretch !== 'boolean') return `"${name}": "stretch" must be true or false`;
 
     if (p.url != null && typeof p.url !== 'string') return `"${name}": the project page must be a web address`;
 

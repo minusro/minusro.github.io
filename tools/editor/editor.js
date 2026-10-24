@@ -175,6 +175,10 @@
 
     if (t.dataset.flag) {
       selected[t.dataset.flag] = t.checked;
+      if (t.dataset.flag === 'stretch') {
+        $('#align-field', els.form).hidden = t.checked;
+        $('#media-pickers', els.form).classList.toggle('is-stretched', t.checked);
+      }
       renderSidebar();
       changed();
     } else if (t.dataset.tag) {
@@ -590,9 +594,15 @@
         </label>
 
         <h2>Media</h2>
-        <div id="media-pickers" style="--media-y: ${mediaY(p.mediaAlign)}">${mediaPicker(p, 'cover')}${mediaPicker(p, 'video')}</div>
+        <div id="media-pickers" class="${p.stretch ? 'is-stretched' : ''}" style="--media-y: ${mediaY(p.mediaAlign)}">${mediaPicker(p, 'cover')}${mediaPicker(p, 'video')}</div>
 
-        <label class="field">
+        <label class="check-row">
+          <input type="checkbox" data-flag="stretch"${p.stretch ? ' checked' : ''}>
+          Stretch to fit the card
+          <span class="hint">The cover and video fill the card’s picture exactly, squashed or stretched if their shape differs. Off: they keep their shape and are cropped instead, and the slider below chooses which part stays in view.</span>
+        </label>
+
+        <label class="field" id="align-field"${p.stretch ? ' hidden' : ''}>
           <span class="label">Vertical alignment <output class="align-value" id="align-value">${formatAlign(p.mediaAlign)}</output></span>
           <input type="range" class="align-slider" data-field="mediaAlign" min="-1" max="1" step="0.05" value="${p.mediaAlign}">
           <span class="align-scale" aria-hidden="true"><span>Bottom</span><span>Centre</span><span>Top</span></span>
@@ -866,7 +876,7 @@
   }
 
   function blankProject() {
-    return { id: '', title: '', year: null, tags: [], hidden: false, personal: false, url: '', role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
+    return { id: '', title: '', year: null, tags: [], hidden: false, personal: false, stretch: true, url: '', role: '', studio: '', platforms: [], tech: [], summary: '', links: [], cover: '', video: '', mediaAlign: 0 };
   }
 
   // Same order as the site: newest first, undated last, ties keep file order.
