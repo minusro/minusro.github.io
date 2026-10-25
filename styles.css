@@ -1101,18 +1101,34 @@ h1 a {
   margin-bottom: 0;
 }
 
+/* Inside the description box, a square below the text (the last
+   paragraph's own margin) */
 .detail-links {
   display: flex;
   flex-wrap: wrap;
-  margin: var(--g) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   font: calc(13 * var(--px))/var(--g) var(--font-mono);
 }
 
-/* Widths snap to whole squares (app.js) */
+/* Like the side column's links, at the description's size. Widths snap to
+   whole squares (app.js). */
 .detail-links a {
   display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+@media (hover: hover) {
+  .detail-links a:hover {
+    color: var(--fg);
+  }
+}
+
+.detail-links a:focus-visible {
+  color: var(--fg);
 }
 
 /* Under the card: previous project on the left, next on the right, inset a

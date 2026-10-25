@@ -741,6 +741,9 @@
           ${p.summary
             ? p.summary.split(/\n\s*\n/).map((s) => `<p>${esc(s.trim())}</p>`).join('')
             : '<p>TODO: what it is, what you built, the interesting technical problem, and the outcome.</p>'}
+          ${links.length
+            ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
+            : ''}
         </div>
         <dl class="detail-meta">
           ${meta.map(([k, v, wide]) => k === 'Studio' && p.personal
@@ -751,9 +754,6 @@
               : '<div><dt class="meta-value">Personal<br>project</dt><dd></dd></div>'
             : `<div${wide ? ' class="meta-wide"' : ''}><dt>${k}</dt><dd>${v ? esc(v) : '<span class="todo">TODO</span>'}</dd></div>`).join('')}
         </dl>
-        ${links.length
-          ? `<ul class="detail-links">${links.map((l) => `<li><a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join('')}</ul>`
-          : ''}
       </div>`;
   }
 
