@@ -150,8 +150,10 @@
       fitting = requestAnimationFrame(() => {
         if (layoutGrid()) renderProjects();
         snapWidths();
+        keepPlace();
       });
     }).observe(els.list);
+    keepPlaceOnResize();
     // An opened card's extra space differs between the wide and narrow layouts
     wide.addEventListener('change', placeCards);
 
@@ -167,7 +169,10 @@
 
     const refit = () => {
       cancelAnimationFrame(lengthening);
-      lengthening = requestAnimationFrame(fitPageLength);
+      lengthening = requestAnimationFrame(() => {
+        fitPageLength();
+        keepPlace();
+      });
     };
 
     new ResizeObserver(refit).observe(els.main);
@@ -395,6 +400,76 @@
   }
 
   // ---- Keeping things on the grid ------------------------------------------
+
+  // When the window's width changes, the cards re-flow and the page grows or
+  // shrinks above whatever was being read. So the place on the page is kept
+  // as the first card, heading or paragraph that starts in view (below the
+  // pinned filters), or else the one running through the top of the window,
+  // and how far down the window it was; while the width is changing, the
+  // page is scrolled to keep that there. (Height alone changes as phones show and
+  // hide their address bar, and is left alone.)
+  let place = null;
+  let resizing = 0;
+
+  function notePlace() {
+    if (resizing) return;
+    if (scrollY < 1) return void (place = null);
+
+    const top = els.toolbar.classList.contains('is-stuck') ? els.toolbar.getBoundingClientRect().bottom : 0;
+    let through = null;
+
+    for (const el of document.querySelectorAll('.section-head, .card, #about-body > p, #about-contact')) {
+      const r = el.getBoundingClientRect();
+
+      if (!r.height || r.bottom <= 0) continue;
+      through ??= el;
+
+      if (r.top >= top - 0.5) return void (place = spot(el));
+    }
+
+    place = through && spot(through);
+  }
+
+  function spot(el) {
+    return { id: el.classList.contains('card') ? el.dataset.id : null, el, offset: el.getBoundingClientRect().top };
+  }
+
+  function keepPlace() {
+    if (!resizing) return;
+    if (!place) return instantly(() => window.scrollTo(0, 0));
+
+    // Cards are drawn afresh when the grid changes: find this one again
+    const el = place.id ? els.list.querySelector(`.card[data-id="${place.id}"]`) : place.el;
+
+    if (!el?.isConnected) return;
+
+    const by = el.getBoundingClientRect().top - place.offset;
+
+    if (Math.abs(by) >= 0.5) instantly(() => window.scrollBy(0, by));
+  }
+
+  function keepPlaceOnResize() {
+    let width = window.innerWidth;
+    let settled = 0;
+
+    window.addEventListener('scroll', notePlace, { passive: true });
+    window.addEventListener('scrollend', notePlace);
+    notePlace();
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      resizing = 1;
+      keepPlace();
+      requestAnimationFrame(keepPlace);
+      clearTimeout(settled);
+      settled = setTimeout(() => {
+        keepPlace();
+        resizing = 0;
+        notePlace();
+      }, 300);
+    });
+  }
 
   // Fit as many cards across as will go, up to three (at least 12 squares
   // wide, at most 16), one free square between them; the picture, half a
