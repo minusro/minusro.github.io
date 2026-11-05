@@ -209,4 +209,12 @@ document.fonts.ready.then(()=>{
 (function(){function fit(){var w=document.documentElement.clientWidth,p=794+32;document.documentElement.style.setProperty('--z',w<p?(w/p):1)}
 fit();addEventListener('resize',fit)})();
 </script>
+<!-- Visit counts, on the CV's own GoatCounter site (no cookies, nothing stored
+     on the device; local previews aren't counted), plus a "print" event when
+     the page is printed or saved as PDF (once per visit) -->
+<script data-goatcounter="https://danielstanciu-cv.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script>
+addEventListener('beforeprint',function once(){removeEventListener('beforeprint',once);
+try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:'print',title:'Printed or saved as PDF',event:true})}catch(e){}});
+</script>
 </body></html>
