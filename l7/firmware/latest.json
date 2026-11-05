@@ -17,5 +17,9 @@
       "bytes": 1365342,
       "sha256": "60096e11924a6e09dfa60ca1f9044db1d0c04ae66042e83f8daea18dc4085100"
     }
+  },
+  "dirtywave": {
+    "page": "https://dirtywave.com/pages/resources-downloads",
+    "zip": "https://raw.githubusercontent.com/DirtyWave/M8Firmware/main/M8Firmware.zip"
   }
 }
