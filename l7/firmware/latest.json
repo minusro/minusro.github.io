@@ -1,0 +1,21 @@
+{
+  "version": "v1.0.2",
+  "published": "2026-11-04T13:35:09Z",
+  "url": "https://github.com/minusro/L7/releases/tag/v1.0.2",
+  "docs": {
+    "guide": "https://github.com/minusro/L7/releases/download/v1.0.2/L7-User-Guide.pdf",
+    "cheatsheet": "https://github.com/minusro/L7/releases/download/v1.0.2/L7-Cheatsheet.pdf"
+  },
+  "firmware": {
+    "model01": {
+      "file": "L7-v1.0.2-M8-Model01.hex",
+      "bytes": 1408529,
+      "sha256": "e60eca9f4167f2b0b3a45dd65e9a4112e457452c3513e802acff6e00cac8f4cf"
+    },
+    "model02": {
+      "file": "L7-v1.0.2-M8-Model02.hex",
+      "bytes": 1365342,
+      "sha256": "60096e11924a6e09dfa60ca1f9044db1d0c04ae66042e83f8daea18dc4085100"
+    }
+  }
+}
