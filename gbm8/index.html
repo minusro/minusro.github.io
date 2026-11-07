@@ -6,7 +6,7 @@
   <title>GBM8</title>
   <meta name="description" content="Install GBM8, a Game Boy and Game Boy Color emulator for the Dirtywave M8, straight from your browser.">
   <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0e0f14">
+  <meta name="theme-color" content="#d3ccbf">
   <link rel="canonical" href="https://danielstanciu.com/gbm8/">
   <!-- Link previews (Discord, Slack, X, iMessage, ...): social-card.png is
        1200x630, made by make_social_card.py -->
@@ -31,26 +31,27 @@
   <link rel="preload" href="/fonts/ibm-plex-sans-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <style>
-    /* The colours of GBM8's own screens (src/ui.h), and the portfolio's
-       fonts (served from the site root) */
+    /* An original Game Boy: its beige case, its olive screen green; and
+       the portfolio's fonts (served from the site root) */
     @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-mono-400-latin.woff2") format("woff2"); }
     @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("/fonts/ibm-plex-mono-500-latin.woff2") format("woff2"); }
     @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-400-latin.woff2") format("woff2"); }
     @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 600; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-600-latin.woff2") format("woff2"); }
 
     :root {
-      color-scheme: dark;
-      --bg: #0e0f14;                          /* its panel grey, darker */
-      --bg-raise: #000000;                    /* its screen black */
-      --fg: #ebebf0;                          /* its text */
-      --muted: #a3a6b2;                       /* its dim text, lighter */
-      --line: rgba(235, 235, 240, 0.16);
-      --line-strong: #464c60;                 /* its panel edges */
-      --grid: rgba(235, 235, 240, 0.05);      /* its text, faint */
-      --accent: #6ed2ff;                      /* its accent blue */
-      --on-accent: #000000;
-      --error: #ff9e96;                       /* its warning red, lighter */
-      --ok: #78e68c;                          /* its green */
+      color-scheme: light;
+      --bg: #d3ccbf;                          /* the case's beige */
+      --bg-raise: #e4ded2;                    /* lighter */
+      --fg: #26251f;
+      --muted: #57534a;
+      --line: rgba(38, 37, 31, 0.16);
+      --line-strong: #857d6c;
+      --grid: rgba(246, 242, 232, 0.75);      /* light beige stripes */
+      --accent: #4d5c12;                      /* olive, the screen's green darkened to read on beige */
+      --accent-strong: #36410a;
+      --on-accent: #f6f2e8;
+      --error: #9b2a20;
+      --ok: #35600c;
       --font-sans: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, monospace;
       --g: 24px;
@@ -70,13 +71,9 @@
     a { color: inherit; text-underline-offset: 3px; }
     a:hover { color: var(--accent); }
     .logo { display: block; margin: 0; color: var(--accent); shape-rendering: crispEdges; }
-    .demo { image-rendering: pixelated; }
     .note { color: var(--muted); }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-    .hero { display: flex; align-items: stretch; gap: 24px; }
-    .hero-text { flex: 1; min-width: 0; text-align: left; display: flex; flex-direction: column; justify-content: flex-end; }
     .hero .lede { margin: 20px 0 0; }
-    .demo { display: block; flex: none; align-self: flex-start; width: 320px; max-width: 100%; height: auto; }
     h2 { font: 600 22px/24px var(--font-sans); margin: 0 0 12px; }
     p { margin: 0 0 12px; }
     .lede { font-size: 20px; line-height: 28px; color: var(--muted); max-width: 34em; }
@@ -105,7 +102,7 @@
       padding: 12px 20px;
       cursor: pointer;
     }
-    button:hover:not(:disabled) { background: #ffffff; color: var(--on-accent); }
+    button:hover:not(:disabled) { background: var(--accent-strong); color: var(--on-accent); }
     button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     button:disabled { opacity: 0.45; cursor: default; }
     button.secondary { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-strong); }
@@ -159,9 +156,6 @@
     #manual .downloads { margin: 6px 0 0; }
     footer { color: var(--muted); font-size: 15px; margin-top: 36px; }
 
-    @media (max-width: 640px) {
-      .hero { flex-direction: column; align-items: stretch; }
-    }
     @media (max-width: 520px) {
       .lede { font-size: 18px; line-height: 26px; }
       .panel { padding: 16px; }
@@ -177,14 +171,11 @@
 <body>
 <main>
   <header class="hero">
-    <div class="hero-text">
-      <svg class="logo" viewBox="0 0 23 7" width="184" height="56" fill="currentColor" role="img" aria-label="GBM8">
-        <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
-      </svg>
-      <h1 class="visually-hidden">GBM8</h1>
-      <p class="lede">A Game Boy and Game Boy Color emulator for the Dirtywave M8. Copy your games to the M8's SD card, pick one, and play it on the M8's keys, with save states, the cartridge clock, and the colours a Game Boy Color gives older games.</p>
-    </div>
-    <img class="demo" src="demo.gif" width="320" height="240" alt="GBM8 on the M8's screen: the games list, the cgb-acid2 test picture in colour, the in-game menu, and dmg-acid2 in three palettes">
+    <svg class="logo" viewBox="0 0 23 7" width="184" height="56" fill="currentColor" role="img" aria-label="GBM8">
+      <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
+    </svg>
+    <h1 class="visually-hidden">GBM8</h1>
+    <p class="lede">A Game Boy and Game Boy Color emulator for the Dirtywave M8. Copy your games to the M8's SD card, pick one, and play it on the M8's keys, with save states, the cartridge clock, and the colours a Game Boy Color gives older games.</p>
   </header>
 
   <nav class="tabs" aria-label="Page sections">
@@ -309,8 +300,8 @@
     <p>▲ ▼ selects, ◀ ▶ changes a value, EDIT chooses, and OPT, PLAY or a power key tap goes back to the game.</p>
     <ul>
       <li><strong>Save state / Load state</strong>: three slots per game; ◀ ▶ picks the slot.</li>
-      <li><strong>Palette</strong> (original Game Boy games): AUTO colours the game the way a Game Boy Color does, picked by its title. Also the classic green, Pocket grey and the twelve start-up palettes of a Game Boy Color. Remembered per game.</li>
-      <li><strong>Picture</strong> (Model:01): FIT (the full height, the right shape), PIXEL 1.5X (crisper), or FULL (stretched). The Model:02 shows exactly 2×.</li>
+      <li><strong>Palette</strong> (original Game Boy games): the original Game Boy's green unless you pick another. AUTO colours the game the way a Game Boy Color does, picked by its title. Also Pocket grey and the twelve start-up palettes of a Game Boy Color. Remembered per game.</li>
+      <li><strong>Picture</strong> (Model:01): 1:1 (each Game Boy pixel one screen pixel: small and sharp), 1.5X, FIT (the full height, the right shape) or FULL (stretched). The Model:02 shows exactly 2×.</li>
       <li><strong>Volume, Brightness</strong>.</li>
       <li><strong>Reset game</strong>: press EDIT twice.</li>
       <li><strong>USB drive mode</strong> and <strong>Quit to games</strong>.</li>
@@ -349,6 +340,6 @@
     show();
   })();
 </script>
-<script type="module" src="flasher.js?v=87ac4feff9"></script>
+<script type="module" src="flasher.js?v=3d3cd89cb8"></script>
 </body>
 </html>
