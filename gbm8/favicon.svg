@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 23 23" shape-rendering="crispEdges">
-  <!-- The GBM8 logo, full width: the page's olive on a light browser
-       theme, a lighter olive on a dark one -->
-  <style>
-    path { fill: #4d5c12; }
-    @media (prefers-color-scheme: dark) { path { fill: #b4c45a; } }
-  </style>
-  <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -10.5 32 32" shape-rendering="crispEdges">
+  <!-- The GBM8 logo, full width, its letters beige so they read on a dark tab too -->
+  <path fill="#d3ccbf" d="M3,2h4v1h-4zM9,2h5v1h-5zM16,2h2v1h-2zM21,2h2v1h-2zM25,2h4v1h-4zM2,3h2v1h-2zM6,3h2v1h-2zM9,3h2v1h-2zM13,3h2v1h-2zM16,3h3v1h-3zM20,3h3v1h-3zM24,3h2v1h-2zM28,3h2v1h-2zM2,4h2v1h-2zM9,4h2v1h-2zM13,4h2v1h-2zM16,4h7v1h-7zM24,4h2v1h-2zM28,4h2v1h-2zM2,5h2v1h-2zM5,5h3v1h-3zM9,5h5v1h-5zM16,5h2v1h-2zM19,5h1v1h-1zM21,5h2v1h-2zM25,5h4v1h-4zM2,6h2v1h-2zM6,6h2v1h-2zM9,6h2v1h-2zM13,6h2v1h-2zM16,6h2v1h-2zM21,6h2v1h-2zM24,6h2v1h-2zM28,6h2v1h-2zM2,7h2v1h-2zM6,7h2v1h-2zM9,7h2v1h-2zM13,7h2v1h-2zM16,7h2v1h-2zM21,7h2v1h-2zM24,7h2v1h-2zM28,7h2v1h-2zM3,8h4v1h-4zM9,8h5v1h-5zM16,8h2v1h-2zM21,8h2v1h-2zM25,8h4v1h-4z"/>
+  <path fill="#7d8d2e" d="M2,0h28v1h-28zM1,1h30v1h-30zM0,2h3v1h-3zM7,2h2v1h-2zM14,2h2v1h-2zM18,2h3v1h-3zM23,2h2v1h-2zM29,2h3v1h-3zM0,3h2v1h-2zM4,3h2v1h-2zM8,3h1v1h-1zM11,3h2v1h-2zM15,3h1v1h-1zM19,3h1v1h-1zM23,3h1v1h-1zM26,3h2v1h-2zM30,3h2v1h-2zM0,4h2v1h-2zM4,4h5v1h-5zM11,4h2v1h-2zM15,4h1v1h-1zM23,4h1v1h-1zM26,4h2v1h-2zM30,4h2v1h-2zM0,5h2v1h-2zM4,5h1v1h-1zM8,5h1v1h-1zM14,5h2v1h-2zM18,5h1v1h-1zM20,5h1v1h-1zM23,5h2v1h-2zM29,5h3v1h-3zM0,6h2v1h-2zM4,6h2v1h-2zM8,6h1v1h-1zM11,6h2v1h-2zM15,6h1v1h-1zM18,6h3v1h-3zM23,6h1v1h-1zM26,6h2v1h-2zM30,6h2v1h-2zM0,7h2v1h-2zM4,7h2v1h-2zM8,7h1v1h-1zM11,7h2v1h-2zM15,7h1v1h-1zM18,7h3v1h-3zM23,7h1v1h-1zM26,7h2v1h-2zM30,7h2v1h-2zM0,8h3v1h-3zM7,8h2v1h-2zM14,8h2v1h-2zM18,8h3v1h-3zM23,8h2v1h-2zM29,8h3v1h-3zM1,9h30v1h-30zM2,10h28v1h-28z"/>
 </svg>

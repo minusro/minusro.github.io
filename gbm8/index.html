@@ -70,7 +70,12 @@
     main { max-width: 720px; margin: 0 auto; padding: calc(2 * var(--g)) 16px calc(3 * var(--g)); }
     a { color: inherit; text-underline-offset: 3px; }
     a:hover { color: var(--accent); }
-    .logo { display: block; margin: 0; color: var(--accent); shape-rendering: crispEdges; }
+    .logo { display: block; margin: 0; max-width: 100%; height: auto; shape-rendering: crispEdges; }
+    .brand { display: flex; align-items: center; gap: 28px; }
+    .sibling { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; color: var(--muted); text-decoration: none; }
+    .sibling:hover, .sibling:focus-visible { color: var(--accent); }
+    .sibling:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .sibling svg { display: block; flex: none; }
     .note { color: var(--muted); }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .hero .lede { margin: 20px 0 0; }
@@ -171,9 +176,22 @@
 <body>
 <main>
   <header class="hero">
-    <svg class="logo" viewBox="0 0 23 7" width="184" height="56" fill="currentColor" role="img" aria-label="GBM8">
-      <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
-    </svg>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 11" width="256" height="88" shape-rendering="crispEdges" role="img" aria-label="GBM8">
+        <path fill="#7d8d2e" d="M2,0h28v1h-28zM1,1h30v1h-30zM0,2h3v1h-3zM7,2h2v1h-2zM14,2h2v1h-2zM18,2h3v1h-3zM23,2h2v1h-2zM29,2h3v1h-3zM0,3h2v1h-2zM4,3h2v1h-2zM8,3h1v1h-1zM11,3h2v1h-2zM15,3h1v1h-1zM19,3h1v1h-1zM23,3h1v1h-1zM26,3h2v1h-2zM30,3h2v1h-2zM0,4h2v1h-2zM4,4h5v1h-5zM11,4h2v1h-2zM15,4h1v1h-1zM23,4h1v1h-1zM26,4h2v1h-2zM30,4h2v1h-2zM0,5h2v1h-2zM4,5h1v1h-1zM8,5h1v1h-1zM14,5h2v1h-2zM18,5h1v1h-1zM20,5h1v1h-1zM23,5h2v1h-2zM29,5h3v1h-3zM0,6h2v1h-2zM4,6h2v1h-2zM8,6h1v1h-1zM11,6h2v1h-2zM15,6h1v1h-1zM18,6h3v1h-3zM23,6h1v1h-1zM26,6h2v1h-2zM30,6h2v1h-2zM0,7h2v1h-2zM4,7h2v1h-2zM8,7h1v1h-1zM11,7h2v1h-2zM15,7h1v1h-1zM18,7h3v1h-3zM23,7h1v1h-1zM26,7h2v1h-2zM30,7h2v1h-2zM0,8h3v1h-3zM7,8h2v1h-2zM14,8h2v1h-2zM18,8h3v1h-3zM23,8h2v1h-2zM29,8h3v1h-3zM1,9h30v1h-30zM2,10h28v1h-28z"/>
+      </svg>
+      <a class="sibling" href="/l7/" aria-label="L7, a looper for the M8">
+        <svg class="l7" viewBox="0 0 55 26" width="42" height="20" fill="currentColor" aria-hidden="true">
+          <path d="M8.667,0 15.67,0 10.33,16 20.33,16 19.67,18 2.667,18Z"/>
+          <path d="M55,0 37,18 27,18 38,7 27.33,7 29.67,0Z"/>
+          <path d="M2,20 19,20 18.33,22 1.333,22Z"/>
+          <path d="M35,20 33,22 23,22 25,20Z"/>
+          <path d="M0.6667,24 17.67,24 17,26 0,26Z"/>
+          <path d="M31,24 29,26 19,26 21,24Z"/>
+        </svg>
+        <svg class="arrow" viewBox="0 0 6 8" width="8" height="10" fill="currentColor" aria-hidden="true"><path d="M0,0 6,4 0,8Z"/></svg>
+      </a>
+    </div>
     <h1 class="visually-hidden">GBM8</h1>
     <p class="lede">A Game Boy and Game Boy Color emulator for the Dirtywave M8. Copy your games to the M8's SD card, pick one, and play it on the M8's keys, with save states, the cartridge clock, and the colours a Game Boy Color gives older games.</p>
   </header>
@@ -340,6 +358,6 @@
     show();
   })();
 </script>
-<script type="module" src="flasher.js?v=3d3cd89cb8"></script>
+<script type="module" src="flasher.js?v=51653f2663"></script>
 </body>
 </html>

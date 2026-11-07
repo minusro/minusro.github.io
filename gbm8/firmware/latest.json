@@ -1,8 +1,8 @@
 {
   "version": "v0.2",
-  "published": "2026-11-07T22:38:11Z",
+  "published": "2026-11-07T22:52:04Z",
   "url": null,
-  "commit": "c2cce25",
+  "commit": "67521a9",
   "firmware": {
     "model01": {
       "file": "GBM8-v0.2-M8-Model01.hex",
