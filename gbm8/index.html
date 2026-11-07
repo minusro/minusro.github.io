@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GBM8</title>
+  <meta name="description" content="Install GBM8, a Game Boy and Game Boy Color emulator for the Dirtywave M8, straight from your browser.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0e0f14">
+  <link rel="canonical" href="https://danielstanciu.com/gbm8/">
+  <!-- Link previews (Discord, Slack, X, iMessage, ...): social-card.png is
+       1200x630, made by make_social_card.py -->
+  <meta property="og:title" content="GBM8">
+  <meta property="og:description" content="A Game Boy and Game Boy Color emulator for the Dirtywave M8, Model:01 and Model:02. Games load from the SD card; save states, auto-resume, battery saves and the MBC3 clock.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://danielstanciu.com/gbm8/">
+  <meta property="og:image" content="https://danielstanciu.com/gbm8/social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The GBM8 logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GBM8">
+  <meta name="twitter:description" content="A Game Boy and Game Boy Color emulator for the Dirtywave M8, Model:01 and Model:02. Games load from the SD card; save states, auto-resume, battery saves and the MBC3 clock.">
+  <meta name="twitter:image" content="https://danielstanciu.com/gbm8/social-card.png">
+  <meta name="twitter:image:alt" content="The GBM8 logo">
+  <!-- PNGs for browsers without SVG icons (Safari before 26), the SVG last so the rest take it -->
+  <link rel="icon" href="favicon-light.png" type="image/png" sizes="64x64" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="favicon-dark.png" type="image/png" sizes="64x64" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="preload" href="/fonts/ibm-plex-sans-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* The colours of GBM8's own screens (src/ui.h), and the portfolio's
+       fonts (served from the site root) */
+    @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-mono-400-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("/fonts/ibm-plex-mono-500-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-400-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 600; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-600-latin.woff2") format("woff2"); }
+
+    :root {
+      color-scheme: dark;
+      --bg: #0e0f14;                          /* its panel grey, darker */
+      --bg-raise: #000000;                    /* its screen black */
+      --fg: #ebebf0;                          /* its text */
+      --muted: #a3a6b2;                       /* its dim text, lighter */
+      --line: rgba(235, 235, 240, 0.16);
+      --line-strong: #464c60;                 /* its panel edges */
+      --grid: rgba(235, 235, 240, 0.05);      /* its text, faint */
+      --accent: #6ed2ff;                      /* its accent blue */
+      --on-accent: #000000;
+      --error: #ff9e96;                       /* its warning red, lighter */
+      --ok: #78e68c;                          /* its green */
+      --font-sans: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --g: 24px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      background-image: linear-gradient(var(--grid) 1px, transparent 1px);   /* horizontal lines only */
+      background-size: 100% calc(var(--g) / 2);
+      color: var(--fg);
+      font: 400 17px/24px var(--font-sans);
+    }
+    main { max-width: 720px; margin: 0 auto; padding: calc(2 * var(--g)) 16px calc(3 * var(--g)); }
+    a { color: inherit; text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+    .logo { display: block; margin: 0; color: var(--accent); shape-rendering: crispEdges; }
+    .demo { image-rendering: pixelated; }
+    .note { color: var(--muted); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .hero { display: flex; align-items: stretch; gap: 24px; }
+    .hero-text { flex: 1; min-width: 0; text-align: left; display: flex; flex-direction: column; justify-content: flex-end; }
+    .hero .lede { margin: 20px 0 0; }
+    .demo { display: block; flex: none; align-self: flex-start; width: 320px; max-width: 100%; height: auto; }
+    h2 { font: 600 22px/24px var(--font-sans); margin: 0 0 12px; }
+    p { margin: 0 0 12px; }
+    .lede { font-size: 20px; line-height: 28px; color: var(--muted); max-width: 34em; }
+    .mono { font-family: var(--font-mono); font-size: 14px; }
+
+    .panel {
+      background: var(--bg-raise);
+      border: 1px solid var(--line-strong);
+      padding: 24px;
+      margin: 24px 0;
+    }
+    .release { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 20px; }
+    .release strong { font: 600 22px/24px var(--font-sans); }
+    .release span { color: var(--muted); }
+
+    ol.before { margin: 0 0 20px; padding-left: 1.4em; }
+    ol.before li { margin-bottom: 6px; }
+    ol.before li::marker { font-family: var(--font-mono); color: var(--muted); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    button {
+      font: 600 18px/24px var(--font-sans);
+      color: var(--on-accent);
+      background: var(--accent);
+      border: 0;
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) { background: #ffffff; color: var(--on-accent); }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    button:disabled { opacity: 0.45; cursor: default; }
+    button.secondary { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-strong); }
+    button.secondary:hover:not(:disabled) { color: var(--accent); background: transparent; box-shadow: inset 0 0 0 1px var(--accent); }
+    .linkish { background: none; color: inherit; padding: 0; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    .linkish:hover:not(:disabled) { background: none; color: var(--accent); }
+
+    #status { margin: 20px 0 0; }
+    #status:empty { display: none; }
+    details.log { border-top: 0; margin: -12px 0 24px; padding-top: 0; }
+    #status[data-kind="error"] { color: var(--error); }
+    #status[data-kind="ok"] { color: var(--ok); font-weight: 600; }
+    progress {
+      display: block; width: 100%; height: 12px; margin-top: 12px;
+      appearance: none; border: 1px solid var(--line-strong); background: transparent;
+    }
+    progress::-webkit-progress-bar { background: transparent; }
+    progress::-webkit-progress-value { background: var(--accent); }
+    progress::-moz-progress-bar { background: var(--accent); }
+
+    details { border-top: 1px solid var(--line); padding: 12px 0 0; margin-top: 20px; }
+    details + details { margin-top: 12px; }
+    summary { cursor: pointer; color: var(--muted); }
+    summary:hover { color: var(--accent); }
+    #log { font: 400 12px/18px var(--font-mono); white-space: pre-wrap; word-break: break-word; margin: 12px 0 0; max-height: 240px; overflow: auto; color: var(--muted); }
+    #file-row { margin-top: 12px; }
+    input[type="file"] { font: inherit; max-width: 100%; }
+    #file-actions { margin-top: 12px; }
+
+    .help h3 { font: 600 18px/24px var(--font-sans); margin: 20px 0 4px; }
+    .help h3:first-of-type { margin-top: 0; }
+    .downloads { list-style: none; padding: 0; margin: 0 0 12px; }
+    .downloads li { margin-bottom: 4px; }
+    code { font-family: var(--font-mono); font-size: 0.85em; }
+    .tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line-strong); margin: 32px 0 0; }
+    .tabs a { font: 600 18px/24px var(--font-sans); color: var(--muted); text-decoration: none; padding: 0 0 10px; margin-bottom: -1px; border-bottom: 3px solid transparent; }
+    .tabs a:hover { color: var(--accent); }
+    .tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); }
+    #tab-help { min-height: 240px; }
+    .guide { margin: 24px 0; }
+    .guide h3 { font: 600 18px/24px var(--font-sans); margin: 28px 0 8px; }
+    .guide h3:first-of-type { margin-top: 0; }
+    .guide > ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .guide > ul > li { margin-bottom: 8px; }
+    .guide li::marker { color: var(--muted); }
+    .guide strong { color: var(--accent); font-weight: 600; }   /* the key combos */
+    .guide li ul { margin: 6px 0 0; padding-left: 1.2em; }
+    .guide li li { margin-bottom: 4px; }
+    .cannot-flash .needs-flash, .can-flash .no-flash { display: none !important; }
+    #manual ol.before { margin-bottom: 12px; }
+    #manual .downloads { margin: 6px 0 0; }
+    footer { color: var(--muted); font-size: 15px; margin-top: 36px; }
+
+    @media (max-width: 640px) {
+      .hero { flex-direction: column; align-items: stretch; }
+    }
+    @media (max-width: 520px) {
+      .lede { font-size: 18px; line-height: 26px; }
+      .panel { padding: 16px; }
+      button { width: 100%; }
+    }
+  </style>
+  <script>
+    // Installing from the page needs WebHID (Chrome or Edge on a computer).
+    // Without it, the page shows the manual install instead of its buttons.
+    document.documentElement.className = ('hid' in navigator && window.isSecureContext) ? 'can-flash' : 'cannot-flash';
+  </script>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="hero-text">
+      <svg class="logo" viewBox="0 0 23 7" width="184" height="56" fill="currentColor" role="img" aria-label="GBM8">
+        <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
+      </svg>
+      <h1 class="visually-hidden">GBM8</h1>
+      <p class="lede">A Game Boy and Game Boy Color emulator for the Dirtywave M8. Copy your games to the M8's SD card, pick one, and play it on the M8's keys, with save states, the cartridge clock, and the colours a Game Boy Color gives older games.</p>
+    </div>
+    <img class="demo" src="demo.gif" width="320" height="240" alt="GBM8 on the M8's screen: the games list, the cgb-acid2 test picture in colour, the in-game menu, and dmg-acid2 in three palettes">
+  </header>
+
+  <nav class="tabs" aria-label="Page sections">
+    <a href="#install" id="tab-install-link" aria-current="page">Install</a>
+    <a href="#help" id="tab-help-link">Help</a>
+  </nav>
+
+  <div id="tab-install">
+  <section class="panel no-flash" id="manual" aria-labelledby="manual-title">
+    <div class="release"><span>Looking up the latest release…</span></div>
+    <h2 id="manual-title" class="visually-hidden">Install by hand</h2>
+    <p>This browser can't install firmware on the M8. In Chrome or Edge on a computer, this page installs GBM8 with one click. Here, install it by hand with TyUploader, the way Dirtywave's own updates go:</p>
+    <ol class="before">
+      <li>Download the file for your M8:
+        <ul class="downloads"><li>Looking up the latest release…</li></ul>
+      </li>
+      <li>Install <a href="https://github.com/Koromix/tytools/releases" target="_blank" rel="noopener">TyTools</a> (on a Mac, move it to the Applications folder).</li>
+      <li>Connect the M8 to the computer with a USB data cable, switch it on, and quit anything else that uses it: M8C, the headless display, a serial monitor.</li>
+      <li>Open TyUploader (not TyCommander), check the M8 is selected in its list, click Upload and choose the file.</li>
+    </ol>
+    <p>To go back to the M8's own firmware, download it from <a class="dw-page" href="https://dirtywave.com/pages/resources-downloads" target="_blank" rel="noopener">Dirtywave's downloads page</a> and install the .hex for your model the same way.</p>
+    <p>On Linux, install PJRC's <a href="https://www.pjrc.com/teensy/00-teensy.rules" target="_blank" rel="noopener">udev rules for Teensy</a> first (the M8 is built around a Teensy), then unplug and replug the M8.</p>
+  </section>
+
+  <section class="panel needs-flash" aria-labelledby="install-title">
+    <h2 id="install-title" hidden>Install</h2>
+    <div class="release" id="release"><span>Looking up the latest release…</span></div>
+
+    <div id="flasher">
+      <ol class="before">
+        <li>Connect the M8 to this computer with a USB data cable, then switch it on.</li>
+        <li>Quit anything else that uses the M8 over USB: M8C, the headless display, Teensy Loader, TyCommander, a serial monitor.</li>
+        <li>Click Install, and choose the M8 when the browser asks. The page restarts it into its loader and installs.</li>
+      </ol>
+      <p class="note">GBM8 replaces the M8's firmware while it's installed: to make music again, use Restore below. No games come with it: copy your own <code>.gb</code> and <code>.gbc</code> files to the SD card, in any folder (GBM8's USB drive mode lets you do that over the cable). The Model:02 build hasn't been tried on a Model:02 yet.</p>
+      <div class="actions" id="app-actions">
+        <button id="pick" hidden>Upload</button>
+        <button id="go" disabled>Install</button>
+      </div>
+      <div id="app-slot">
+        <div id="console">
+          <p id="status" role="status" aria-live="polite"></p>
+          <progress id="progress" max="1" value="0" hidden></progress>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel needs-flash" id="restore" aria-labelledby="restore-title">
+    <h2 id="restore-title">Go back to the M8's own firmware</h2>
+    <p>Downloads the latest firmware from <a id="dw-page" href="https://dirtywave.com/pages/resources-downloads" target="_blank" rel="noopener">Dirtywave's downloads page</a> and installs the file for your M8's model. It comes straight from Dirtywave to your browser; this site doesn't host it. Installing it means you agree to Dirtywave's licence (EULA.txt in their download).</p>
+    <div class="actions" id="restore-actions">
+      <button id="restore-go" class="secondary" disabled>Restore</button>
+    </div>
+    <div id="restore-slot"></div>
+    <details id="file-details">
+      <summary>Install a .hex file from your computer</summary>
+      <p>For a test build, or an older version of GBM8 or of the M8's firmware. The page checks the file is for your M8's model before it writes anything.</p>
+      <div id="file-row">
+        <input type="file" id="file" accept=".hex">
+      </div>
+      <div class="actions" id="file-actions" hidden>
+        <button id="file-start">Install</button>
+        <button id="file-go" class="secondary">Cancel</button>
+      </div>
+      <div id="file-slot"></div>
+    </details>
+  </section>
+
+  <details class="log needs-flash">
+    <summary>Details</summary>
+    <pre id="log"></pre>
+  </details>
+
+  <section class="help needs-flash">
+    <h2>If something goes wrong</h2>
+    <h3>It's safe to try again</h3>
+    <p>The M8's loader sits on its own chip, and installing never overwrites it. If an install stops partway, the M8 waits in its loader: click Upload to try again. After reloading the page, click Install, close the browser's pop-up, then click Upload. Installing doesn't touch the SD card, so your songs, games and saves stay put, whichever firmware you install.</p>
+    <h3>The M8 isn't in the browser's pop-up</h3>
+    <p>Check the M8 is switched on, and try another cable (some only charge). If the M8 is already in its loader (after a stopped install, for instance), it doesn't show there: close the pop-up and click Upload.</p>
+    <h3>An Upload button appears</h3>
+    <p>The M8 is waiting in its loader: click Upload and choose it when the browser asks. Cancel goes back to the start.</p>
+    <h3>Upload's pop-up is empty</h3>
+    <p>The M8 didn't restart into its loader. Click Cancel, check nothing else is using the M8 (see the next point), then click Install again.</p>
+    <h3>"Couldn't open the M8's USB port"</h3>
+    <p>Another app has it. Quit M8C, Teensy Loader, TyCommander and any serial monitor (such as the Arduino IDE's), then try again.</p>
+    <h3>"Nothing was written"</h3>
+    <p>The .hex file you chose is built for the other M8 model. Your M8 is unchanged: choose the file for your model.</p>
+    <h3>The screen stays dark after "Done"</h3>
+    <p>Switch the M8 off and on.</p>
+    <h3>Linux</h3>
+    <p>Install PJRC's <a href="https://www.pjrc.com/teensy/00-teensy.rules" target="_blank" rel="noopener">udev rules for Teensy</a> (the M8 is built around a Teensy), then unplug and replug the M8.</p>
+    <h3 id="manual">Install without this page</h3>
+    <p>Download the file for your M8 and install it with <a href="https://github.com/Koromix/tytools/releases" target="_blank" rel="noopener">TyUploader</a>, the way Dirtywave's own updates go: connect and switch on the M8, open TyUploader, check the M8 is selected, click Upload and choose the file.</p>
+    <ul class="downloads"><li>Looking up the latest release…</li></ul>
+  </section>
+  </div>
+
+  <div id="tab-help" hidden>
+  <section class="guide" aria-label="Help">
+
+    <h3>Games on the card</h3>
+    <p>Copy <code>.gb</code> and <code>.gbc</code> files anywhere on the SD card, in any folders. GBM8 opens on the card's folders and shows only folders and Game Boy files. To copy games without taking the card out, choose <strong>USB drive mode</strong> in the settings or the in-game menu: the card shows up on the computer as a drive until you eject it there or press any key on the M8.</p>
+
+    <h3>Playing</h3>
+    <ul>
+      <li><strong>▲ ▼ ◀ ▶</strong>: the D-pad.</li>
+      <li><strong>EDIT</strong>: A. <strong>OPT</strong>: B.</li>
+      <li><strong>PLAY</strong>: START. <strong>SHIFT</strong>: SELECT.</li>
+      <li><strong>Power key tap</strong>, or <strong>SHIFT + PLAY held a second</strong>: the menu.</li>
+      <li><strong>Power key held 1.5 s</strong>: save where you are and switch off.</li>
+    </ul>
+
+    <h3>The games list</h3>
+    <ul>
+      <li><strong>▲ ▼</strong>: move (hold to scroll). <strong>◀ ▶</strong>: a page at a time.</li>
+      <li><strong>EDIT</strong>: open a folder or start a game. <strong>OPT</strong>: up a folder.</li>
+      <li><strong>PLAY</strong> or a power key tap: the settings (volume, brightness, picture, USB drive mode, switch off).</li>
+    </ul>
+
+    <h3>The in-game menu</h3>
+    <p>▲ ▼ selects, ◀ ▶ changes a value, EDIT chooses, and OPT, PLAY or a power key tap goes back to the game.</p>
+    <ul>
+      <li><strong>Save state / Load state</strong>: three slots per game; ◀ ▶ picks the slot.</li>
+      <li><strong>Palette</strong> (original Game Boy games): AUTO colours the game the way a Game Boy Color does, picked by its title. Also the classic green, Pocket grey and the twelve start-up palettes of a Game Boy Color. Remembered per game.</li>
+      <li><strong>Picture</strong> (Model:01): FIT (the full height, the right shape), PIXEL 1.5X (crisper), or FULL (stretched). The Model:02 shows exactly 2×.</li>
+      <li><strong>Volume, Brightness</strong>.</li>
+      <li><strong>Reset game</strong>: press EDIT twice.</li>
+      <li><strong>USB drive mode</strong> and <strong>Quit to games</strong>.</li>
+    </ul>
+
+    <h3>Saves</h3>
+    <ul>
+      <li>Quitting or switching off saves where you are. The next time you start that game, GBM8 asks whether to continue from there or start from the beginning.</li>
+      <li>A game's own saves go in a <code>.sav</code> file next to it, in the format other emulators use, so they carry over both ways. The cartridge clock of games that have one (MBC3) keeps running while the M8 is off.</li>
+      <li>Save states and settings go in the card's <code>GBM8</code> folder.</li>
+    </ul>
+
+    <h3>What runs</h3>
+    <p>Game Boy and Game Boy Color games up to 8 MB, on cartridges with no MBC, MBC1, MBC2, MBC3 or MBC5. Not the Pocket Camera, the link cable, or MBC7, HuC1, HuC3 and MMM01 cartridges. A few games that depend on exact memory timing may glitch.</p>
+  </section>
+  </div>
+
+
+  <footer>
+    <p>GBM8 is an independent project not affiliated with Dirtywave or Nintendo. It uses <a href="https://github.com/Mr-PauI/Walnut-CGB" target="_blank" rel="noopener">Walnut-CGB</a> and minigb_apu (MIT).<br>©2026 Daniel Stanciu</p>
+  </footer>
+</main>
+<script>
+  // Install / Help tabs, by the address's #, so Help can be linked to
+  (function () {
+    function show() {
+      var help = location.hash === '#help';
+      document.getElementById('tab-install').hidden = help;
+      document.getElementById('tab-help').hidden = !help;
+      var on = document.getElementById(help ? 'tab-help-link' : 'tab-install-link');
+      var off = document.getElementById(help ? 'tab-install-link' : 'tab-help-link');
+      on.setAttribute('aria-current', 'page');
+      off.removeAttribute('aria-current');
+    }
+    addEventListener('hashchange', show);
+    show();
+  })();
+</script>
+<script type="module" src="flasher.js?v=87ac4feff9"></script>
+</body>
+</html>

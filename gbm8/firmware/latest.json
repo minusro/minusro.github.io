@@ -1,0 +1,22 @@
+{
+  "version": "v0.1",
+  "published": "2026-11-07T18:33:17Z",
+  "url": null,
+  "commit": "88e30e6",
+  "firmware": {
+    "model01": {
+      "file": "GBM8-v0.1-M8-Model01.hex",
+      "bytes": 627981,
+      "sha256": "b2fa0c5a5f8b885ef061b87f106888fe489559048d74cf96b7106428c908b2c4"
+    },
+    "model02": {
+      "file": "GBM8-v0.1-M8-Model02.hex",
+      "bytes": 547324,
+      "sha256": "9ab4e5ebd2325e3f7d4283d6695c178d954e5e3e2ea0cba85a6bff926ca1b12d"
+    }
+  },
+  "dirtywave": {
+    "page": "https://dirtywave.com/pages/resources-downloads",
+    "zip": "https://raw.githubusercontent.com/DirtyWave/M8Firmware/main/M8Firmware.zip"
+  }
+}

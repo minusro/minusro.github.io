@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 23 23" shape-rendering="crispEdges">
+  <!-- The GBM8 logo, full width: the page's background colour on a light
+       browser theme, the accent blue of GBM8's menus on a dark one -->
+  <style>
+    path { fill: #0e0f14; }
+    @media (prefers-color-scheme: dark) { path { fill: #6ed2ff; } }
+  </style>
+  <path d="M1,0h4v1h-4zM6,0h4v1h-4zM12,0h1v1h-1zM16,0h1v1h-1zM19,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM6,1h1v1h-1zM10,1h1v1h-1zM12,1h2v1h-2zM15,1h2v1h-2zM18,1h1v1h-1zM22,1h1v1h-1zM0,2h1v1h-1zM6,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM18,2h1v1h-1zM22,2h1v1h-1zM0,3h1v1h-1zM6,3h4v1h-4zM12,3h1v1h-1zM14,3h1v1h-1zM16,3h1v1h-1zM19,3h3v1h-3zM0,4h1v1h-1zM3,4h2v1h-2zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM16,4h1v1h-1zM18,4h1v1h-1zM22,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM1,6h4v1h-4zM6,6h4v1h-4zM12,6h1v1h-1zM16,6h1v1h-1zM19,6h3v1h-3z"/>
+</svg>
