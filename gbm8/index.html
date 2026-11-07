@@ -71,8 +71,8 @@
     a { color: inherit; text-underline-offset: 3px; }
     a:hover { color: var(--accent); }
     .logo { display: block; margin: 0; max-width: 100%; height: auto; shape-rendering: crispEdges; }
-    .brand { display: flex; align-items: center; gap: 28px; }
-    .sibling { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; color: var(--muted); text-decoration: none; }
+    .brand { display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; }   /* the L7 link top right */
+    .sibling { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; }
     .sibling:hover, .sibling:focus-visible { color: var(--accent); }
     .sibling:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
     .sibling svg { display: block; flex: none; }
@@ -358,6 +358,6 @@
     show();
   })();
 </script>
-<script type="module" src="flasher.js?v=51653f2663"></script>
+<script type="module" src="flasher.js?v=1b1993bae9"></script>
 </body>
 </html>
