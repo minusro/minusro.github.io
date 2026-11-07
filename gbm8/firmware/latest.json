@@ -1,18 +1,18 @@
 {
-  "version": "v0.2",
-  "published": "2026-11-07T22:57:49Z",
+  "version": "v0.3",
+  "published": "2026-11-07T23:11:27Z",
   "url": null,
-  "commit": "1fdba66",
+  "commit": "6fc3d21",
   "firmware": {
     "model01": {
-      "file": "GBM8-v0.2-M8-Model01.hex",
-      "bytes": 630861,
-      "sha256": "dc7f650524f495f7b814bbdca5a0c7d305695c60ce513b13408ab0253b9059e4"
+      "file": "GBM8-v0.3-M8-Model01.hex",
+      "bytes": 636621,
+      "sha256": "6bfe232a065647c9e05ac27065644c7894f1940c5cee9ab257835e58fdda2cb5"
     },
     "model02": {
-      "file": "GBM8-v0.2-M8-Model02.hex",
-      "bytes": 550204,
-      "sha256": "630e1390e8bb6d978466ad603b91413e79a61f4ef47c044bc328ae4f6cf8cce6"
+      "file": "GBM8-v0.3-M8-Model02.hex",
+      "bytes": 553084,
+      "sha256": "93e45ff48051ddc19e57e2c7b483d4f6a0bc03c71c1b54b2423f21b143c61d89"
     }
   },
   "dirtywave": {
