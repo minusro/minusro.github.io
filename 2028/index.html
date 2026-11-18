@@ -4,51 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<title>FIONA 2028</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Anton&display=swap">
+<title>2028</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23D8151B'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
 <style>
-:root{--red:#D8151B;--cream:#F2EBDD;--white:#FFF;--display:Anton,'Arial Narrow',Impact,sans-serif;--body:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;color-scheme:light}
+:root{--red:#D8151B;--cream:#F2EBDD;--white:#FFF;--body:'Barlow Semi Condensed','Arial Narrow',system-ui,sans-serif;color-scheme:light}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:var(--red);color:var(--white);font-family:var(--body)}
 body{display:flex;align-items:center;justify-content:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
-main{width:100%;max-width:420px;display:flex;flex-direction:column;gap:18px}
-h1{margin:0;font-family:var(--display);font-size:48px;line-height:1;font-weight:400;letter-spacing:.01em}
-p{margin:0;font-size:17px;line-height:1.45}
+main{width:100%;max-width:420px}
 form{display:flex;flex-direction:column;gap:10px}
-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 input{width:100%;height:52px;border:2px solid var(--white);border-radius:0;background:transparent;color:var(--white);padding:0 12px;font:700 22px var(--body);letter-spacing:.08em;text-transform:uppercase;outline:none}
 input:focus-visible{border-color:var(--cream);box-shadow:0 0 0 3px var(--cream)}
 button{height:52px;border:0;border-radius:0;background:var(--cream);color:var(--red);font:700 15px var(--body);text-transform:uppercase;letter-spacing:.05em;cursor:pointer}
 button:disabled{cursor:default;opacity:.7}
-#gateError{min-height:24px;font-weight:600}
 @media (prefers-reduced-motion:no-preference){main{animation:enter .25s ease-out}@keyframes enter{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}}
 </style>
 </head>
 <body>
-<main aria-labelledby="gateTitle">
-  <h1 id="gateTitle">FIONA 2028</h1>
-  <p>Enter the password to play.</p>
+<main aria-label="Game access">
   <form id="gateForm" autocomplete="off">
-    <label for="gateInput">Password</label>
-    <input id="gateInput" name="password" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="64" required autofocus>
+    <input id="gateInput" name="password" type="text" aria-label="Password" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="64" required autofocus>
     <button id="gateButton" type="submit">Enter</button>
   </form>
-  <p id="gateError" role="status" aria-live="polite"></p>
 </main>
 <script>
 (function(){
   var EXPECTED_HASH='4c0db82499ca9a6d65c396d1fbb8e77078e315bd8db0e9476a88cd244aa76ca6';
-  var form=document.getElementById('gateForm'),input=document.getElementById('gateInput'),button=document.getElementById('gateButton'),error=document.getElementById('gateError');
+  var form=document.getElementById('gateForm'),input=document.getElementById('gateInput'),button=document.getElementById('gateButton');
   function hex(buffer){return Array.from(new Uint8Array(buffer),function(b){return b.toString(16).padStart(2,'0')}).join('')}
   form.addEventListener('submit',async function(event){
-    event.preventDefault();error.textContent='';
-    if(!window.crypto||!crypto.subtle){error.textContent='This browser cannot check the password. Please try a modern browser.';return}
+    event.preventDefault();
+    if(!window.crypto||!crypto.subtle){input.focus();return}
     button.disabled=true;
     try{
       var attempt=input.value.trim().toLowerCase(),digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(attempt));
       if(hex(digest)===EXPECTED_HASH){button.textContent='Opening…';window.location.assign('game/');return}
-      error.textContent='That password does not match. Try again.';input.select();button.disabled=false;
-    }catch(e){error.textContent='The password could not be checked. Please try again.';button.disabled=false}
+      input.select();button.disabled=false;
+    }catch(e){input.select();button.disabled=false}
   });
 })();
 </script>
