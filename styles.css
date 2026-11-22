@@ -430,7 +430,15 @@ h1 a {
   padding-block: calc(var(--g) * 3);
 }
 
-/* Three squares between one section and the next. Jumping to a later
+/* The wide layout used to leave three squares above the next section's
+   title; it's two now, as on narrow screens. */
+@media (min-width: 1024px) {
+  .section:has(+ .section) {
+    padding-bottom: calc(var(--g) * 2);
+  }
+}
+
+/* Jumping to a later
    section still leaves its heading three squares from the top. */
 .section + .section {
   padding-top: 0;
@@ -492,7 +500,7 @@ h1 a {
   position: relative;
   z-index: 1;
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 2;
   align-self: end;
   justify-self: end;
   width: calc(var(--g) * 2);
@@ -938,22 +946,43 @@ h1 a {
 
 /* ---- A project opened in place -------------------------------------------- */
 
-/* The card keeps its column, with the previous/next row under it; the
-   description and details take the rest of the row (when they run longer
-   than the card, the extra goes below the previous/next row, which stays
-   right under the card). With only one column it all stacks: card,
-   previous/next, description, details. (The detail wrapper steps aside so
+/* The card keeps its column, with the previous/next row above it; the
+   description and details take the rest of the row, level with the card's
+   top edge (when they run longer than the card, the extra goes below the
+   card). With only one column it all stacks: previous/next, card,
+   description, details. (The detail wrapper steps aside so
    its parts can be placed in this grid.) */
 .card.is-expanded {
   /* A square lower than other cards when scrolled to, matching the two
      squares around it */
-  scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) + var(--g));
+  scroll-margin-top: calc(var(--sticky-h, calc(var(--g) * 2)) - var(--g));
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: calc(var(--card-cells, 14) * var(--g)) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  /* Row 2 is exactly the card's height, so the close button (row 2) sits on
+     the card's bottom corner. The description's extra height only goes to
+     row 3, the flexible one. */
+  grid-template-rows: auto auto 1fr;
   align-items: start;
   gap: var(--g);
+  /* A row of air above the previous/next row and below the last thing (on
+     top of the list's own gap to the neighbouring cards) */
+  padding-block: var(--g);
+}
+
+/* The first project has no card above it to leave a gap, so it gets one
+   row less above. Scrolling lands on the card's top edge, so the padding it
+   loses is added to its scroll margin: the first element ends up where it
+   does on the others. */
+.projects > .card.is-expanded:first-child {
+  padding-top: 0;
+  scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
+}
+
+/* Likewise the last project, with no card below it, loses the row after its
+   last element. */
+.projects > .card.is-expanded:last-child {
+  padding-bottom: 0;
 }
 
 .card-detail {
@@ -963,18 +992,21 @@ h1 a {
 .card.is-expanded > .card-link {
   --fc: var(--c);
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 2;
   height: auto;
 }
 
+/* The row runs the full width of the open project (the description column
+   too): "previous" stays over the card, "next" is right-aligned with the
+   project's right edge. */
 .card-detail > .detail-nav {
-  grid-column: 1;
-  grid-row: 2;
+  grid-column: 1 / -1;
+  grid-row: 1;
 }
 
 .card-detail > .detail-info {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 2 / span 2;
 }
 
 .projects[data-cols="1"] .card.is-expanded {
@@ -1062,8 +1094,7 @@ h1 a {
   font-size: calc(13 * var(--px));
 }
 
-/* The description, level with the card's top edge (or a square below the
-   previous/next row when stacked): a framed box with a square of padding
+/* The description, level with the card's top edge: a framed box with a square of padding
    inside, so one line makes a box three squares tall.
    Like the dashed "to do" box, the frame reaches a pixel further right and
    down so all four sides are on gridlines. Set like the year, role and
@@ -1131,7 +1162,7 @@ h1 a {
   color: var(--fg);
 }
 
-/* Under the card: previous project on the left, next on the right, inset a
+/* Above the card: previous project on the left, next on the right, inset a
    square so the names line up with the card's picture (app.js trims them
    onto the gridlines exactly); the < and > hang outside the names. */
 .detail-nav {
@@ -1376,10 +1407,6 @@ h1 a {
 
   .section + .section {
     scroll-margin-top: var(--g);
-  }
-
-  .card.is-expanded {
-    scroll-margin-top: var(--sticky-h, calc(var(--g) * 2));
   }
 
   .page-side {

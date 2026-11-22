@@ -154,8 +154,6 @@
       });
     }).observe(els.list);
     keepPlaceOnResize();
-    // An opened card's extra space differs between the wide and narrow layouts
-    wide.addEventListener('change', placeCards);
 
     // Cards scrolled into view land below the sticky filters, however many
     // rows of buttons they wrap to.
@@ -965,15 +963,13 @@
   function placeCards() {
     let slot = 0;
     const cards = [...els.list.querySelectorAll('.card')];
-    const extra = wide.matches ? G : 0;
 
-    for (const [i, card] of cards.entries()) {
+    for (const card of cards) {
       card.style.margin = '';
 
       if (card.classList.contains('is-expanded')) {
         slot = Math.ceil(slot / grid.cols) * grid.cols;
         card.style.gridArea = `${slot / grid.cols + 1} / 1 / auto / -1`;
-        card.style.margin = `${extra}px 0 ${i < cards.length - 1 ? extra : 0}px`;
         slot += grid.cols;
       } else {
         card.style.gridArea = `${Math.floor(slot / grid.cols) + 1} / ${(slot % grid.cols) + 1}`;
