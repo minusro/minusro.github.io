@@ -459,6 +459,25 @@ h1 a {
   box-shadow: 0 1px 0 var(--line-strong);
 }
 
+/* The ruled line under the Work title disappears the moment it reaches the
+   top of the window (no fade), which is when the filter bar pins, its
+   buttons a row from the top, and is back as soon as it scrolls down past
+   it. Where scroll timelines aren't supported it just scrolls
+   away under the bar. */
+@keyframes rule-out {
+  to {
+    box-shadow: 0 1px 0 transparent;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  #work .section-head {
+    animation: rule-out steps(1, end) both;
+    animation-timeline: view();
+    animation-range: exit 0% exit 100%;
+  }
+}
+
 /* Back to the top: a double chevron, no outline, in the last square of a
    section's title row (not the first section's, which starts near the top
    anyway) */
@@ -590,8 +609,21 @@ h1 a {
   top: 0;
   z-index: 5;
   max-width: calc(var(--rail, 100vw) + var(--g) * 2);
-  margin: 0 calc(var(--g) * -1) calc(var(--g) - var(--mask));
-  padding: 0 var(--g) var(--mask);
+  /* A square of padding on top, taken back by the negative margin so nothing
+     moves: pinned, the buttons stop a square below the top of the window,
+     with the bar's background filling the square above them. */
+  margin: calc(var(--g) * -1) calc(var(--g) * -1) calc(var(--g) - var(--mask));
+  padding: var(--g) var(--g) var(--mask);
+}
+
+/* That top square overlaps the heading above while the bar is loose; it
+   shouldn't catch clicks meant for it */
+.toolbar:not(.is-stuck) {
+  pointer-events: none;
+}
+
+.toolbar .filters {
+  pointer-events: auto;
 }
 
 /* Only while it's actually stuck (app.js) does it need a background: the
