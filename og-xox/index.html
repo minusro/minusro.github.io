@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OG-XOX</title>
+  <meta name="description" content="OG-XOX: SP-404, SP-303 and SP-202 play modes for the SP-404MKII. Patch your own 5.52 system file in the browser.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#151515">
+  <link rel="canonical" href="https://danielstanciu.com/og-xox/">
+  <meta property="og:title" content="OG-XOX">
+  <meta property="og:description" content="SP-404, SP-303 and SP-202 play modes for the SP-404MKII, as a patch on its 5.52 firmware. Hold EXIT and turn VALUE to switch.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://danielstanciu.com/og-xox/">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="preload" href="/fonts/ibm-plex-sans-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* A dark sampler: charcoal case, a warm amber for what you press; and the
+       portfolio's fonts (served from the site root) */
+    @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-mono-400-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("/fonts/ibm-plex-mono-500-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 400; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-400-latin.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 600; font-display: swap; src: url("/fonts/ibm-plex-sans-condensed-600-latin.woff2") format("woff2"); }
+
+    :root {
+      color-scheme: dark;
+      --bg: #151515;
+      --bg-raise: #1e1e1d;
+      --fg: #ebe8e1;
+      --muted: #a29d93;
+      --line: rgba(235, 232, 225, 0.12);
+      --line-strong: #5c5850;
+      --grid: rgba(235, 232, 225, 0.035);
+      --accent: #f0a23a;
+      --accent-strong: #ffb85c;
+      --on-accent: #151515;
+      --error: #ff8a7a;
+      --ok: #9fd67a;
+      --font-sans: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --g: 24px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      background-image: linear-gradient(var(--grid) 1px, transparent 1px);
+      background-size: 100% calc(var(--g) / 2);
+      color: var(--fg);
+      font: 400 17px/24px var(--font-sans);
+    }
+    main { max-width: 720px; margin: 0 auto; padding: calc(2 * var(--g)) 16px calc(3 * var(--g)); }
+    a { color: inherit; text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+    .logo { display: block; margin: 0; max-width: 100%; height: auto; shape-rendering: crispEdges; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .hero .lede { margin: 24px 0 0; }
+    h2 { font: 600 22px/24px var(--font-sans); margin: 0 0 12px; }
+    h3 { font: 600 18px/24px var(--font-sans); margin: 28px 0 8px; }
+    p { margin: 0 0 12px; }
+    .lede { font-size: 20px; line-height: 28px; color: var(--muted); max-width: 34em; }
+    .note { color: var(--muted); }
+    .nw { white-space: nowrap; }
+    code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+    kbd { font: 500 0.8em/1 var(--font-mono); color: var(--accent); border: 1px solid var(--line-strong); padding: 2px 5px 1px; white-space: nowrap; }
+
+    .tabs { display: flex; gap: 28px; border-bottom: 1px solid var(--line-strong); margin: 32px 0 0; }
+    .tabs a { font: 600 18px/24px var(--font-sans); color: var(--muted); text-decoration: none; padding: 0 0 10px; margin-bottom: -1px; border-bottom: 3px solid transparent; }
+    .tabs a:hover { color: var(--accent); }
+    .tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); }
+
+    .panel { background: var(--bg-raise); border: 1px solid var(--line-strong); padding: 24px; margin: 24px 0; }
+    .release { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 20px; }
+    .release strong { font: 600 22px/24px var(--font-sans); }
+    .release span { color: var(--muted); }
+    ol.steps { margin: 0 0 20px; padding-left: 1.4em; }
+    ol.steps li { margin-bottom: 8px; }
+    ol.steps li::marker { font-family: var(--font-mono); color: var(--muted); }
+
+    .drop {
+      display: block; border: 1px dashed var(--line-strong); padding: 20px; text-align: center; cursor: pointer;
+      color: var(--muted); margin: 0 0 16px; transition: border-color .15s, color .15s;
+    }
+    .drop:hover, .drop.over, .drop:focus-within { border-color: var(--accent); color: var(--fg); }
+    .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .drop strong { color: var(--fg); font-weight: 600; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    button {
+      font: 600 18px/24px var(--font-sans); color: var(--on-accent); background: var(--accent);
+      border: 0; padding: 12px 20px; cursor: pointer;
+    }
+    button:hover:not(:disabled) { background: var(--accent-strong); }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    button:disabled { opacity: 0.4; cursor: default; }
+
+    #status { margin: 20px 0 0; }
+    #status:empty { display: none; }
+    #status[data-kind="error"] { color: var(--error); }
+    #status[data-kind="ok"] { color: var(--ok); }
+    #status .hash { display: block; font: 400 12px/18px var(--font-mono); color: var(--muted); word-break: break-all; margin-top: 4px; }
+
+    details { border-top: 1px solid var(--line); padding: 12px 0 0; margin-top: 20px; }
+    summary { cursor: pointer; color: var(--muted); }
+    summary:hover { color: var(--accent); }
+    #changes { font: 400 12px/18px var(--font-mono); color: var(--muted); margin: 12px 0 0; padding-left: 1.4em; }
+
+    .guide ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .guide li { margin-bottom: 8px; }
+    .guide li::marker { color: var(--muted); }
+    table { border-collapse: collapse; width: 100%; margin: 0 0 12px; font-size: 16px; line-height: 22px; }
+    th, td { text-align: left; vertical-align: top; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); }
+    th { font-weight: 600; color: var(--muted); }
+    td:first-child { white-space: nowrap; font-weight: 600; }
+
+    footer { color: var(--muted); font-size: 15px; margin-top: 36px; }
+
+    @media (max-width: 520px) {
+      .lede { font-size: 18px; line-height: 26px; }
+      .panel { padding: 16px; }
+      button { width: 100%; }
+      td:first-child { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <!-- "OG-XOX" in the 5×7 font the firmware draws its splash with -->
+    <svg class="logo" viewBox="-1 -1 37 9" width="370" height="90" role="img" aria-label="OG-XOX">
+      <path fill="var(--accent)" d="M1,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM0,2h1v1h-1zM4,2h1v1h-1zM0,3h1v1h-1zM4,3h1v1h-1zM0,4h1v1h-1zM4,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM1,6h3v1h-3zM7,0h3v1h-3zM6,1h1v1h-1zM10,1h1v1h-1zM6,2h1v1h-1zM6,3h1v1h-1zM8,3h3v1h-3zM6,4h1v1h-1zM10,4h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM7,6h4v1h-4zM13,3h3v1h-3zM18,0h1v1h-1zM22,0h1v1h-1zM18,1h1v1h-1zM22,1h1v1h-1zM19,2h1v1h-1zM21,2h1v1h-1zM20,3h1v1h-1zM19,4h1v1h-1zM21,4h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM18,6h1v1h-1zM22,6h1v1h-1zM25,0h3v1h-3zM24,1h1v1h-1zM28,1h1v1h-1zM24,2h1v1h-1zM28,2h1v1h-1zM24,3h1v1h-1zM28,3h1v1h-1zM24,4h1v1h-1zM28,4h1v1h-1zM24,5h1v1h-1zM28,5h1v1h-1zM25,6h3v1h-3zM30,0h1v1h-1zM34,0h1v1h-1zM30,1h1v1h-1zM34,1h1v1h-1zM31,2h1v1h-1zM33,2h1v1h-1zM32,3h1v1h-1zM31,4h1v1h-1zM33,4h1v1h-1zM30,5h1v1h-1zM34,5h1v1h-1zM30,6h1v1h-1zM34,6h1v1h-1z"/>
+    </svg>
+    <h1 class="visually-hidden">OG-XOX</h1>
+    <p class="lede">The SP-404MKII, cut back to the samplers it grew from. OG-XOX adds <span class="nw">OG-404</span>, <span class="nw">OG-303</span> and <span class="nw">OG-202</span> modes that switch off every button the original <span class="nw">SP-404</span>, <span class="nw">SP-303</span> or <span class="nw">SP-202</span> didn't have, next to <span class="nw">SP-404</span> mode, the MK2 as it ships. Hold <kbd>EXIT</kbd> and turn <kbd>VALUE</kbd> to switch.</p>
+  </header>
+
+  <nav class="tabs" aria-label="Page sections">
+    <a href="#install" id="tab-install-link" aria-current="page">Install</a>
+    <a href="#help" id="tab-help-link">Help</a>
+  </nav>
+
+  <div id="tab-install">
+    <section class="panel" aria-labelledby="install-title">
+      <h2 id="install-title" class="visually-hidden">Install</h2>
+      <div class="release"><strong id="version">OG-XOX</strong><span>for SP-404MKII system 5.52</span></div>
+
+      <ol class="steps">
+        <li>Download the <a href="https://www.roland.com/global/support/by_product/sp-404mk2/updates_drivers/174cc2fc-ddb2-4128-87a0-848b882cdcea/" target="_blank" rel="noopener">SP-404MKII System Program 5.52</a> from Roland. OG-XOX works on 5.52 only, and Roland's files don't come with it.</li>
+        <li>Choose the download below, either the <code>.zip</code> as it comes or the <code>SP404MKII_APP1.bin</code> inside it. It stays on this computer: the page patches it right here.</li>
+      </ol>
+
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".zip,.bin">
+        <span id="drop-text"><strong>Choose a file</strong> or drop it here</span>
+      </label>
+
+      <div class="actions">
+        <button id="patch" disabled>Patch and download</button>
+      </div>
+      <p id="status" role="status" aria-live="polite"></p>
+
+      <details>
+        <summary>What the patch changes</summary>
+        <ol id="changes"></ol>
+      </details>
+    </section>
+
+    <section class="panel" aria-labelledby="sd-title">
+      <h2 id="sd-title">Put it on the SP</h2>
+      <ol class="steps">
+        <li>Back up your SD card.</li>
+        <li>Copy the downloaded <code>SP404MKII_APP1.bin</code> to the root of the SP's SD card (formatted on the SP).</li>
+        <li>Hold <kbd>SHIFT</kbd> and switch the SP on. When it shows "UPDATE SURE?", press <kbd>VALUE</kbd>.</li>
+        <li>Wait for "UPDATE COMPLETE!" and don't switch off before then. Switch off, take the file off the card, and switch on: the OG-XOX splash appears for three seconds.</li>
+      </ol>
+      <p class="note"><strong>To go back to stock,</strong> do the same with Roland's own <code>SP404MKII_APP1.bin</code> from the 5.52 download. Your projects and samples aren't touched either way.</p>
+    </section>
+
+    <section aria-labelledby="careful-title">
+      <h2 id="careful-title">Before you install</h2>
+      <p class="note">OG-XOX is new, and has been tried on one SP-404MKII. It changes the SP's system program, and you install it at your own risk. Updating is the same procedure Roland uses, so reinstalling Roland's 5.52 file is always the way back. If something misbehaves, go back to stock.</p>
+    </section>
+  </div>
+
+  <div id="tab-help" class="guide" hidden>
+    <h3>Switching modes</h3>
+    <ul>
+      <li><strong>Hold <kbd>EXIT</kbd></strong>: a menu lists SP-404, OG-404, OG-303 and OG-202, the current mode inverted.</li>
+      <li><strong>Turn <kbd>VALUE</kbd></strong> (EXIT still held): up or down the list. It switches straight away, and stops at either end.</li>
+      <li><strong>Click <kbd>VALUE</kbd></strong> (EXIT still held): the next mode, wrapping from OG-202 back to SP-404.</li>
+      <li><strong>Let go of <kbd>EXIT</kbd></strong>: the menu closes. Pads, effects and EXIT itself work as usual while it's held.</li>
+    </ul>
+    <p>The SP remembers the mode when you switch it off. After the splash, a popup names the mode if it's an OG mode.</p>
+
+    <h3>The modes</h3>
+    <p>Pads, the five effect buttons and MFX work in every mode. In the OG modes, buttons the original didn't have do nothing and stay dark, and so does anything pressed while one of them is held (which takes out the MK2's SHIFT shortcuts). VALUE clicks do nothing on their own.</p>
+    <table>
+      <thead><tr><th>Mode</th><th>Buttons that work</th></tr></thead>
+      <tbody>
+        <tr><td>SP-404</td><td>All of them: the stock MK2.</td></tr>
+        <tr><td>OG-404</td><td>Banks, HOLD, EXT SRC, SUB PAD, GATE, LOOP, REVERSE, REC, RESAMPLE, DEL, PTN SELECT, REMAIN, EXIT</td></tr>
+        <tr><td>OG-303</td><td>As OG-404, without SUB PAD and REMAIN</td></tr>
+        <tr><td>OG-202</td><td>As OG-303, without EXT SRC, RESAMPLE and PTN SELECT. No pattern sequencer: switching to OG-202 leaves pattern mode.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Good to know</h3>
+    <ul>
+      <li>The SP's menus and settings are untouched, including UTILITY &gt; SYSTEM, which still shows 5.52.</li>
+      <li>Some of the SP's own dialogs ask for a VALUE press (deleting, resampling settings). In an OG mode VALUE clicks do nothing, so switch to SP-404 mode to confirm them, or press EXIT to back out.</li>
+      <li>The effects, screens and readouts are the MK2's own in every mode for now.</li>
+    </ul>
+
+    <h3>If the page refuses your file</h3>
+    <p>It patches Roland's 5.52 <code>SP404MKII_APP1.bin</code> exactly, checked by its fingerprint, so an older or newer version, an <code>APP0</code> file, or a file that's already patched won't do. Download 5.52 from Roland again and choose that.</p>
+  </div>
+
+  <footer>
+    <p>OG-XOX is an independent project, not affiliated with or endorsed by Roland. SP-404MKII, SP-404, SP-303 and SP-202 are Roland's product names, used here only to say what OG-XOX works with.<br>©2026 Daniel Stanciu</p>
+  </footer>
+</main>
+<script>
+  // Install / Help tabs, by the address's #, so Help can be linked to
+  (function () {
+    function show() {
+      var help = location.hash === '#help';
+      document.getElementById('tab-install').hidden = help;
+      document.getElementById('tab-help').hidden = !help;
+      document.getElementById(help ? 'tab-help-link' : 'tab-install-link').setAttribute('aria-current', 'page');
+      document.getElementById(help ? 'tab-install-link' : 'tab-help-link').removeAttribute('aria-current');
+    }
+    addEventListener('hashchange', show);
+    show();
+  })();
+</script>
+<script type="module" src="installer.js?v=f0a1f73240"></script>
+</body>
+</html>
