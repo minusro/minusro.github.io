@@ -8,7 +8,7 @@ import { isZip, listZip, extractZip, findEntry } from './unzip.js?v=f9f1c7631b';
 
 const $ = (id) => document.getElementById(id);
 
-// GoatCounter events (see index.html). count.js loads after the page and
+// GoatCounter events, on the page's own site (danielstanciu-og-xox.goatcounter.com). count.js loads after the page and
 // doesn't count on localhost; an event from before it has loaded waits for it
 // (up to 15 s), and if it's blocked nothing is counted. Only what happened is
 // sent, never the file.
@@ -18,7 +18,7 @@ function track(name, title = name, wait = 15000) {
     return;
   }
   try {
-    window.goatcounter.count({ path: `og-xox/${name}`, title: String(title).slice(0, 200), event: true });
+    window.goatcounter.count({ path: name, title: String(title).slice(0, 200), event: true });
   } catch { /* counting is best-effort */ }
 }
 
