@@ -74,6 +74,7 @@
     .tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); }
 
     .panel { background: var(--bg-raise); border: 1px solid var(--line-strong); padding: 24px; margin: 24px 0; }
+    #tab-install > section[aria-labelledby="careful-title"] { margin-top: 24px; }   /* first under the tabs, spaced like the panels */
     .release { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 20px; }
     .release strong { font: 600 22px/24px var(--font-sans); }
     .release span { color: var(--muted); }
@@ -135,7 +136,7 @@
       <path fill="var(--accent)" d="M1,0h3v1h-3zM0,1h1v1h-1zM4,1h1v1h-1zM0,2h1v1h-1zM4,2h1v1h-1zM0,3h1v1h-1zM4,3h1v1h-1zM0,4h1v1h-1zM4,4h1v1h-1zM0,5h1v1h-1zM4,5h1v1h-1zM1,6h3v1h-3zM7,0h3v1h-3zM6,1h1v1h-1zM10,1h1v1h-1zM6,2h1v1h-1zM6,3h1v1h-1zM8,3h3v1h-3zM6,4h1v1h-1zM10,4h1v1h-1zM6,5h1v1h-1zM10,5h1v1h-1zM7,6h4v1h-4zM13,3h3v1h-3zM18,0h1v1h-1zM22,0h1v1h-1zM18,1h1v1h-1zM22,1h1v1h-1zM19,2h1v1h-1zM21,2h1v1h-1zM20,3h1v1h-1zM19,4h1v1h-1zM21,4h1v1h-1zM18,5h1v1h-1zM22,5h1v1h-1zM18,6h1v1h-1zM22,6h1v1h-1zM25,0h3v1h-3zM24,1h1v1h-1zM28,1h1v1h-1zM24,2h1v1h-1zM28,2h1v1h-1zM24,3h1v1h-1zM28,3h1v1h-1zM24,4h1v1h-1zM28,4h1v1h-1zM24,5h1v1h-1zM28,5h1v1h-1zM25,6h3v1h-3zM30,0h1v1h-1zM34,0h1v1h-1zM30,1h1v1h-1zM34,1h1v1h-1zM31,2h1v1h-1zM33,2h1v1h-1zM32,3h1v1h-1zM31,4h1v1h-1zM33,4h1v1h-1zM30,5h1v1h-1zM34,5h1v1h-1zM30,6h1v1h-1zM34,6h1v1h-1z"/>
     </svg>
     <h1 class="visually-hidden">OG-XOX</h1>
-    <p class="lede">The SP-404MKII, cut back to the samplers it grew from. OG-XOX adds <span class="nw">OG-404</span>, <span class="nw">OG-303</span> and <span class="nw">OG-202</span> modes that switch off every button the original <span class="nw">SP-404</span>, <span class="nw">SP-303</span> or <span class="nw">SP-202</span> didn't have, next to <span class="nw">SP-404</span> mode, the MK2 as it ships. Hold <kbd>EXIT</kbd> and turn <kbd>VALUE</kbd> to switch.</p>
+    <p class="lede">The SP-404 MKII, pared back to the samplers it evolved from.<br>Three new modes (202, 303 and 404 MKI) that turn off the functions the originals didn't have. You can quickly return to the full MKII mode when needed.<br>Hold <kbd>EXIT</kbd> and turn <kbd>VALUE</kbd> to switch. Your projects remain unchanged.</p>
   </header>
 
   <nav class="tabs" aria-label="Page sections">
@@ -144,13 +145,18 @@
   </nav>
 
   <div id="tab-install">
+    <section aria-labelledby="careful-title">
+      <h2 id="careful-title">Before you install</h2>
+      <p class="note">OG-XOX has been tested on an SP-404 MKII. It installs through Roland's own update procedure, so reinstalling Roland's 5.52 file takes you back to stock. As per usual with alternate firmware, install at your own risk.</p>
+    </section>
+
     <section class="panel" aria-labelledby="install-title">
       <h2 id="install-title" class="visually-hidden">Install</h2>
       <div class="release"><strong id="version">OG-XOX</strong><span>for SP-404MKII system 5.52</span></div>
 
       <ol class="steps">
-        <li>Download the <a href="https://www.roland.com/global/support/by_product/sp-404mk2/updates_drivers/174cc2fc-ddb2-4128-87a0-848b882cdcea/" target="_blank" rel="noopener">SP-404MKII System Program 5.52</a> from Roland. OG-XOX works on 5.52 only, and Roland's files don't come with it.</li>
-        <li>Choose the download below, either the <code>.zip</code> as it comes or the <code>SP404MKII_APP1.bin</code> inside it. It stays on this computer: the page patches it right here.</li>
+        <li>Download the <a href="https://www.roland.com/global/support/by_product/sp-404mk2/updates_drivers/174cc2fc-ddb2-4128-87a0-848b882cdcea/" target="_blank" rel="noopener">SP-404MKII System Program 5.52</a> from Roland.<br>OG-XOX works with 5.52 only, and doesn't include any of Roland's files: you patch your own copy.</li>
+        <li>Choose that download below, either the <code>.zip</code> or the <code>SP404MKII_APP1.bin</code> inside it.<br>Your file never leaves this computer: the page patches it locally in your browser.</li>
       </ol>
 
       <label class="drop" id="drop">
@@ -165,6 +171,7 @@
 
       <details>
         <summary>What the patch changes</summary>
+        <p class="note" style="margin: 12px 0 0">For the curious: every change the patch makes to Roland's file.</p>
         <ol id="changes"></ol>
       </details>
     </section>
@@ -173,49 +180,44 @@
       <h2 id="sd-title">Put it on the SP</h2>
       <ol class="steps">
         <li>Back up your SD card.</li>
-        <li>Copy the downloaded <code>SP404MKII_APP1.bin</code> to the root of the SP's SD card (formatted on the SP).</li>
-        <li>Hold <kbd>SHIFT</kbd> and switch the SP on. When it shows "UPDATE SURE?", press <kbd>VALUE</kbd>.</li>
-        <li>Wait for "UPDATE COMPLETE!" and don't switch off before then. Switch off, take the file off the card, and switch on: the OG-XOX splash appears for three seconds.</li>
+        <li>Copy the downloaded <code>SP404MKII_APP1.bin</code> to the root of the SD card (32 GB max).</li>
+        <li>Hold <kbd>SHIFT</kbd> and switch the sampler on. When it shows "UPDATE SURE?", press <kbd>VALUE</kbd>.</li>
+        <li>Wait for "UPDATE COMPLETE!". Don't switch off before it appears.</li>
+        <li>Switch off and turn back on. After the original SP-404 splash screen, the OG-XOX splash shows for three seconds.</li>
       </ol>
-      <p class="note"><strong>To go back to stock,</strong> do the same with Roland's own <code>SP404MKII_APP1.bin</code> from the 5.52 download. Your projects and samples aren't touched either way.</p>
-    </section>
-
-    <section aria-labelledby="careful-title">
-      <h2 id="careful-title">Before you install</h2>
-      <p class="note">OG-XOX is new, and has been tried on one SP-404MKII. It changes the SP's system program, and you install it at your own risk. Updating is the same procedure Roland uses, so reinstalling Roland's 5.52 file is always the way back. If something misbehaves, go back to stock.</p>
+      <p class="note"><strong>To go back to stock,</strong> follow the same steps with Roland's own <code>SP404MKII_APP1.bin</code> from the 5.52 download. Your projects and samples aren't touched either way.</p>
     </section>
   </div>
 
   <div id="tab-help" class="guide" hidden>
     <h3>Switching modes</h3>
     <ul>
-      <li><strong>Hold <kbd>EXIT</kbd></strong>: a menu lists SP-404, OG-404, OG-303 and OG-202, the current mode inverted.</li>
-      <li><strong>Turn <kbd>VALUE</kbd></strong> (EXIT still held): up or down the list. It switches straight away, and stops at either end.</li>
-      <li><strong>Click <kbd>VALUE</kbd></strong> (EXIT still held): the next mode, wrapping from OG-202 back to SP-404.</li>
-      <li><strong>Let go of <kbd>EXIT</kbd></strong>: the menu closes. Pads, effects and EXIT itself work as usual while it's held.</li>
+      <li><strong>Hold <kbd>EXIT</kbd></strong>: a menu lists SP-404, OG-404, OG-303 and OG-202, with the current mode highlighted.</li>
+      <li><strong>Turn or click <kbd>VALUE</kbd></strong> while EXIT is still held to navigate modes.</li>
+      <li><strong>Let go of <kbd>EXIT</kbd></strong>: the menu closes.</li>
     </ul>
-    <p>The SP remembers the mode when you switch it off. After the splash, a popup names the mode if it's an OG mode.</p>
+    <p>Holding EXIT doesn't get in the way so pads and effects keep working, and EXIT still does its usual job. The SP remembers your mode when you switch it off.</p>
 
     <h3>The modes</h3>
-    <p>Pads, the five effect buttons and MFX work in every mode. In the OG modes, buttons the original didn't have do nothing and stay dark, and so does anything pressed while one of them is held (which takes out the MK2's SHIFT shortcuts). <kbd>VALUE</kbd> turns and clicks work as usual in every mode, as long as EXIT isn't held.</p>
+    <p>Pads, the five effect buttons and MFX work in every mode. In the OG modes, buttons the original didn't have do nothing and stay dark. Holding one of them also blocks whatever you press with it, so the MK2's SHIFT shortcuts are off too.</p>
     <table>
       <thead><tr><th>Mode</th><th>Buttons that work</th></tr></thead>
       <tbody>
-        <tr><td>SP-404</td><td>All of them: the stock MK2.</td></tr>
+        <tr><td>SP-404</td><td>All of them: the stock MK2</td></tr>
         <tr><td>OG-404</td><td>Banks, HOLD, EXT SRC, SUB PAD, GATE, LOOP, REVERSE, REC, RESAMPLE, DEL, PTN SELECT, REMAIN, EXIT</td></tr>
-        <tr><td>OG-303</td><td>As OG-404, without SUB PAD and REMAIN</td></tr>
-        <tr><td>OG-202</td><td>As OG-303, without EXT SRC, RESAMPLE and PTN SELECT. No pattern sequencer: switching to OG-202 leaves pattern mode.</td></tr>
+        <tr><td>OG-303</td><td>Same as OG-404, minus SUB PAD and REMAIN</td></tr>
+        <tr><td>OG-202</td><td>Same as OG-303, minus EXT SRC, RESAMPLE and PTN SELECT.<br>Also, since there's no pattern sequencer, switching to OG-202 leaves pattern mode.</td></tr>
       </tbody>
     </table>
 
     <h3>Good to know</h3>
     <ul>
-      <li>The SP's menus and settings are untouched, including UTILITY &gt; SYSTEM, which still shows 5.52.</li>
-      <li>The effects, screens and readouts are the MK2's own in every mode for now.</li>
+      <li>The SP's menus and settings are untouched.</li>
+      <li>The effects, screens and readouts are the MK2's own in every mode, for now.</li>
     </ul>
 
     <h3>If the page refuses your file</h3>
-    <p>It patches Roland's 5.52 <code>SP404MKII_APP1.bin</code> exactly, checked by its fingerprint, so an older or newer version, an <code>APP0</code> file, or a file that's already patched won't do. Download 5.52 from Roland again and choose that.</p>
+    <p>The page only accepts Roland's unmodified 5.52 <code>SP404MKII_APP1.bin</code>, which it checks by fingerprint. An older or newer version, the <code>APP0</code> file, or a file that's already patched won't work.</p>
   </div>
 
   <footer>
