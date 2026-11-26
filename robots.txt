@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /cv/Daniel-Stanciu-CV.pdf
 
 Sitemap: https://danielstanciu.com/sitemap.xml
