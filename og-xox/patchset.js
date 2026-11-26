@@ -4,7 +4,7 @@
 // Offsets are file offsets in SP404MKII_APP1.bin. For code and constants in
 // SDRAM: offset = address − 0x80000000 + 0x21ac0 (see docs/spike.md).
 
-import OGXOX from './patches/ogxox-0.10.js?v=a57b3b864c';
+import OGXOX from './patches/ogxox-0.11.js?v=a1226b366e';
 
 export { BASE_552 } from './base.js?v=8fe23f95ad';
 

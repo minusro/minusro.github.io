@@ -3,7 +3,7 @@
 // back the patched SP404MKII_APP1.bin. Nothing is uploaded.
 
 import { checkBase, checkResult, applyPatches } from './patch.js?v=df7492aa6e';
-import { PATCH_SET as set } from './patchset.js?v=96f064ac52';
+import { PATCH_SET as set } from './patchset.js?v=2cdb9f5380';
 import { isZip, listZip, extractZip, findEntry } from './unzip.js?v=f9f1c7631b';
 
 const $ = (id) => document.getElementById(id);
